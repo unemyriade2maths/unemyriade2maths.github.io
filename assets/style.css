@@ -373,3 +373,26 @@ a.carte-partie:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(
 .carte-rub { display: flex; align-items: center; gap: 12px; text-align: left; background: #FFF; border: 2px solid #E6EDE8; border-radius: 16px; padding: 14px; min-height: 74px; cursor: pointer; font: inherit; color: var(--encre); transition: transform .15s, box-shadow .15s; }
 .carte-rub:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(31, 111, 61, .12); }
 .carte-rub .txt { display: flex; flex-direction: column; } .carte-rub strong { color: var(--vert); font-size: 17px; } .carte-rub small { color: var(--gris); font-weight: 700; font-size: 13px; }
+.tc-brevet { background: #E3F2E7; border-radius: 12px; padding: 10px 12px; font-weight: 700; color: var(--vert); margin: 14px 0 0; }
+.tc-regles { background: #FFF; border-radius: 14px; padding: 12px 14px; margin-top: 14px; }
+.tc-regles-haut { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.tc-regles-haut .mini-son { position: static; flex-shrink: 0; }
+.tc-regles ol { margin: 8px 0 0; padding-left: 22px; } .tc-regles li { margin: 6px 0; }
+.tc-points { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; }
+.tc-points span { min-width: 44px; padding: 6px 0; text-align: center; border-radius: 10px; background: #FFF; border: 2px solid #E6EDE8; font-weight: 800; color: var(--gris); font-size: 14px; }
+.tc-points span.fait { background: #E3F2E7; border-color: #CFE3D5; color: var(--vert); }
+.tc-points span.actuel { border-color: var(--orange); color: var(--orange-fonce); }
+.tc-une { background: #FFF; border-radius: 16px; padding: 16px; animation: entree .3s ease both; }
+.tc-num { margin: 0; font-size: 13px; font-weight: 800; color: var(--orange-fonce); }
+.tc-enonce { font-size: 22px; font-weight: 800; margin: 6px 0 14px; }
+.tc-corr-titre { color: var(--vert); margin: 18px 0 6px; }
+.tc-c { background: #FFF; border-radius: 14px; padding: 12px 14px; margin-top: 10px; border-left: 5px solid var(--vert); }
+.tc-c.faux { border-left-color: #D9534F; }
+.tc-c-haut { margin: 0 0 6px; font-weight: 800; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tc-ta { margin: 0 0 8px; color: var(--gris); }
+.tc-c .lignes p { margin: 0 0 4px; }
+.tc-c .cc { margin: 6px 0 0; }
+.barre-rub { display: flex; align-items: center; gap: 12px; padding: 14px 0 0; flex-wrap: wrap; }
+.barre-rub h2 { margin: 0; font-family: 'Baloo 2', sans-serif; color: var(--vert); font-size: 24px; }
+.btn.retour-som { min-height: 44px; padding: 0 14px; border: 2px solid var(--vert); background: #FFF; color: var(--vert); }
+.tc-c-haut { flex-wrap: nowrap !important; align-items: center; } .tcq { flex: 1; }

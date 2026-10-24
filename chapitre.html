@@ -32,8 +32,8 @@ $('titre').textContent = c.titre; $('niv').textContent = 'CHAPITRE · ' + c.nive
 $('retour').href = 'niveau.html?n=' + c.niveau; document.title = c.titre + ' – Une myriade de maths';
 $('parties').innerHTML = c.videos.length
   ? '<h2 class="titre-bloc">Les parties</h2>' + c.videos.map((v, i) => (EXOS[id] || {})[i + 1]
-      ? `<a class="carte-partie" href="exercices.html?c=${id}&p=${i + 1}"><span class="num-partie">${i + 1}</span><span class="txt"><small>Partie ${i + 1}</small><strong>${v.titre}</strong></span><span class="fl">→</span></a>`
-      : `<div class="carte-partie bientot-p"><span class="num-partie">${i + 1}</span><span class="txt"><small>Partie ${i + 1}</small><strong>${v.titre}</strong></span><span class="badge todo">Bientôt</span></div>`).join('')
+      ? `<a class="carte-partie" href="exercices.html?c=${id}&p=${i + 1}"><span class="num-partie">${i + 1}</span><span class="txt"><strong>${v.titre}</strong></span><span class="fl">→</span></a>`
+      : `<div class="carte-partie bientot-p"><span class="num-partie">${i + 1}</span><span class="txt"><strong>${v.titre}</strong></span><span class="badge todo">Bientôt</span></div>`).join('')
   : '<p class="sous" style="text-align:left">Les parties de ce chapitre arrivent bientôt.</p>';
 if (typeof BILANS !== 'undefined' && BILANS[id]) $('fin').innerHTML = `<h2 class="titre-bloc">Fin de chapitre</h2>
   <div class="duo-fin"><a class="carte-fin" href="bilan.html?c=${id}&t=qcm"><span aria-hidden="true">✅</span><strong>QCM de fin de chapitre</strong><small>10 questions sur tout le chapitre</small></a>

@@ -16,7 +16,7 @@
   </div>
 </header>
 <div class="page zone-exos" id="zone">
-  <nav class="sommaire" id="sommaire" role="tablist" aria-label="Rubriques de la partie"></nav>
+  <div class="barre-rub" id="barre" hidden><button class="btn retour-som" id="retourSom">← Sommaire</button><h2 id="nomRub"></h2></div>
   <div id="liste"></div>
 </div>
 <script src="assets/data.js"></script>
@@ -29,7 +29,7 @@
 const P = new URLSearchParams(location.search), cid = P.get('c') || 'arithmetique', pid = P.get('p') || '1';
 const E = EXOS[cid][pid];
 const $ = (x) => document.getElementById(x);
-$('titre').textContent = 'Partie ' + pid + ' · ' + E.titre; $('niv').textContent = 'ARITHMÉTIQUE · PARTIE ' + pid;
+$('titre').textContent = 'Partie ' + pid + ' · ' + E.titre; $('niv').textContent = chapitre(cid).titre.toUpperCase() + ' · ' + chapitre(cid).niveau;
 $('retour').href = 'chapitre.html?c=' + cid;
 document.title = 'Exercices – ' + E.titre;
 const son = new Audio();
@@ -92,7 +92,6 @@ const menu = RUBRIQUES.filter(([r]) => E.items.some(it => it.rub === r)).map(([r
   `<button class="carte-rub" data-r="${r}"><span class="rub-ico" aria-hidden="true">${ico}</span><span class="txt"><strong>${nom}</strong><small>${DESC[r] || ''}</small></span></button>`).join('');
 html = `<section class="rubrique" id="r-menu"><p class="consigne">Que veux-tu travailler ? Choisis dans l’ordre que tu veux.</p><div class="grille-rub">${menu}</div></section>` + html;
 $('liste').innerHTML = html;
-$('sommaire').innerHTML = '<button role="tab" data-r="menu" aria-selected="false"><span aria-hidden="true">🏠</span> Sommaire</button>' + som;
 
 document.querySelectorAll('.mini-son').forEach(b => b.onclick = () => jouer(decodeURIComponent(b.dataset.v)));
 
@@ -224,14 +223,14 @@ E.items.forEach((it, n) => {
   });
 });
 // --- onglets : une seule rubrique visible à la fois
+const NOMS = Object.fromEntries(RUBRIQUES.map(([r, nom, ico]) => [r, ico + ' ' + nom]));
 const ouvrir = (r) => {
-  if (!$('r-' + r)) r = $('sommaire').querySelector('[role=tab]').dataset.r;
+  if (!$('r-' + r)) r = 'menu';
+  $('barre').hidden = r === 'menu'; $('nomRub').textContent = NOMS[r] || '';
   document.querySelectorAll('.rubrique').forEach(x => x.hidden = x.id !== 'r-' + r);
-  document.querySelectorAll('#sommaire [role=tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.r === r));
-  const b = $('sommaire').querySelector(`[data-r="${r}"]`); if (b) b.scrollIntoView({ block: 'nearest', inline: 'center' });
   son.pause();
 };
-document.querySelectorAll('#sommaire [role=tab]').forEach(b => b.onclick = () => { history.replaceState(null, '', '#' + b.dataset.r); ouvrir(b.dataset.r); window.scrollTo({ top: 0 }); });
+$('retourSom').onclick = () => { history.replaceState(null, '', location.pathname + location.search); ouvrir('menu'); window.scrollTo({ top: 0 }); };
 document.querySelectorAll('.carte-rub').forEach(b => b.onclick = () => { history.replaceState(null, '', '#' + b.dataset.r); ouvrir(b.dataset.r); window.scrollTo({ top: 0 }); });
 ouvrir(location.hash.slice(1) || 'menu');
 </script>

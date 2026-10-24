@@ -61,5 +61,6 @@ const AUDIO = {
 "Cent égale sept fois quatorze, plusse deux. Le reste est deux, pas zéro : le lutin dit « non ».": "0943eacef580.mp3",
 "Tableur. On tape égale ENT de trois cent quatre-vingt-neuf sur quinze dans la case A1, et égale MOD de trois cent quatre-vingt-neuf point-virgule quinze dans la case B1. Qu'affiche chaque case ?": "e68564547e62.mp3",
 "Correction. On pose la division : trois cent quatre-vingt-neuf, égale quinze fois vingt-cinq, plusse quatorze.": "aa9328a5ab3b.mp3",
-"La case A1 affiche vingt-cinq : c’est le quotient. La case B1 affiche quatorze : c’est le reste.": "d91c77f7cee6.mp3"
+"La case A1 affiche vingt-cinq : c’est le quotient. La case B1 affiche quatorze : c’est le reste.": "d91c77f7cee6.mp3",
+"Top Chrono. Tu as six minutes pour cinq questions, sans calculatrice. Lis la question, écris ta réponse, puis clique sur Valider. Si tu bloques, clique sur Suivante : la question reviendra à la fin, s'il te reste du temps. Une réponse validée ne se change plus. À la fin, tu vois ton score et la correction.": "7e45ab533b27.mp3"
 };

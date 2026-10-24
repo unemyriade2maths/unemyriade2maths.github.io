@@ -11,7 +11,7 @@
 <header class="entete">
   <div class="page" style="padding-bottom:0">
     <a href="index.html">← Accueil</a>
-    <small>5 QUESTIONS · 6 MINUTES · SANS CALCULATRICE</small>
+    <small>LES AUTOMATISMES</small>
     <h1>Top Chrono</h1>
   </div>
 </header>
@@ -20,11 +20,14 @@
   <div id="contenu"></div>
 </div>
 <script src="assets/data.js"></script>
+<script src="assets/lecons.js"></script>
 <script src="assets/topchrono.js"></script>
+<script src="assets/audio.js"></script>
 <script src="assets/clavier.js" defer></script>
 <script>
 const P = new URLSearchParams(location.search), k = P.get('n') || '3e', num = +P.get('num') || 0;
 const $ = (x) => document.getElementById(x);
+const son = new Audio(), jouer = (t) => { const a = AUDIO[t]; if (!a) return; son.pause(); son.src = 'audio/' + a; son.play().catch(() => {}); };
 $('niveaux').innerHTML = Object.keys(NIVEAUX).map(x => `<a href="topchrono.html?n=${x}" class="${x === k ? 'actif' : ''}">${x}</a>`).join('');
 const d0 = new Date(), auj = d0.getFullYear() + '-' + String(d0.getMonth() + 1).padStart(2, '0') + '-' + String(d0.getDate()).padStart(2, '0');
 const fr = (d) => new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -32,39 +35,74 @@ const tous = (TOPCHRONO[k] || []).slice().sort((a, b) => b.date.localeCompare(a.
 const dispo = tous.filter(t => t.date <= auj), futur = tous.filter(t => t.date > auj).pop();
 const T = num ? dispo.find(t => t.num === num) : dispo[0];
 const norm = (s) => s.replace(/\s+/g, '').replace(/\./g, ',').replace(/[x*]/gi, '×').toLowerCase();
+const L = 'ABCDE';
 let h = '';
 if (!T) h = `<div class="tc-carte"><h2>Pas encore de Top Chrono pour la ${k}</h2><p>${futur ? 'Le premier arrive le ' + fr(futur.date) + '.' : 'Il arrive bientôt.'}</p></div>`;
 else {
-  h = `<div class="tc-carte"><div class="tc-haut"><h2>Top Chrono n°${T.num}</h2><span>${T.theme} · ${fr(T.date)}</span></div>
-    <div id="depart"><p>Tu as 6 minutes pour répondre aux 5 questions. Prêt ?</p><button class="btn verif large" id="go">Lancer le chrono</button></div>
-    <div id="jeu" hidden><div class="ds-chrono" id="chrono"></div>
-    ${T.questions.map((q, i) => `<div class="tc-q question" data-touches="${q.rep.some(r => r.includes('/')) ? '/' : ''}"><span class="lettre">Q${'ABCDE'[i]}</span>
-      <div><p>${q.q}</p><input type="text" autocomplete="off" aria-label="Réponse Q${'ABCDE'[i]}"><p class="tc-sol" hidden></p></div></div>`).join('')}
-    <button class="btn verif large" id="valider">Valider</button><div id="score"></div></div></div>`;
+  h = `<div class="tc-carte" id="carte"><div class="tc-haut"><h2>Top Chrono n°${T.num}</h2><span>Série ${T.serie} · ${T.theme} · ${fr(T.date)}</span></div>
+    <div id="depart">
+      ${k === '3e' ? `<p class="tc-brevet">🎓 ${TC_BREVET}</p>` : ''}
+      <div class="tc-regles"><div class="tc-regles-haut"><strong>Comment ça marche ?</strong>${AUDIO[TC_CONSIGNES] ? '<button class="mini-son" id="consignes" aria-label="Écouter les consignes">🔊</button>' : ''}</div>
+        <ol><li><strong>6 minutes</strong> pour <strong>5 questions</strong>, sans calculatrice.</li>
+          <li>Écris ta réponse, puis clique sur <strong>Valider</strong>. Une réponse validée ne se change plus.</li>
+          <li>Tu bloques ? Clique sur <strong>Suivante ▶</strong> : la question revient <strong>à la fin</strong>, s’il te reste du temps.</li>
+          <li>À la fin : ton score et la correction.</li></ol></div>
+      <button class="btn verif large" id="go">Lancer le chrono</button></div>
+    <div id="jeu" hidden><div class="ds-chrono" id="chrono"></div><div class="tc-points" id="points"></div>
+      <div class="tc-une" id="une"></div></div>
+    <div id="resultat" hidden></div></div>`;
 }
 if (futur && T) h += `<p class="consigne" style="margin-top:14px">Prochain Top Chrono : ${fr(futur.date)}.</p>`;
 const anciens = dispo.filter(t => t !== T);
-if (anciens.length) h += `<section class="bloc archive"><h3>Les Top Chrono précédents</h3>${anciens.map(t => `<a class="ligne" href="topchrono.html?n=${k}&num=${t.num}"><span>Top Chrono n°${t.num} · ${t.theme}</span><span class="badge ok">${fr(t.date)}</span></a>`).join('')}</section>`;
+if (anciens.length) h += `<section class="bloc archive"><h3>Les Top Chrono précédents</h3>${anciens.map(t => `<a class="ligne" href="topchrono.html?n=${k}&num=${t.num}"><span>n°${t.num} · ${t.theme}</span><span class="badge ok">${fr(t.date)}</span></a>`).join('')}</section>`;
 $('contenu').innerHTML = h;
+
 if (T) {
-  let fin = 0, tm = null, fini = false;
+  if ($('consignes')) $('consignes').onclick = () => { jouer(TC_CONSIGNES); };
+  const rep = T.questions.map(() => null);          // réponse validée de chaque question
+  let file = T.questions.map((_, i) => i), fin = 0, tm = null, termine = false;
+  const points = () => $('points').innerHTML = T.questions.map((_, i) =>
+    `<span class="${rep[i] !== null ? 'fait' : ''}${file[0] === i ? ' actuel' : ''}">Q${L[i]}</span>`).join('');
+  const afficher = () => {
+    const i = file[0], q = T.questions[i], dernier = file.length === 1;
+    $('une').innerHTML = `<p class="tc-num">Question Q${L[i]}</p><p class="tc-enonce">${q.q}</p>
+      <div class="question" data-touches="${q.rep.some(r => r.includes('/')) ? '/' : ''}"><input type="text" id="champ" autocomplete="off" aria-label="Ta réponse"></div>
+      <div class="boutons"><button class="btn verif" id="valider">Valider</button><button class="btn indice-b" id="passer" ${dernier ? 'disabled' : ''}>Suivante ▶</button></div>
+      ${dernier && rep.filter(x => x === null).length === 1 ? '<p class="consigne" style="margin-top:10px">C’est la dernière question.</p>' : ''}`;
+    points();
+    const c = $('champ'); c.focus({ preventScroll: true });
+    c.addEventListener('keydown', e => { if (e.key === 'Enter') valider(); });
+    $('valider').onclick = valider; $('passer').onclick = passer;
+  };
   const valider = () => {
-    if (fini) return; fini = true; clearInterval(tm); let s = 0;
-    document.querySelectorAll('.tc-q').forEach((Q, i) => {
-      const q = T.questions[i], inp = Q.querySelector('input'), ok = q.rep.some(r => norm(r) === norm(inp.value)); if (ok) s++;
-      Q.classList.add(ok ? 'juste' : 'faux'); inp.disabled = true;
-      const so = Q.querySelector('.tc-sol'); so.hidden = false; so.textContent = (ok ? '✓ ' : '✗ ') + q.sol;
-    });
-    $('valider').hidden = true; $('chrono').textContent = 'Terminé !';
-    $('score').innerHTML = `<div class="verdict ${s >= 3 ? 'ok' : 'non'}">Score : ${s} / 5</div><button class="btn essai" onclick="location.reload()">Recommencer</button>`;
+    const v = $('champ').value.trim(); if (!v) { $('champ').focus(); return; }
+    rep[file.shift()] = v;
+    if (!file.length) terminer(); else afficher();
+  };
+  const passer = () => { file.push(file.shift()); afficher(); };
+  const terminer = () => {
+    if (termine) return; termine = true; clearInterval(tm);
+    let s = 0;
+    const ok = T.questions.map((q, i) => { const b = rep[i] !== null && q.rep.some(r => norm(r) === norm(rep[i])); if (b) s++; return b; });
+    $('jeu').hidden = true; $('resultat').hidden = false;
+    const detail = T.num === 1;
+    $('resultat').innerHTML = `<div class="verdict ${s >= 3 ? 'ok' : 'non'}">Score : ${s} / 5</div>
+      <h3 class="tc-corr-titre">${detail ? 'La correction détaillée' : 'La correction'}</h3>
+      ${T.questions.map((q, i) => `<div class="tc-c ${ok[i] ? 'juste' : 'faux'}"><p class="tc-c-haut"><span class="lettre">Q${L[i]}</span><span class="tcq">${q.q}</span></p>
+        <p class="tc-ta">Ta réponse : <strong>${rep[i] === null ? 'pas de réponse' : rep[i]}</strong> ${ok[i] ? '✓' : '✗'}</p>
+        ${detail && q.det ? `<div class="lignes">${q.det.map(x => `<p>${x}</p>`).join('')}</div>` : ''}<p class="cc">${q.sol}</p></div>`).join('')}
+      ${detail ? `<details class="revoir video-partie"><summary>▶ La vidéo de la correction</summary><div class="lecteur">${T.video
+        ? `<iframe src="https://www.youtube-nocookie.com/embed/${T.video}?rel=0" title="Correction du Top Chrono" allow="encrypted-media; fullscreen" allowfullscreen></iframe>`
+        : '<p class="sous" style="text-align:left;margin:8px 4px">La vidéo arrive bientôt sur la chaîne.</p>'}</div></details>` : ''}
+      <button class="btn essai" onclick="location.reload()">Recommencer</button>`;
+    window.scrollTo({ top: 0 });
   };
   const tic = () => {
     const r = Math.max(0, fin - Date.now()), m = Math.floor(r / 60000), sec = Math.floor(r / 1000) % 60;
     $('chrono').textContent = `⏱ ${m} min ${String(sec).padStart(2, '0')} s`; $('chrono').classList.toggle('presque', r < 60000);
-    if (r === 0) valider();
+    if (r === 0) terminer();
   };
-  $('go').onclick = () => { $('depart').hidden = true; $('jeu').hidden = false; fin = Date.now() + 6 * 60000; tic(); tm = setInterval(tic, 1000); document.querySelector('.tc-q input').focus(); };
-  $('valider').onclick = valider;
+  $('go').onclick = () => { son.pause(); $('depart').hidden = true; $('jeu').hidden = false; fin = Date.now() + 6 * 60000; tic(); tm = setInterval(tic, 1000); afficher(); };
 }
 </script>
 </body>
