@@ -49,32 +49,59 @@ if (t === 'qcm') {
     $('score').scrollIntoView({ behavior: 'smooth' });
   };
 } else {
-  const D = B.ds, total = D.exos.reduce((a, e) => a + e.corr.length * 3, 0);
+  const D = B.ds, Q = [];
+  D.exos.forEach((e, i) => e.corr.forEach(c => Q.push({ e, i, c })));
+  const total = Q.length * 2, virg = (x) => String(x).replace('.', ',');
   $('titre').textContent = 'Simulation du DS'; document.title = 'Simulation du DS – ' + ch.titre;
   Z.innerHTML = `<div class="ds-debut" id="debut"><h2>${D.titre}</h2><p>Durée : <strong>${D.duree} minutes</strong>.</p><div class="rappel">${D.consigne}</div>
-      <p>Prends une feuille et ton crayon. Quand tu cliques sur « Commencer », le chrono démarre. À la fin, tu corriges ta copie : pour chaque question, coche les points que tu as gagnés.</p>
+      <p>Prends une feuille et ton crayon. Quand tu cliques sur « Commencer », le chrono démarre. À la fin, tu corriges ta copie question par question.</p>
       <button class="btn verif large" id="go">Commencer le DS</button></div>
-    <div id="sujet" hidden><div class="ds-chrono" id="chrono"></div><div class="rappel">${D.consigne}</div>
-      ${D.exos.map((e, i) => `<section class="ds-exo"><h3 class="exo-titre">${e.titre} <span class="ceinture">${e.corr.length * 3} points</span></h3><div class="enonce">${e.enonce}</div>
-        <div class="ds-corr" hidden><h3>Correction</h3>${e.corr.map(c => `<div class="ds-q"><p class="ds-lettre"><span class="q">${c.q}.</span></p>
-          <div class="ds-ligne"><span class="ds-tag">Calcul</span><div class="lignes">${c.calc}</div><label class="ds-pt"><input type="checkbox" data-pts="1"> 1 pt</label></div>
-          <div class="ds-ligne"><span class="ds-tag">Réponse</span><div class="lignes">${c.rep}</div><label class="ds-pt"><input type="checkbox" data-pts="1"> 1 pt</label></div>
-          <div class="ds-ligne"><span class="ds-tag">Phrase réponse</span><div class="lignes"><p class="cc">${c.phrase}</p></div><label class="ds-pt"><input type="checkbox" data-pts="1"> 1 pt</label></div></div>`).join('')}</div></section>`).join('')}
-      <button class="btn verif large" id="rendre">Je rends ma copie</button><div id="note"></div></div>`;
-  let fin = 0, tm = null;
+    <div id="sujet" hidden><div class="ds-chrono" id="chrono"></div><div id="page"></div>
+      <div class="ds-nav"><button class="btn rond" id="prec" aria-label="Précédent">◀</button><span id="pos"></span><button class="btn rond plein" id="suiv" aria-label="Suivant">▶</button></div>
+      <button class="btn verif large" id="fin">Fin : je rends ma copie</button></div>`;
+  let mode = 'sujet', k = 0, fin = 0, tm = null;
+  const pts = Q.map(() => [false, false, false]);
+  const PT = [1, 0.5, 0.5], NOM = ['Calcul', 'Réponse', 'Phrase réponse'];
+  const somme = () => pts.reduce((a, p) => a + p.reduce((b, x, j) => b + (x ? PT[j] : 0), 0), 0);
+  const montrer = () => {
+    const P = $('page');
+    if (mode === 'sujet') {
+      const e = D.exos[k];
+      P.innerHTML = `<div class="rappel petit-rappel">Justifie chaque calcul.</div><h3 class="exo-titre">${e.titre} <span class="ceinture">${virg(e.corr.length * 2)} points</span></h3><div class="enonce">${e.enonce}</div>`;
+      $('pos').textContent = `Exercice ${k + 1} / ${D.exos.length}`; $('prec').disabled = k === 0; $('suiv').disabled = k === D.exos.length - 1;
+    } else if (mode === 'corr') {
+      const { e, c } = Q[k];
+      P.innerHTML = `<h3 class="exo-titre">${e.titre} · question ${c.q}</h3>
+        <details class="revoir"><summary>Revoir l’énoncé</summary><div class="enonce">${e.enonce}</div></details>
+        ${[c.calc, c.rep, `<p class="cc">${c.phrase}</p>`].map((h, j) => `<div class="ds-ligne"><span class="ds-tag">${NOM[j]}</span><div class="lignes">${h}</div>
+          <label class="ds-pt"><input type="checkbox" data-j="${j}" ${pts[k][j] ? 'checked' : ''}> ${virg(PT[j])} pt</label></div>`).join('')}
+        <p class="ds-total">Tes points pour l’instant : ${virg(somme())} / ${total}</p>`;
+      P.querySelectorAll('.ds-pt input').forEach(x => x.onchange = () => { pts[k][+x.dataset.j] = x.checked; P.querySelector('.ds-total').textContent = `Tes points pour l’instant : ${virg(somme())} / ${total}`; });
+      $('pos').textContent = `Question ${k + 1} / ${Q.length}`; $('prec').disabled = k === 0; $('suiv').disabled = k === Q.length - 1;
+    }
+    window.scrollTo({ top: 0 });
+  };
   const tic = () => {
     const r = Math.max(0, fin - Date.now()), m = Math.floor(r / 60000), s = Math.floor(r / 1000) % 60;
     $('chrono').textContent = `⏱ ${m} min ${String(s).padStart(2, '0')} s`;
     $('chrono').classList.toggle('presque', r < 5 * 60000);
     if (r === 0) { clearInterval(tm); $('chrono').textContent = '⏱ Temps écoulé : pose ton crayon !'; }
   };
-  $('go').onclick = () => { $('debut').hidden = true; $('sujet').hidden = false; fin = Date.now() + D.duree * 60000; tic(); tm = setInterval(tic, 1000); window.scrollTo({ top: 0 }); };
-  const calc = () => { let n = 0; Z.querySelectorAll('.ds-pt input:checked').forEach(c => n += +c.dataset.pts); $('note').innerHTML = `<div class="verdict ${n >= total / 2 ? 'ok' : 'non'}">Tes points : ${n} / ${total}, soit ${(Math.round(n / total * 40) / 2).toString().replace('.', ',')} / 20</div>`; };
-  $('rendre').onclick = () => {
-    clearInterval(tm); $('chrono').textContent = 'Copie rendue : corrige-toi avec le barème.';
-    Z.querySelectorAll('.ds-corr').forEach(c => c.hidden = false); $('rendre').hidden = true; calc();
-    Z.querySelectorAll('.ds-pt input').forEach(c => c.onchange = calc);
-    Z.querySelector('.ds-corr').scrollIntoView({ behavior: 'smooth' });
+  $('go').onclick = () => { $('debut').hidden = true; $('sujet').hidden = false; fin = Date.now() + D.duree * 60000; tic(); tm = setInterval(tic, 1000); montrer(); };
+  $('prec').onclick = () => { if (k > 0) { k--; montrer(); } };
+  $('suiv').onclick = () => { k++; montrer(); };
+  $('fin').onclick = () => {
+    if (mode === 'sujet') {
+      clearInterval(tm); mode = 'corr'; k = 0; $('chrono').textContent = 'Copie rendue : corrige-toi question par question.';
+      $('fin').textContent = 'Fin : voir ma note'; montrer();
+    } else {
+      const n = somme(), sur20 = Math.round(n / total * 40) / 2;
+      mode = 'note'; document.querySelector('.ds-nav').hidden = true; $('fin').hidden = true; $('chrono').textContent = 'Correction terminée';
+      $('page').innerHTML = `<div class="verdict ${sur20 >= 10 ? 'ok' : 'non'}">Ta note : ${virg(sur20)} / 20 &nbsp;(${virg(n)} points sur ${total})</div>
+        <table class="tableau"><tr><th>Question</th><th>Points</th></tr>${Q.map((q, i) => `<tr><td>${q.e.titre} · ${q.c.q}</td><td>${virg(pts[i].reduce((b, x, j) => b + (x ? PT[j] : 0), 0))} / 2</td></tr>`).join('')}</table>
+        <button class="btn essai" id="revoir">Revoir la correction</button>`;
+      $('revoir').onclick = () => { mode = 'corr'; k = 0; document.querySelector('.ds-nav').hidden = false; $('fin').hidden = false; montrer(); };
+    }
   };
 }
 </script>

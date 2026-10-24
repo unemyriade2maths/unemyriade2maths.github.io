@@ -346,3 +346,7 @@ h3.exo-titre { font-size: 22px; }
 .g-titre { margin: 0 0 6px; font-size: 13px; font-weight: 800; color: var(--gris); text-transform: uppercase; }
 .g-fait { margin: 0 0 6px; color: var(--vert); font-weight: 700; animation: entree .35s ease both; }
 .g-fait strong { color: var(--encre); }
+.ds-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 22px; font-weight: 800; color: var(--gris); }
+.petit-rappel { font-weight: 800; }
+.revoir { margin: 4px 0 12px; } .revoir summary { cursor: pointer; font-weight: 800; color: var(--vert); min-height: 40px; display: flex; align-items: center; }
+.ds-total { margin: 14px 0 0; font-weight: 800; color: var(--vert); text-align: center; }

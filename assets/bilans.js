@@ -14,7 +14,7 @@ const BILANS = {
       { q: 'Avec 30 bonbons et 45 sucettes, on fait le plus grand nombre de sachets identiques. Combien de sachets ?', o: ['5', '15', '90'], r: 1, e: '<p>30 = 2 × 3 × 5</p><p>45 = 3² × 5</p><p>PGCD = 3 × 5 = 15</p>', cc: 'On peut faire 15 sachets.' }],
     ds: {
       duree: 45, titre: 'DS · Arithmétique (3e)',
-      consigne: 'Sans calculatrice pour l’exercice 1. <strong>Justifie chaque calcul.</strong> Chaque question est notée sur 3 points : 1 point pour le calcul, 1 point pour la réponse, 1 point pour la phrase réponse.',
+      consigne: 'Sans calculatrice pour l’exercice 1. <strong>Justifie chaque calcul.</strong> Chaque question est notée sur 2 points : 1 point pour le calcul, ½ point pour la réponse, ½ point pour la phrase réponse.',
       exos: [
         { titre: 'Exercice 1', enonce: '<p><span class="q">a.</span> 2 340 est-il divisible par 9 ? Justifie.</p><p><span class="q">b.</span> Décompose 504 en produit de facteurs premiers.</p><p><span class="q">c.</span> Rends la fraction ' + frac(126, 180) + ' irréductible.</p><p><span class="q">d.</span> 221 est-il un nombre premier ? Justifie.</p>',
           corr: [
