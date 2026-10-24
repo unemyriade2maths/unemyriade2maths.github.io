@@ -10,7 +10,7 @@
 <body>
 <div class="page">
   <div class="haut">
-    <a href="arithmetique.html" style="font-weight:800;text-decoration:none;min-height:44px;display:inline-flex;align-items:center">← Arithmétique</a>
+    <a href="chapitre.html?c=arithmetique" style="font-weight:800;text-decoration:none;min-height:44px;display:inline-flex;align-items:center">← Arithmétique</a>
     <span class="essai-num" id="essai"></span>
   </div>
   <div class="titre-exo"><p>Exercice 3</p><small>Les diviseurs avec un tableau</small></div>
@@ -26,6 +26,14 @@
   <div class="grille" id="grille"></div>
   <label for="qc"><span class="q">c.</span> Les diviseurs de <span class="n"></span></label>
   <input id="qc" type="text" placeholder="ex. : 1 ; 2 ; …" autocomplete="off" inputmode="numeric">
+  <div class="clavier" aria-label="Clavier mathématique">
+    <p>Clavier maths : touche une case, puis un symbole</p>
+    <button type="button" data-k="×">×</button><button type="button" data-k="÷">÷</button>
+    <button type="button" data-k="²">x²</button><button type="button" data-k="³">x³</button><button type="button" data-k="⁴">x⁴</button>
+    <button type="button" data-k="⁰">x⁰</button><button type="button" data-k=" ; ">;</button>
+    <button type="button" data-k="(">(</button><button type="button" data-k=")">)</button><button type="button" data-k="√">√</button>
+    <button type="button" class="eff" data-k="⌫" aria-label="Effacer">Effacer</button>
+  </div>
   <div id="indices"></div>
   <div class="boutons">
     <button class="btn indice-b" id="bIndice"></button>
@@ -94,7 +102,7 @@ $('bIndice').onclick = () => {
 };
 $('bVerif').onclick = () => {
   const v = V[i];
-  const norm = s => s.replace(/\s/g, '').replace(/[x*]/g, '×').replace(/\^2/g, '²');
+  const norm = s => s.replace(/\s/g, '').replace(/[x*]/g, '×').replace(/\^2/g, '²').replace(/\^1/g, '');
   const okA = norm($('qa').value) === norm(v.deco);
   const okB = [...$('grille').querySelectorAll('input')].every(e => Number(e.value) === Number(e.dataset.x));
   const divs = [...$('grille').querySelectorAll('input')].map(e => Number(e.dataset.x)).sort((a, b) => a - b);
@@ -111,6 +119,17 @@ $('bVerif').onclick = () => {
   $('resultat').scrollIntoView({ behavior: 'smooth' });
 };
 $('bEssai').onclick = () => { if (i < V.length - 1) { i++; charger(); window.scrollTo({ top: 0, behavior: 'smooth' }); } };
+let dernier = null;
+document.addEventListener('focusin', e => { if (e.target.matches('input[type=text]')) dernier = e.target; });
+document.querySelectorAll('.clavier button').forEach(b => {
+  b.addEventListener('mousedown', e => e.preventDefault());
+  b.addEventListener('click', () => {
+    const el = dernier || $('qa'); const s = el.selectionStart ?? el.value.length, f = el.selectionEnd ?? el.value.length;
+    if (b.dataset.k === '⌫') { const d = s === f ? Math.max(0, s - 1) : s; el.value = el.value.slice(0, d) + el.value.slice(f); el.setSelectionRange(d, d); }
+    else { el.value = el.value.slice(0, s) + b.dataset.k + el.value.slice(f); const q = s + b.dataset.k.length; el.setSelectionRange(q, q); }
+    el.focus();
+  });
+});
 charger();
 </script>
 </body>

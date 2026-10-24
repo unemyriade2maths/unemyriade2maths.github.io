@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapitre – Une myriade de maths</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="entete">
+  <div class="page" style="padding-bottom:0">
+    <a id="retour" href="index.html">← Ma classe</a>
+    <small id="niv"></small>
+    <h1 id="titre"></h1>
+  </div>
+</header>
+<div class="page">
+  <div class="onglets" role="tablist" aria-label="Rubriques">
+    <button role="tab" aria-selected="true" data-t="lecon">Leçon</button>
+    <button role="tab" aria-selected="false" data-t="videos">Vidéos</button>
+    <button role="tab" aria-selected="false" data-t="exos">Exercices</button>
+  </div>
+  <section id="lecon"></section>
+  <section id="videos" hidden></section>
+  <section id="exos" hidden></section>
+</div>
+<script src="assets/data.js"></script>
+<script>
+const id = new URLSearchParams(location.search).get('c') || 'arithmetique';
+const c = CHAPITRES[id] || CHAPITRES.arithmetique;
+const $ = (x) => document.getElementById(x);
+$('titre').textContent = c.titre; $('niv').textContent = 'CHAPITRE · ' + c.niveau;
+$('retour').href = 'niveau.html?n=' + c.niveau; document.title = c.titre + ' – Une myriade de maths';
+const vide = (t) => `<p class="sous" style="text-align:left">${t}</p>`;
+$('lecon').innerHTML = '<h3 style="color:var(--vert)">Les diapos de la leçon</h3>' + (c.lecon.length
+  ? c.lecon.map(([l, t]) => `<a class="ligne" href="#"><span><span class="lettre">${l}</span> ${t}</span></a>`).join('')
+  : vide('Bientôt disponible.'));
+$('videos').innerHTML = '<h3 style="color:var(--vert)">Les vidéos</h3>' + (c.videos.length
+  ? c.videos.map((v, i) => `<div class="video">
+      <button class="ligne" style="width:100%;text-align:left;font:inherit;font-weight:700;cursor:pointer" data-i="${i}" aria-expanded="false">
+        <span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="fl">▶</span></button>
+      <div class="lecteur" id="lect${i}" hidden></div></div>`).join('')
+  : vide('Bientôt disponible.'));
+$('exos').innerHTML = '<h3 style="color:var(--vert)">Exercices</h3>' + (c.exercices.length
+  ? c.exercices.map(e => `<a class="ligne" href="${e.page}"><span>${e.titre}</span><span class="fl">→</span></a>`).join('')
+  : vide('Bientôt disponible.'));
+document.querySelectorAll('.video button').forEach(b => b.addEventListener('click', () => {
+  const i = b.dataset.i, v = c.videos[i], box = $('lect' + i), open = box.hidden;
+  document.querySelectorAll('.lecteur').forEach(x => { x.hidden = true; x.innerHTML = ''; });
+  document.querySelectorAll('.video button').forEach(x => x.setAttribute('aria-expanded', 'false'));
+  if (!open) return;
+  box.innerHTML = v.id
+    ? `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?rel=0" title="${v.titre}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`
+    : `<p class="sous" style="text-align:left;margin:8px 4px">Cette vidéo arrive bientôt sur la chaîne. <a href="${CHAINE}">Voir la chaîne</a></p>`;
+  box.hidden = false; b.setAttribute('aria-expanded', 'true');
+}));
+document.querySelectorAll('[role=tab]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[role=tab]').forEach(x => x.setAttribute('aria-selected', x === b));
+  ['lecon', 'videos', 'exos'].forEach(s => $(s).hidden = s !== b.dataset.t);
+}));
+</script>
+</body>
+</html>

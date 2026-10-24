@@ -68,3 +68,15 @@ input[type=text]:focus { outline: 3px solid var(--orange); border-color: var(--v
 .essai-num { font-size: 13px; font-weight: 800; color: var(--orange-fonce); background: #FFF1DF; padding: 4px 10px; border-radius: 999px; }
 .haut { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
 [hidden] { display: none !important; }
+.niveaux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.carte-niveau { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: inherit; border-radius: 20px; padding: 18px 16px; background: var(--vert-clair); border: 2px solid #CFE3D5; min-height: 140px; }
+.carte-niveau:nth-child(odd) { background: #FFF6EA; border-color: var(--bord); }
+.carte-niveau .gros { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--vert); }
+.carte-niveau small { display: block; font-weight: 700; color: var(--gris); font-size: 13px; }
+.carte-niveau strong { font-size: 16px; }
+.lecteur { margin: 0 0 12px; }
+.lecteur iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 12px; }
+.clavier { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 10px; background: #F6F6F7; border-radius: 14px; position: sticky; bottom: 0; }
+.clavier p { width: 100%; margin: 0 0 2px; font-size: 13px; font-weight: 800; color: var(--gris); }
+.clavier button { min-width: 48px; min-height: 48px; border-radius: 10px; border: 2px solid #CFE3D5; background: #FFF; font: 800 20px Nunito, sans-serif; color: var(--encre); cursor: pointer; }
+.clavier button.eff { color: #A12222; border-color: #F2C4C4; font-size: 16px; padding: 0 10px; }

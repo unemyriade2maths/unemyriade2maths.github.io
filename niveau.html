@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Une myriade de maths – Ma classe</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="page">
+  <div class="haut"><a href="index.html" style="font-weight:800;text-decoration:none;min-height:44px;display:inline-flex;align-items:center">← Toutes les classes</a></div>
+  <header class="logo" style="padding-top:4px">
+    <p>Une myriade de <span>maths</span></p>
+    <div class="trait"></div>
+  </header>
+  <p class="sous" id="sous"></p>
+  <main id="contenu"></main>
+</div>
+<script src="assets/data.js"></script>
+<script>
+const k = new URLSearchParams(location.search).get('n') || '3e';
+const n = NIVEAUX[k] || NIVEAUX['3e'];
+document.getElementById('sous').textContent = 'Espace élèves · ' + n.nom;
+document.title = 'Une myriade de maths – ' + n.nom;
+const cur = n.enCours ? CHAPITRES[n.enCours] : null, prec = n.precedent ? CHAPITRES[n.precedent] : null;
+let h = '';
+if (cur) {
+  h += `<a class="carte-chap" href="chapitre.html?c=${n.enCours}">
+    <span class="pastille">Chapitre en cours</span><h2>${cur.titre}</h2><p>${cur.resume}</p><p class="go">Ouvrir le chapitre →</p></a>`;
+} else {
+  h += `<div class="carte-chap"><span class="pastille">Bientôt</span><h2>Les chapitres arrivent bientôt</h2><p>En attendant, retrouve les vidéos sur la chaîne.</p></div>`;
+}
+if (prec) {
+  h += `<a class="carte-prec" href="chapitre.html?c=${n.precedent}"><span class="lettre" aria-hidden="true">←</span>
+    <span><small>Chapitre précédent</small><strong>${prec.titre}</strong></span></a>`;
+}
+const autres = Object.entries(CHAPITRES).filter(([id, c]) => c.niveau === k && id !== n.enCours && id !== n.precedent);
+if (autres.length) {
+  h += `<section class="bloc"><h3>Les autres chapitres</h3>` +
+    autres.map(([id, c]) => `<a class="ligne" href="chapitre.html?c=${id}"><span>${c.titre}</span><span class="fl">→</span></a>`).join('') + `</section>`;
+}
+h += `<section class="bloc"><h3>Les vidéos</h3><a class="ligne" href="${CHAINE}"><span>La chaîne Une myriade de maths</span><span class="fl">▶</span></a></section>`;
+document.getElementById('contenu').innerHTML = h;
+</script>
+</body>
+</html>

@@ -15,28 +15,22 @@
     <p>Une myriade de <span>maths</span></p>
     <div class="trait"></div>
   </header>
-  <p class="sous">Espace élèves · 3e</p>
-  <main>
-    <a class="carte-chap" href="arithmetique.html">
-      <span class="pastille">Chapitre en cours</span>
-      <h2>Arithmétique</h2>
-      <p>Multiples, diviseurs, nombres premiers, PGCD et PPCM</p>
-      <p class="go">Ouvrir le chapitre →</p>
-    </a>
-    <a class="carte-prec" href="#">
-      <span class="lettre" aria-hidden="true">←</span>
-      <span><small>Chapitre précédent</small><strong>[Chapitre précédent]</strong></span>
-    </a>
-    <section class="bloc">
-      <h3>À faire cette semaine</h3>
-      <a class="ligne" href="exercice-diviseurs.html"><span>Exercice 3 · Diviseurs avec un tableau</span><span class="fl">→</span></a>
-      <a class="ligne" href="https://www.youtube.com/@une.myriademaths"><span>Vidéos de la chaîne</span><span class="fl">→</span></a>
-    </section>
-  </main>
+  <p class="sous">Espace élèves · Choisis ta classe</p>
+  <main class="niveaux" id="niveaux"></main>
   <footer>
     <a href="https://www.youtube.com/@une.myriademaths">La chaîne YouTube</a>
     <span>© 2026 Une myriade de maths</span>
   </footer>
 </div>
+<script src="assets/data.js"></script>
+<script>
+document.getElementById('niveaux').innerHTML = Object.entries(NIVEAUX).map(([k, n]) => {
+  const ch = n.enCours ? CHAPITRES[n.enCours] : null;
+  return `<a class="carte-niveau" href="niveau.html?n=${k}">
+    <span class="gros">${n.nom}</span>
+    <span><small>Chapitre en cours</small><strong>${ch ? ch.titre : 'Bientôt disponible'}</strong></span>
+  </a>`;
+}).join('');
+</script>
 </body>
 </html>
