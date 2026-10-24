@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Une myriade de maths – Espace élèves</title>
+<title>Une myriade de maths</title>
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -15,22 +15,25 @@
     <p>Une myriade de <span>maths</span></p>
     <div class="trait"></div>
   </header>
-  <p class="sous">Espace élèves · Choisis ta classe</p>
-  <main class="niveaux" id="niveaux"></main>
+  <p class="sous">Méthodes, corrections et exercices · collège et lycée</p>
+  <main class="espaces">
+    <a class="carte-espace vert" href="espace.html?e=college">
+      <strong>Espace collège</strong><span>De la 6e à la 3e : leçons, vidéos, exercices corrigés</span>
+    </a>
+    <a class="carte-espace vert2" href="espace.html?e=lycee">
+      <strong>Espace lycée</strong><span>2de, 1re, Terminale</span>
+    </a>
+    <a class="carte-espace orange" href="cours-particuliers.html">
+      <strong>Cours particuliers</strong><span>Un accompagnement personnalisé, en ligne</span>
+    </a>
+    <a class="carte-espace creme" href="creation-contenu.html">
+      <strong>Création de contenu</strong><span>Diapos et supports sur mesure pour les enseignants</span>
+    </a>
+  </main>
   <footer>
     <a href="https://www.youtube.com/@une.myriademaths">La chaîne YouTube</a>
     <span>© 2026 Une myriade de maths</span>
   </footer>
 </div>
-<script src="assets/data.js"></script>
-<script>
-document.getElementById('niveaux').innerHTML = Object.entries(NIVEAUX).map(([k, n]) => {
-  const ch = n.enCours ? CHAPITRES[n.enCours] : null;
-  return `<a class="carte-niveau" href="niveau.html?n=${k}">
-    <span class="gros">${n.nom}</span>
-    <span><small>Chapitre en cours</small><strong>${ch ? ch.titre : 'Bientôt disponible'}</strong></span>
-  </a>`;
-}).join('');
-</script>
 </body>
 </html>

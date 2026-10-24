@@ -3,11 +3,15 @@
 const CHAINE = 'https://www.youtube.com/@une.myriademaths';
 
 const NIVEAUX = {
-  '6e': { nom: '6e', enCours: 'fractions-6e', precedent: null },
-  '5e': { nom: '5e', enCours: null, precedent: null },
-  '4e': { nom: '4e', enCours: null, precedent: null },
-  '3e': { nom: '3e', enCours: 'arithmetique', precedent: 'fonctions' },
+  '6e': { nom: '6e', espace: 'college', enCours: 'fractions-6e', precedent: null },
+  '5e': { nom: '5e', espace: 'college', enCours: null, precedent: null },
+  '4e': { nom: '4e', espace: 'college', enCours: null, precedent: null },
+  '3e': { nom: '3e', espace: 'college', enCours: 'arithmetique', precedent: 'fonctions' },
+  '2de': { nom: '2de', espace: 'lycee', enCours: null, precedent: null },
+  '1re': { nom: '1re', espace: 'lycee', enCours: null, precedent: null },
+  'Tle': { nom: 'Tle', espace: 'lycee', enCours: null, precedent: null },
 };
+const ESPACES = { college: 'Espace collège', lycee: 'Espace lycée' };
 
 const CHAPITRES = {
   'fractions-6e': {

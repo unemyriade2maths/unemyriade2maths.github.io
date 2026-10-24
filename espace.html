@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Une myriade de maths</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<svg class="feuille g" aria-hidden="true" viewBox="0 0 150 150"><path d="M75 140 C20 120 0 60 30 10 C60 40 110 60 75 140 Z" fill="#2E8B57"/><path d="M75 140 C40 100 30 60 30 10" stroke="#1F6F3D" stroke-width="3" fill="none"/></svg>
+<svg class="feuille d" aria-hidden="true" viewBox="0 0 150 150"><path d="M75 140 C20 120 0 60 30 10 C60 40 110 60 75 140 Z" fill="#6FAF6E"/><path d="M75 140 C40 100 30 60 30 10" stroke="#1F6F3D" stroke-width="3" fill="none"/></svg>
+<div class="page">
+  <header class="logo">
+    <p>Une myriade de <span>maths</span></p>
+    <div class="trait"></div>
+  </header>
+  <div class="haut"><a href="index.html" style="font-weight:800;text-decoration:none;min-height:44px;display:inline-flex;align-items:center">← Accueil</a></div>
+  <p class="sous" id="sous"></p>
+  <main class="niveaux" id="niveaux"></main>
+  <footer>
+    <a href="https://www.youtube.com/@une.myriademaths">La chaîne YouTube</a>
+    <span>© 2026 Une myriade de maths</span>
+  </footer>
+</div>
+<script src="assets/data.js"></script>
+<script>
+const e = new URLSearchParams(location.search).get('e') || 'college';
+document.getElementById('sous').textContent = (ESPACES[e] || ESPACES.college) + ' · Choisis ta classe';
+document.title = (ESPACES[e] || ESPACES.college) + ' – Une myriade de maths';
+document.getElementById('niveaux').innerHTML = Object.entries(NIVEAUX).filter(([k, n]) => n.espace === e).map(([k, n]) => {
+  const ch = n.enCours ? CHAPITRES[n.enCours] : null;
+  return `<a class="carte-niveau" href="niveau.html?n=${k}">
+    <span class="gros">${n.nom}</span>
+    <span><small>Chapitre en cours</small><strong>${ch ? ch.titre : 'Bientôt disponible'}</strong></span>
+  </a>`;
+}).join('');
+</script>
+</body>
+</html>
