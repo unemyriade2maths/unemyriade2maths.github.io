@@ -16,7 +16,36 @@
   </div>
 </header>
 <div class="page texte">
-  <h2>L’énigme de la semaine</h2>
+  <nav class="onglets" aria-label="Rubriques">
+    <a class="ligne" style="margin:0" href="#flash">Flash maths</a>
+    <a class="ligne" style="margin:0" href="#enigmes">Énigmes</a>
+    <a class="ligne" style="margin:0" href="#escape">Escape games</a>
+  </nav>
+
+  <h2 id="flash">Flash maths</h2>
+  <p>5 questions, 2 minutes, sans calculatrice. Prêt ? Lance le chrono !</p>
+  <div class="enonce">
+    <p><strong>Série 1 · Arithmétique (3e)</strong></p>
+    <p>1. 51 est-il un nombre premier ?</p>
+    <p>2. Quel est le reste de la division euclidienne de 47 par 5 ?</p>
+    <p>3. Décompose 36 en produit de facteurs premiers.</p>
+    <p>4. La fraction 18/24 est-elle irréductible ?</p>
+    <p style="margin:0">5. 2 340 est-il divisible par 9 ?</p>
+  </div>
+  <div class="boutons">
+    <button class="btn indice-b" id="chrono">Lancer le chrono (2:00)</button>
+    <button class="btn verif" onclick="document.getElementById('rep-flash').hidden=false">Voir les réponses</button>
+  </div>
+  <div class="correction" id="rep-flash" hidden>
+    <p style="margin:0 0 4px">1. Non : 5 + 1 = 6, donc 51 = 3 × 17.</p>
+    <p style="margin:0 0 4px">2. 47 = 5 × 9 + 2 : le reste est 2.</p>
+    <p style="margin:0 0 4px">3. 36 = 2² × 3².</p>
+    <p style="margin:0 0 4px">4. Non : 18 et 24 sont divisibles par 6 ; 18/24 = 3/4.</p>
+    <p style="margin:0">5. Oui : 2 + 3 + 4 + 0 = 9.</p>
+  </div>
+
+  <h2 id="enigmes">Énigmes</h2>
+  <h3 style="margin:8px 0">L’énigme de la semaine</h3>
   <div class="enonce">
     <p>Je suis un nombre premier palindrome compris entre 150 et 200.</p>
     <p style="margin:0">La somme de mes chiffres est 11. Qui suis-je ?</p>
@@ -26,11 +55,39 @@
     <p style="margin:0">Les palindromes entre 150 et 200 sont 151, 161, 171, 181 et 191. Seul 191 a pour somme de chiffres 1 + 9 + 1 = 11, et 191 est premier.</p>
     <p class="cc" style="margin:8px 0 0">CC : je suis 191.</p>
   </div>
-  <h2>Curiosités</h2>
-  <a class="ligne" href="chapitre.html?c=arithmetique"><span>Les nombres premiers de Sophie Germain</span><span class="fl">→</span></a>
-  <a class="ligne" href="chapitre.html?c=arithmetique"><span>Les nombres parfaits et les nombres amicaux</span><span class="fl">→</span></a>
-  <h2>Escape games</h2>
-  <p class="bientot">Bientôt disponible.</p>
+
+  <h3 style="margin:22px 0 8px">Grande énigme logique : les quatre carbets</h3>
+  <div class="enonce">
+    <p>Quatre amis habitent quatre carbets alignés, numérotés de 1 à 4 de gauche à droite. Chacun a un animal et un fruit préféré, tous différents.</p>
+    <p><strong>Amis :</strong> Léa, Noah, Inès, Enzo. <strong>Animaux :</strong> toucan, paresseux, jaguar, iguane. <strong>Fruits :</strong> mangue, ramboutan, goyave, maracuja.</p>
+    <p>1. Inès habite le carbet 1.</p>
+    <p>2. Léa habite juste à gauche d’Enzo.</p>
+    <p>3. Noah aime la mangue.</p>
+    <p>4. Celui qui aime la mangue a un toucan.</p>
+    <p>5. Le toucan vit dans le carbet 2.</p>
+    <p>6. Le paresseux vit dans le carbet 4.</p>
+    <p>7. Celui qui aime la goyave a un jaguar.</p>
+    <p>8. Inès aime le maracuja.</p>
+    <p style="margin:0"><strong>Qui a l’iguane ? Qui aime le ramboutan ?</strong></p>
+  </div>
+  <button class="btn verif" style="width:100%;margin-top:12px" onclick="this.nextElementSibling.hidden=false;this.hidden=true">Voir la solution</button>
+  <div class="correction" hidden>
+    <p style="margin:0 0 4px">Noah aime la mangue, donc il a le toucan, donc il habite le carbet 2. Inès est au carbet 1, donc Léa et Enzo sont aux carbets 3 et 4 : Léa au 3, Enzo au 4.</p>
+    <p style="margin:0 0 4px">Le jaguar ne peut pas être au carbet 1 (Inès aime le maracuja, pas la goyave) : il est au carbet 3, chez Léa, qui aime la goyave. L’iguane est donc au carbet 1 et le ramboutan au carbet 4.</p>
+    <p class="cc" style="margin:8px 0 0">CC : Inès a l’iguane et Enzo aime le ramboutan.</p>
+  </div>
+
+  <h2 id="escape">Escape games</h2>
+  <p>Des escape games de maths à vivre en classe : énigmes, cadenas, indices cachés…</p>
+  <p class="bientot">Bientôt disponible. Enseignants : voir <a href="creation-contenu.html">Création de contenu</a>.</p>
+<script>
+let t = null;
+document.getElementById('chrono').onclick = function () {
+  if (t) return; let s = 120; const b = this;
+  t = setInterval(() => { s--; b.textContent = 'Temps restant ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    if (s <= 0) { clearInterval(t); t = null; b.textContent = 'Temps écoulé ! Relancer'; } }, 1000);
+};
+</script>
 </div>
 </body>
 </html>
