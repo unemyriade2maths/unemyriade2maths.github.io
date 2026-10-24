@@ -18,10 +18,10 @@
 <div class="page zone-exos" id="zone">
   <nav class="sommaire" id="sommaire" role="tablist" aria-label="Rubriques de la partie"></nav>
   <div id="liste"></div>
-  <div id="fin"></div>
 </div>
 <script src="assets/data.js"></script>
 <script src="assets/lecons.js"></script>
+<script src="assets/diapos.js"></script>
 <script src="assets/exercices.js"></script>
 <script src="assets/audio.js"></script>
 <script src="assets/clavier.js" defer></script>
@@ -48,7 +48,10 @@ const pasHtml = (et, pi) => {
   return h;
 };
 const carte = (it, n) => {
-  if (it.type === 'lecon') return `<div class="item" id="ex${n}">${it.parties.map(l => `<a class="ligne" href="lecon.html?c=${cid}&p=${l}"><span><span class="lettre">${l}</span> ${LECONS[cid][l].titre} · les diapos</span><span class="fl">▶</span></a>`).join('')}</div>`;
+  if (it.type === 'lecon') return `<div class="item" id="ex${n}">
+      ${it.parties.length > 1 ? `<div class="choix-lecon">${it.parties.map((l, j) => `<button class="opt${j ? '' : ' choisi'}" data-l="${l}"><span class="lettre">${l}</span> ${LECONS[cid][l].titre}</button>`).join('')}</div>` : ''}
+      <div class="lecteur-lecon"></div>
+      <details class="revoir video-partie"><summary>▶ Voir la vidéo de cette partie</summary><div class="lecteur"></div></details></div>`;
   if (it.type === 'lien') return `<div class="item"><h3 class="exo-titre">${it.titre}</h3><a class="ligne" href="${it.page}"><span>${it.texte}</span><span class="fl">→</span></a></div>`;
   if (it.type === 'methode') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}</h3><div class="methode">${it.resume}
       <div class="pas"></div><div class="pas-barre"><button class="btn rond plein pas-suiv" aria-label="Étape suivante">▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
@@ -83,8 +86,13 @@ RUBRIQUES.forEach(([r, nom, ico]) => {
   som += `<button role="tab" data-r="${r}" aria-selected="false"><span aria-hidden="true">${ico}</span> ${nom}</button>`;
   html += `<section class="rubrique" id="r-${r}"><h2 class="rub-titre"><span class="rub-ico" aria-hidden="true">${ico}</span>${nom}</h2>${its.map(([it, n]) => carte(it, n)).join('')}</section>`;
 });
-$('sommaire').innerHTML = som + '<button role="tab" data-r="fin" aria-selected="false"><span aria-hidden="true">🏁</span> Fin de chapitre</button>';
+const DESC = { lecon: 'Les diapos clic par clic, avec la voix', methode: 'La méthode pas à pas, sur un exemple', flash: 'Vrai ou faux, en quelques secondes',
+  guide: 'Un exercice court, étape par étape', exo: 'Seul, avec des indices si besoin', scratch: 'Que fait le programme ?', calc: 'Les touches de ta calculatrice', tableur: 'Qu’affiche le tableur ?' };
+const menu = RUBRIQUES.filter(([r]) => E.items.some(it => it.rub === r)).map(([r, nom, ico]) =>
+  `<button class="carte-rub" data-r="${r}"><span class="rub-ico" aria-hidden="true">${ico}</span><span class="txt"><strong>${nom}</strong><small>${DESC[r] || ''}</small></span></button>`).join('');
+html = `<section class="rubrique" id="r-menu"><p class="consigne">Que veux-tu travailler ? Choisis dans l’ordre que tu veux.</p><div class="grille-rub">${menu}</div></section>` + html;
 $('liste').innerHTML = html;
+$('sommaire').innerHTML = '<button role="tab" data-r="menu" aria-selected="false"><span aria-hidden="true">🏠</span> Sommaire</button>' + som;
 
 document.querySelectorAll('.mini-son').forEach(b => b.onclick = () => jouer(decodeURIComponent(b.dataset.v)));
 
@@ -198,10 +206,23 @@ E.items.forEach((it, n) => {
   };
   etape(0);
 });
-// --- fin de chapitre
-$('fin').innerHTML = `<section class="rubrique fin-chap" id="r-fin"><h2 class="rub-titre"><span class="rub-ico" aria-hidden="true">🏁</span>Fin de chapitre</h2>
-  <a class="ligne" href="bilan.html?c=${cid}&t=qcm"><span>QCM de fin de chapitre</span><span class="fl">→</span></a>
-  <a class="ligne" href="bilan.html?c=${cid}&t=ds"><span>Simulation du DS</span><span class="fl">→</span></a></section>`;
+// --- leçon : les diapos dans l'onglet Leçon, et la vidéo de la partie
+E.items.forEach((it, n) => {
+  if (it.type !== 'lecon') return;
+  const S = $('ex' + n), box = S.querySelector('.lecteur-lecon');
+  const charger = (l) => lecteurDiapos(box, LECONS[cid][l], jouer, () => son.pause());
+  charger(it.parties[0]);
+  S.querySelectorAll('.choix-lecon .opt').forEach(b => b.onclick = () => {
+    S.querySelectorAll('.choix-lecon .opt').forEach(x => x.classList.toggle('choisi', x === b)); son.pause(); charger(b.dataset.l);
+  });
+  const v = (chapitre(cid).videos || [])[pid - 1], dv = S.querySelector('.video-partie');
+  dv.addEventListener('toggle', () => {
+    if (!dv.open) { dv.querySelector('.lecteur').innerHTML = ''; return; }
+    dv.querySelector('.lecteur').innerHTML = v && v.id
+      ? `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?rel=0" title="${v.titre}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`
+      : `<p class="sous" style="text-align:left;margin:8px 4px">Cette vidéo arrive bientôt sur la chaîne.</p>`;
+  });
+});
 // --- onglets : une seule rubrique visible à la fois
 const ouvrir = (r) => {
   if (!$('r-' + r)) r = $('sommaire').querySelector('[role=tab]').dataset.r;
@@ -211,7 +232,8 @@ const ouvrir = (r) => {
   son.pause();
 };
 document.querySelectorAll('#sommaire [role=tab]').forEach(b => b.onclick = () => { history.replaceState(null, '', '#' + b.dataset.r); ouvrir(b.dataset.r); window.scrollTo({ top: 0 }); });
-ouvrir(location.hash.slice(1));
+document.querySelectorAll('.carte-rub').forEach(b => b.onclick = () => { history.replaceState(null, '', '#' + b.dataset.r); ouvrir(b.dataset.r); window.scrollTo({ top: 0 }); });
+ouvrir(location.hash.slice(1) || 'menu');
 </script>
 </body>
 </html>

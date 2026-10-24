@@ -16,14 +16,9 @@
   </div>
 </header>
 <div class="page">
-  <div class="onglets" role="tablist" aria-label="Rubriques">
-    <button role="tab" aria-selected="true" data-t="lecon">Leçon</button>
-    <button role="tab" aria-selected="false" data-t="videos">Vidéos</button>
-    <button role="tab" aria-selected="false" data-t="exos">Par partie</button>
-  </div>
-  <section id="lecon"></section>
-  <section id="videos" hidden></section>
-  <section id="exos" hidden></section>
+  <p class="intro-chap">On travaille la notion <strong>partie par partie</strong>. Choisis une partie : tu y trouves la leçon, la méthode, les questions flash et les exercices, dans l’ordre que tu veux.</p>
+  <div id="parties"></div>
+  <div id="fin"></div>
 </div>
 <script src="assets/data.js"></script>
 <script src="assets/lecons.js"></script>
@@ -35,38 +30,14 @@ const c = chapitre(id) || CHAPITRES.arithmetique;
 const $ = (x) => document.getElementById(x);
 $('titre').textContent = c.titre; $('niv').textContent = 'CHAPITRE · ' + c.niveau;
 $('retour').href = 'niveau.html?n=' + c.niveau; document.title = c.titre + ' – Une myriade de maths';
-const vide = (t) => `<p class="sous" style="text-align:left">${t}</p>`;
-$('lecon').innerHTML = '<h3 style="color:var(--vert)">Les diapos de la leçon</h3>' + (c.lecon.length
-  ? c.lecon.map(([l, t]) => (LECONS[id] || {})[l]
-      ? `<a class="ligne" href="lecon.html?c=${id}&p=${l}"><span><span class="lettre">${l}</span> ${t}</span><span class="fl">▶</span></a>`
-      : `<div class="ligne"><span><span class="lettre">${l}</span> ${t}</span><span class="badge todo">Bientôt</span></div>`).join('')
-  : vide('Bientôt disponible.'));
-$('videos').innerHTML = '<h3 style="color:var(--vert)">Les vidéos</h3>' + (c.videos.length
-  ? c.videos.map((v, i) => `<div class="video">
-      <button class="ligne" style="width:100%;text-align:left;font:inherit;font-weight:700;cursor:pointer" data-i="${i}" aria-expanded="false">
-        <span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="fl">▶</span></button>
-      <div class="lecteur" id="lect${i}" hidden></div></div>`).join('')
-  : vide('Bientôt disponible.'));
-$('exos').innerHTML = '<h3 style="color:var(--vert)">Leçon, méthode et exercices de chaque partie</h3>' + (c.videos.length
-  ? c.videos.map((v, i) => v.sansExo ? '' : ((EXOS[id] || {})[i + 1]
-      ? `<a class="ligne" href="exercices.html?c=${id}&p=${i + 1}"><span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="fl">→</span></a>`
-      : `<div class="ligne"><span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="badge todo">Bientôt</span></div>`)).join('')
-  : vide('Bientôt disponible.'))
-  + (typeof BILANS !== 'undefined' && BILANS[id] ? `<h3 style="color:var(--vert);margin-top:22px">🏁 Fin de chapitre</h3><a class="ligne" href="bilan.html?c=${id}&t=qcm"><span>QCM de fin de chapitre</span><span class="fl">→</span></a><a class="ligne" href="bilan.html?c=${id}&t=ds"><span>Simulation du DS</span><span class="fl">→</span></a>` : '');
-document.querySelectorAll('.video button').forEach(b => b.addEventListener('click', () => {
-  const i = b.dataset.i, v = c.videos[i], box = $('lect' + i), open = box.hidden;
-  document.querySelectorAll('.lecteur').forEach(x => { x.hidden = true; x.innerHTML = ''; });
-  document.querySelectorAll('.video button').forEach(x => x.setAttribute('aria-expanded', 'false'));
-  if (!open) return;
-  box.innerHTML = v.id
-    ? `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?rel=0" title="${v.titre}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`
-    : `<p class="sous" style="text-align:left;margin:8px 4px">Cette vidéo arrive bientôt sur la chaîne. <a href="${CHAINE}">Voir la chaîne</a></p>`;
-  box.hidden = false; b.setAttribute('aria-expanded', 'true');
-}));
-document.querySelectorAll('[role=tab]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('[role=tab]').forEach(x => x.setAttribute('aria-selected', x === b));
-  ['lecon', 'videos', 'exos'].forEach(s => $(s).hidden = s !== b.dataset.t);
-}));
+$('parties').innerHTML = c.videos.length
+  ? '<h2 class="titre-bloc">Les parties</h2>' + c.videos.map((v, i) => (EXOS[id] || {})[i + 1]
+      ? `<a class="carte-partie" href="exercices.html?c=${id}&p=${i + 1}"><span class="num-partie">${i + 1}</span><span class="txt"><small>Partie ${i + 1}</small><strong>${v.titre}</strong></span><span class="fl">→</span></a>`
+      : `<div class="carte-partie bientot-p"><span class="num-partie">${i + 1}</span><span class="txt"><small>Partie ${i + 1}</small><strong>${v.titre}</strong></span><span class="badge todo">Bientôt</span></div>`).join('')
+  : '<p class="sous" style="text-align:left">Les parties de ce chapitre arrivent bientôt.</p>';
+if (typeof BILANS !== 'undefined' && BILANS[id]) $('fin').innerHTML = `<h2 class="titre-bloc">Fin de chapitre</h2>
+  <div class="duo-fin"><a class="carte-fin" href="bilan.html?c=${id}&t=qcm"><span aria-hidden="true">✅</span><strong>QCM de fin de chapitre</strong><small>10 questions sur tout le chapitre</small></a>
+  <a class="carte-fin" href="bilan.html?c=${id}&t=ds"><span aria-hidden="true">📝</span><strong>Simulation du DS</strong><small>45 minutes, avec le barème</small></a></div>`;
 </script>
 </body>
 </html>
