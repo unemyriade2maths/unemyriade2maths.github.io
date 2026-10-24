@@ -24,6 +24,8 @@
 <script src="assets/diapos.js"></script>
 <script src="assets/exercices.js"></script>
 <script src="assets/audio.js"></script>
+<script src="assets/scratch/scratchblocks.min.js"></script>
+<script src="assets/scratch/fr.js"></script>
 <script src="assets/clavier.js" defer></script>
 <script>
 const P = new URLSearchParams(location.search), cid = P.get('c') || 'arithmetique', pid = P.get('p') || '1';
@@ -222,6 +224,8 @@ E.items.forEach((it, n) => {
       : `<p class="sous" style="text-align:left;margin:8px 4px">Cette vidéo arrive bientôt sur la chaîne.</p>`;
   });
 });
+// --- vrais blocs Scratch
+if (window.scratchblocks) scratchblocks.renderMatching('pre.blocks', { style: 'scratch3', languages: ['fr', 'en'], scale: window.innerWidth < 500 ? 0.68 : 0.85 });
 // --- un exercice à la fois dans une rubrique, avec les flèches
 document.querySelectorAll('.rubrique').forEach(R => {
   const its = [...R.querySelectorAll(':scope > .item')];

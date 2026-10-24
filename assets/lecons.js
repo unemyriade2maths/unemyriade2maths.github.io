@@ -15,15 +15,15 @@ const LECONS = {
           { h: '<p class="puce">le reste de la division euclidienne de a par b est <strong>nul</strong>.</p>', v: 'Le reste de la division euclidienne de a par b est nul.' }] },
         { titre: 'Exemple 1', etapes: [
           { h: '<p class="question">1 147 est-il un multiple de 37 ?</p>', v: 'Exemple : mille cent quarante-sept est-il un multiple de trente-sept ?' },
-          { h: '<p class="calc">1 147 ÷ 37 = 31</p><p>31 est un nombre entier.</p>', v: "On calcule mille cent quarante-sept divisé par trente-sept. On trouve trente et un : c'est un nombre entier." },
-          { h: '<p class="calc">1 147 = 37 × 31</p><p class="cc">1 147 est un multiple de 37.</p>', v: 'Donc mille cent quarante-sept égale trente-sept fois trente et un. On peut conclure : mille cent quarante-sept est un multiple de trente-sept.' }] },
+          { h: '<p class="calc">1 147 ÷ 37 = 31</p>', v: 'On calcule mille cent quarante-sept divisé par trente-sept. On trouve trente et un.' },
+          { h: '<p class="cc">Le résultat 31 est un nombre entier, donc 1 147 est un multiple de 37 : 1 147 = 37 × 31.</p>', v: "Le résultat, trente et un, est un nombre entier, donc mille cent quarante-sept est un multiple de trente-sept : mille cent quarante-sept égale trente-sept fois trente et un." }] },
         { titre: 'Exemple 2', etapes: [
           { h: '<p class="question">1 150 est-il divisible par 92 ?</p>', v: 'Autre exemple : mille cent cinquante est-il divisible par quatre-vingt-douze ?' },
-          { h: '<p class="calc">1 150 ÷ 92 = 12,5</p><p>12,5 n’est pas un nombre entier.</p>', v: "Mille cent cinquante divisé par quatre-vingt-douze, égale douze virgule cinq : ce n'est pas un nombre entier." },
-          { h: '<p class="cc">1 150 n’est pas divisible par 92.</p>', v: "On peut conclure : mille cent cinquante n'est pas divisible par quatre-vingt-douze." }] },
+          { h: '<p class="calc">1 150 ÷ 92 = 12,5</p>', v: 'Mille cent cinquante divisé par quatre-vingt-douze, égale douze virgule cinq.' },
+          { h: '<p class="cc">Le résultat 12,5 n’est pas un nombre entier, alors 1 150 n’est pas divisible par 92.</p>', v: "Le résultat, douze virgule cinq, n'est pas un nombre entier, alors mille cent cinquante n'est pas divisible par quatre-vingt-douze." }] },
         { titre: 'Attention : erreur fréquente', alerte: true, etapes: [
-          { h: '<p class="barre">« 5 est un multiple de 20 »</p><p>C’est l’inverse !</p>', v: "Attention ! Cette erreur est fréquente. Dire : cinq est un multiple de vingt. C'est l'inverse !" },
-          { h: '<p class="calc">20 = 5 × 4</p><p class="cc">20 est un multiple de 5, et 5 est un diviseur de 20.</p>', v: 'Vingt égale cinq fois quatre : vingt est un multiple de cinq, et cinq est un diviseur de vingt.' }] },
+          { h: '<p class="barre">« 5 est un multiple de 20 »</p><p>Cette phrase est fausse : c’est l’inverse !</p>', v: "Attention ! Cette erreur est fréquente. Dire : cinq est un multiple de vingt. C'est l'inverse !" },
+          { h: '<p class="calc">20 = 5 × 4</p><p class="cc">20 = 5 × 4, donc 20 est un multiple de 5, et 5 est un diviseur de 20.</p>', v: 'Vingt égale cinq fois quatre, donc vingt est un multiple de cinq, et cinq est un diviseur de vingt.' }] },
       ],
     },
     B: {
@@ -45,16 +45,16 @@ const LECONS = {
           { h: '<p class="formule grand"><span class="c1">183</span> = <span class="c2">12</span> × <span class="c3">15</span> + <span class="c4">3</span></p>', v: 'Rappel du vocabulaire.' },
           { h: '<p class="puce"><span class="c1">183</span> est le <strong>dividende</strong> : le nombre que l’on divise.</p>', v: "Cent quatre-vingt-trois est le dividende : c'est le nombre que l'on divise." },
           { h: '<p class="puce"><span class="c2">12</span> est le <strong>diviseur</strong> : le nombre par lequel on divise.</p>', v: "Douze est le diviseur : c'est le nombre par lequel on divise." },
-          { h: '<p class="puce"><span class="c3">15</span> est le <strong>quotient</strong>.</p>', v: 'Ensuite, le quotient est égal à quinze.' },
+          { h: '<p class="puce"><span class="c3">15</span> est le <strong>quotient</strong> : le nombre de fois que 12 est contenu dans 183.</p>', v: 'Ensuite, le quotient est égal à quinze.' },
           { h: '<p class="puce"><span class="c4">3</span> est le <strong>reste</strong> : il est toujours plus petit que le diviseur.</p>', v: 'Et trois est le reste. Il est toujours plus petit que le diviseur.' }] },
         { titre: 'Quelle division euclidienne ?', etapes: [
           { h: '<p class="formule grand">233 = 7 × 32 + 9</p><p class="question">Quelle division euclidienne cette égalité représente-t-elle ?</p>', v: 'Autre exemple : deux cent trente-trois égale sept fois trente-deux, plusse neuf. Quelle division euclidienne cette égalité représente-t-elle ?' },
-          { h: '<p class="puce ok">Quotient 32 : le reste 9 &lt; 32. <strong>C’est la division euclidienne de 233 par 32.</strong></p>', v: "Premier cas : le quotient est trente-deux. Le reste, neuf, est plus petit que trente-deux. Donc l'égalité représente la division euclidienne de deux cent trente-trois par trente-deux." },
-          { h: '<p class="puce non">Quotient 7 : le reste 9 &gt; 7. <strong>Ce n’est pas la division euclidienne de 233 par 7.</strong></p>', v: "Deuxième cas : le quotient est sept. Mais le reste, neuf, est plus grand que sept. Donc l'égalité ne représente pas la division euclidienne de deux cent trente-trois par sept." }] },
+          { h: '<p class="puce ok">Si le quotient est 32 : le reste 9 est plus petit que 32, donc <strong>l’égalité représente la division euclidienne de 233 par 32.</strong></p>', v: "Premier cas : le quotient est trente-deux. Le reste, neuf, est plus petit que trente-deux. Donc l'égalité représente la division euclidienne de deux cent trente-trois par trente-deux." },
+          { h: '<p class="puce non">Si le quotient est 7 : le reste 9 est plus grand que 7, donc <strong>l’égalité ne représente pas la division euclidienne de 233 par 7.</strong></p>', v: "Deuxième cas : le quotient est sept. Mais le reste, neuf, est plus grand que sept. Donc l'égalité ne représente pas la division euclidienne de deux cent trente-trois par sept." }] },
         { titre: 'Remarque : reste nul', cadre: true, etapes: [
           { h: '<p>Si le reste de la division euclidienne de a par b est <strong>nul</strong>, alors a est un multiple de b, et b est un diviseur de a.</p>', v: 'Remarque : si le reste de la division euclidienne de a par b est égal à zéro, alors a est un multiple de b, et b est un diviseur de a.' },
-          { h: '<p class="puce non">183 = 12 × 15 + 3 : le reste n’est pas nul, 12 ne divise pas 183.</p>', v: "Par exemple : cent quatre-vingt-trois égale douze fois quinze, plusse trois. Le reste n'est pas nul : douze ne divise pas cent quatre-vingt-trois." },
-          { h: '<p class="puce ok">180 = 12 × 15 + 0 : le reste est nul, 180 est un multiple de 12.</p>', v: 'Mais cent quatre-vingts égale douze fois quinze, plusse zéro. Le reste est nul : douze divise cent quatre-vingts, et cent quatre-vingts est un multiple de douze.' }] },
+          { h: '<p class="puce non">183 = 12 × 15 + 3 : le reste 3 n’est pas nul, donc 12 ne divise pas 183.</p>', v: "Par exemple : cent quatre-vingt-trois égale douze fois quinze, plusse trois. Le reste n'est pas nul : douze ne divise pas cent quatre-vingt-trois." },
+          { h: '<p class="puce ok">180 = 12 × 15 + 0 : le reste est nul, donc 180 est un multiple de 12, et 12 divise 180.</p>', v: 'Mais cent quatre-vingts égale douze fois quinze, plusse zéro. Le reste est nul : douze divise cent quatre-vingts, et cent quatre-vingts est un multiple de douze.' }] },
       ],
     },
   },

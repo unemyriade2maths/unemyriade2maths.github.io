@@ -21,10 +21,10 @@ const EXOS = {
             { h: { pot: [263, 15, 4], apres: '<p class="formule grand">263 = 15 × 17 + 8 &nbsp; avec &nbsp; 8 &lt; 15</p>' }, v: 'On peut conclure : deux cent soixante-trois égale quinze fois dix-sept, plusse huit.' }],
           cc: 'Le quotient est 17 et le reste est 8.' },
         { type: 'flash', rub: 'flash', titre: 'Questions flash', consigne: 'Vrai ou faux ? Tu as 8 secondes par question.', duree: 8, questions: [
-          { q: '42 est un multiple de 6.', rep: true, expl: '42 = 6 × 7.', v: 'Quarante-deux, c’est un multiple de six. Vrai, ou faux ?' },
-          { q: '8 divise 28.', rep: false, expl: '28 ÷ 8 = 3,5 : ce n’est pas un nombre entier.', v: 'Huit divise vingt-huit. Vrai, ou faux ?' },
-          { q: '9 est un diviseur de 54.', rep: true, expl: '54 = 9 × 6.', v: 'Neuf est un diviseur de cinquante-quatre. Vrai, ou faux ?' },
-          { q: '35 est divisible par 4.', rep: false, expl: '35 ÷ 4 = 8,75 : ce n’est pas un nombre entier.', v: 'Trente-cinq est divisible par quatre. Vrai, ou faux ?' }] },
+          { q: '42 est un multiple de 6.', rep: true, expl: '42 = 6 × 7, donc 42 est un multiple de 6.', v: 'Quarante-deux, c’est un multiple de six. Vrai, ou faux ?' },
+          { q: '8 divise 28.', rep: false, expl: '28 ÷ 8 = 3,5 n’est pas un nombre entier, donc 8 ne divise pas 28.', v: 'Huit divise vingt-huit. Vrai, ou faux ?' },
+          { q: '9 est un diviseur de 54.', rep: true, expl: '54 = 9 × 6, donc 9 est un diviseur de 54.', v: 'Neuf est un diviseur de cinquante-quatre. Vrai, ou faux ?' },
+          { q: '35 est divisible par 4.', rep: false, expl: '35 ÷ 4 = 8,75 n’est pas un nombre entier, donc 35 n’est pas divisible par 4.', v: 'Trente-cinq est divisible par quatre. Vrai, ou faux ?' }] },
         { type: 'guide', rub: 'guide', titre: 'Division euclidienne de 347 par 16',
           enonce: '<p>Pose la division euclidienne de <strong>347</strong> par <strong>16</strong>, étape par étape.</p>',
           v: "Exercice guidé. Pose la division euclidienne de trois cent quarante-sept par seize, étape par étape.",
@@ -64,8 +64,8 @@ const EXOS = {
             'Divise 196 par 14.',
             'Le résultat est-il un nombre entier ?'],
           correction: [
-            { h: '<p class="calc">196 ÷ 14 = 14</p><p>14 est un nombre entier.</p>', v: "Correction. Cent quatre-vingt-seize divisé par quatorze, égale quatorze : c'est un nombre entier." },
-            { h: '<p class="calc">196 = 14 × 14</p>', v: 'Donc, cent quatre-vingt-seize, égale quatorze fois quatorze.' }],
+            { h: '<p class="calc">196 ÷ 14 = 14</p><p>Le résultat 14 est un nombre entier,</p>', v: "Correction. Cent quatre-vingt-seize divisé par quatorze, égale quatorze : c'est un nombre entier." },
+            { h: '<p>donc 196 = 14 × 14.</p>', v: 'Donc, cent quatre-vingt-seize, égale quatorze fois quatorze.' }],
           cc: 'Oui, 196 est un multiple de 14.' },
         { type: 'lien', rub: 'exo', titre: 'Exercice 3', texte: 'Les diviseurs d’un nombre avec un tableau', page: 'exercice-diviseurs.html' },
         { type: 'exo', rub: 'calc', titre: 'Est-ce un multiple ?',
@@ -82,19 +82,18 @@ const EXOS = {
             <figure><img src="assets/img/calc-cw.png" alt="Calculatrice collège 2023 : l'écran affiche 1334÷23 puis 58" width="190"><figcaption>Modèle 2023</figcaption></figure></div>
             <p class="touches"><kbd>1</kbd><kbd>3</kbd><kbd>3</kbd><kbd>4</kbd><kbd>÷</kbd><kbd>2</kbd><kbd>3</kbd><kbd>EXE</kbd></p>` },
           correction: [
-            { h: '<p class="calc">1 334 ÷ 23 = 58</p><p>58 est un nombre entier.</p>', v: "Correction. La calculatrice affiche cinquante-huit : c'est un nombre entier." },
-            { h: '<p class="calc">1 334 = 23 × 58</p>', v: 'Donc mille trois cent trente-quatre égale vingt-trois fois cinquante-huit.' }],
+            { h: '<p class="calc">1 334 ÷ 23 = 58</p>', v: 'Correction. La calculatrice affiche cinquante-huit.' },
+            { h: '<p>Le résultat 58 est un nombre entier, donc 1 334 = 23 × 58.</p>', v: 'Le résultat, cinquante-huit, est un nombre entier, donc mille trois cent trente-quatre égale vingt-trois fois cinquante-huit.' }],
           cc: 'Oui, 1 334 est divisible par 23.' },
         { type: 'exo', rub: 'scratch', titre: 'Que dit le lutin ?',
-          enonce: `<div class="scratch">
-            <div class="bloc-s ev">quand <span class="drapeau">⚑</span> est cliqué</div>
-            <div class="bloc-s cap">demander <span class="ovale">Donne un nombre</span> et attendre</div>
-            <div class="bloc-s var">mettre <span class="ovale">n</span> à <span class="ovale cap">réponse</span></div>
-            <div class="bloc-s ctl"><span class="ls">si <span class="hexa"><span class="ovale op"><span class="ovale var">n</span> modulo <span class="ovale">7</span></span> = <span class="ovale">0</span></span> alors</span>
-              <div class="dedans"><div class="bloc-s app">dire <span class="ovale">multiple de 7</span></div></div>
-              sinon
-              <div class="dedans"><div class="bloc-s app">dire <span class="ovale">non</span></div></div>
-              <div class="fin-ctl"></div></div></div>
+          enonce: `<pre class="blocks">quand @greenFlag est cliqué
+demander [Donne un nombre] et attendre
+mettre [n v] à (réponse)
+si <((n) modulo (7)) = (0)> alors
+dire [multiple de 7]
+sinon
+dire [non]
+fin</pre>
             <p>Que dit le lutin si on donne <strong>n = 91</strong>, puis <strong>n = 100</strong> ?</p>`,
           v: 'Débranché. Voici un programme Scratch. Que dit le lutin si on donne n égale quatre-vingt-onze, puis n égale cent ?',
           champs: [
@@ -104,8 +103,8 @@ const EXOS = {
             '« n modulo 7 » est le reste de la division euclidienne de n par 7.',
             'Fais la division euclidienne de 91 par 7, puis de 100 par 7.'],
           correction: [
-            { h: '<p class="calc">91 = 7 × 13 + 0</p><p>91 modulo 7 = 0 : le lutin dit « multiple de 7 ».</p>', v: 'Correction. Quatre-vingt-onze, égale sept fois treize, plusse zéro. Le reste est zéro : le lutin dit « multiple de sept ».' },
-            { h: '<p class="calc">100 = 7 × 14 + 2</p><p>100 modulo 7 = 2 : le lutin dit « non ».</p>', v: 'Cent égale sept fois quatorze, plusse deux. Le reste est deux, pas zéro : le lutin dit « non ».' }],
+            { h: '<p class="calc">91 = 7 × 13 + 0</p><p>Le reste est 0, donc 91 modulo 7 = 0 : le lutin dit « multiple de 7 ».</p>', v: 'Correction. Quatre-vingt-onze, égale sept fois treize, plusse zéro. Le reste est zéro : le lutin dit « multiple de sept ».' },
+            { h: '<p class="calc">100 = 7 × 14 + 2</p><p>Le reste est 2, donc 100 modulo 7 = 2 : le lutin dit « non ».</p>', v: 'Cent égale sept fois quatorze, plusse deux. Le reste est deux, pas zéro : le lutin dit « non ».' }],
           cc: 'Pour 91, le lutin dit « multiple de 7 » ; pour 100, il dit « non ».' },
         { type: 'exo', rub: 'tableur', titre: 'Qu’affiche chaque case ?',
           enonce: `<div class="tableur"><div class="fx"><span>fx</span>=ENT(389/15)</div>
