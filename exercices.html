@@ -222,6 +222,18 @@ E.items.forEach((it, n) => {
       : `<p class="sous" style="text-align:left;margin:8px 4px">Cette vidéo arrive bientôt sur la chaîne.</p>`;
   });
 });
+// --- un exercice à la fois dans une rubrique, avec les flèches
+document.querySelectorAll('.rubrique').forEach(R => {
+  const its = [...R.querySelectorAll(':scope > .item')];
+  if (its.length < 2) return;
+  let k = 0;
+  R.insertAdjacentHTML('beforeend', `<div class="ds-nav item-nav"><button class="btn rond" aria-label="Exercice précédent">◀</button><span></span><button class="btn rond plein" aria-label="Exercice suivant">▶</button></div>`);
+  const [bp, pos, bs] = R.querySelector('.item-nav').children;
+  const voir = () => { its.forEach((x, j) => x.hidden = j !== k); pos.textContent = `${k + 1} / ${its.length}`; bp.disabled = k === 0; bs.disabled = k === its.length - 1; son.pause(); };
+  bp.onclick = () => { if (k > 0) { k--; voir(); window.scrollTo({ top: 0 }); } };
+  bs.onclick = () => { if (k < its.length - 1) { k++; voir(); window.scrollTo({ top: 0 }); } };
+  voir();
+});
 // --- onglets : une seule rubrique visible à la fois
 const NOMS = Object.fromEntries(RUBRIQUES.map(([r, nom, ico]) => [r, ico + ' ' + nom]));
 const ouvrir = (r) => {

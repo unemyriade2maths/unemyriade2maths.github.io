@@ -396,3 +396,4 @@ a.carte-partie:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(
 .barre-rub h2 { margin: 0; font-family: 'Baloo 2', sans-serif; color: var(--vert); font-size: 24px; }
 .btn.retour-som { min-height: 44px; padding: 0 14px; border: 2px solid var(--vert); background: #FFF; color: var(--vert); }
 .tc-c-haut { flex-wrap: nowrap !important; align-items: center; } .tcq { flex: 1; }
+.item-nav { margin-top: 8px; } .rubrique > .item[hidden] + .item { border-top: 0; padding-top: 0; } .rubrique > .item { border-top: 0 !important; padding-top: 0 !important; }
