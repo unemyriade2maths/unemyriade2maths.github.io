@@ -3,6 +3,7 @@ function lecteurDiapos(box, L, jouer, arreter) {
   box.innerHTML = `<div class="diapo" tabindex="0" aria-live="polite">
       <div class="diapo-haut"><span class="dt"></span><span class="cpt"></span></div>
       <div class="diapo-corps"></div><p class="astuce">Clique sur la diapo pour avancer</p></div>
+    <p class="pas-cpt d-cpt"></p>
     <div class="barre-lecon">
       <button class="btn rond d-prec" aria-label="Revenir en arrière">◀</button>
       <button class="btn son d-son" aria-label="Écouter"><span aria-hidden="true">🔊</span> Écouter</button>
@@ -27,6 +28,8 @@ function lecteurDiapos(box, L, jouer, arreter) {
     q('.d-suiv').disabled = di === L.diapos.length - 1 && ei === D.etapes.length - 1;
     q('.d-prec').disabled = di === 0 && ei === 0;
     q('.astuce').hidden = !(di === 0 && ei === 0);
+    const r = D.etapes.length - 1 - ei;
+    q('.d-cpt').textContent = r ? `Étape ${ei + 1} / ${D.etapes.length} de cette diapo · encore ${r} clic${r > 1 ? 's' : ''}` : (di < L.diapos.length - 1 ? `Diapo complète ✓ · clique pour la diapo suivante` : 'Fin de la leçon ✓');
   };
   const ecouter = () => jouer(L.diapos[di].etapes[ei].v);
   const avancer = () => {

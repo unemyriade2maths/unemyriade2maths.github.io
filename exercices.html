@@ -44,10 +44,18 @@ const pasHtml = (et, pi) => {
   let h = '';
   for (let j = 0; j <= pi; j++) {
     const x = et[j].h;
+    if (et[j].q && (j === 0 || et[j - 1].q !== et[j].q)) h += `<p class="q-titre">Question ${et[j].q})</p>`;
     if (typeof x === 'string') h += `<div class="etape${j === pi ? ' nouvelle' : ''}">${x}</div>`;
     else if (j === pi || typeof et[j + 1].h === 'string') h += `<div class="etape pot">${rendu(x)}</div>`;
   }
   return h;
+};
+// le bouton dit ce qui vient : « Question b) ▶ » quand on change de question, sinon « Suite ▶ »
+const labelSuiv = (b, et, pi) => {
+  const fin = pi >= et.length - 1; b.disabled = fin;
+  b.textContent = fin ? 'Correction terminée' : (et[pi + 1].q && et[pi + 1].q !== et[pi].q ? `Question ${et[pi + 1].q}) ▶` : 'Suite ▶');
+  const reste = et.length - 1 - pi, c = b.closest('.pas-barre').previousElementSibling;
+  if (c && c.classList.contains('pas-cpt')) c.textContent = fin ? `Correction complète ✓ (${et.length} étapes)` : `Étape ${pi + 1} / ${et.length} · encore ${reste} clic${reste > 1 ? 's' : ''} pour la correction complète`;
 };
 const carte = (it, n) => {
   if (it.type === 'lecon') return `<div class="item" id="ex${n}">
@@ -56,7 +64,7 @@ const carte = (it, n) => {
       <details class="revoir video-partie"><summary>▶ Voir la vidéo de cette partie</summary><div class="lecteur"></div></details></div>`;
   if (it.type === 'lien') return `<div class="item"><h3 class="exo-titre">${it.titre}</h3><a class="ligne" href="${it.page}"><span>${it.texte}</span><span class="fl">→</span></a></div>`;
   if (it.type === 'methode') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}</h3><div class="methode">${it.resume}
-      <div class="pas"></div><div class="pas-barre"><button class="btn rond plein pas-suiv" aria-label="Étape suivante">▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
+      <div class="pas"></div><p class="pas-cpt"></p><div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
       <p class="cc" hidden>${it.cc}</p></div></div>`;
   if (it.type === 'flash') return `<div class="item flash" id="ex${n}"><p class="consigne">${it.consigne}</p>
       <div class="flash-carte"><div class="flash-num"></div><p class="flash-q"></p><div class="chrono"><span></span></div>
@@ -70,15 +78,15 @@ const carte = (it, n) => {
   return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}${it.ceinture ? ` <span class="ceinture">Ceinture ${it.ceinture}</span>` : ''}</h3>
     <div class="enonce">${btnSon(it.v)}${it.enonce}</div>
     <div class="questions">${it.champs.map((c, k) => c.choix
-      ? `<div class="question" data-k="${k}"><span class="lab">${c.lab}</span><div class="choix">${c.choix.map(o => `<button class="opt" data-o="${o}">${o}</button>`).join('')}</div></div>`
-      : `<div class="question" data-k="${k}" data-touches="${(c.touches || []).join(' ')}"><label class="lab" for="c${n}_${k}">${c.lab}</label>
+      ? `<div class="question" data-k="${k}"><span class="lab">${c.q ? `<span class="q">${c.q})</span> ` : ''}${c.lab}</span><div class="choix">${c.choix.map(o => `<button class="opt" data-o="${o}">${o}</button>`).join('')}</div></div>`
+      : `<div class="question" data-k="${k}" data-touches="${(c.touches || []).join(' ')}"><label class="lab" for="c${n}_${k}">${c.q ? `<span class="q">${c.q})</span> ` : ''}${c.lab}</label>
          <input type="text" id="c${n}_${k}" class="${c.court ? 'court' : ''}" autocomplete="off" ${c.touches ? '' : 'inputmode="numeric"'} placeholder="${c.place || ''}"></div>`).join('')}</div>
     <div class="indices"></div>
     ${it.aide ? `<button class="btn aide-b">${it.aide.bouton}</button><div class="aide" hidden>${it.aide.html}</div>` : ''}
     <div class="boutons"><button class="btn indice-b">💡 Indice (1/${it.indices.length})</button><button class="btn verif">Vérifier</button></div>
     <div class="verdict" hidden></div>
     <div class="correction" hidden><h3>Correction</h3><div class="pas"></div>
-      <div class="pas-barre"><button class="btn rond plein pas-suiv" aria-label="Étape suivante">▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
+      <p class="pas-cpt"></p><div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
       <p class="cc" hidden>${it.cc}</p></div></div>`;
 };
 let html = '', som = '';
@@ -147,7 +155,7 @@ E.items.forEach((it, n) => {
   const C = S.querySelector('.correction'), pas = S.querySelector('.pas'), ps = S.querySelector('.pas-suiv');
   const montrer = () => {
     const et = it.correction;
-    pas.innerHTML = pasHtml(et, pi); ps.disabled = pi >= et.length - 1;
+    pas.innerHTML = pasHtml(et, pi); labelSuiv(ps, et, pi);
     S.querySelector('.cc').hidden = pi < et.length - 1;
   };
   ps.onclick = () => { if (pi < it.correction.length - 1) { pi++; montrer(); jouer(it.correction[pi].v); } };
@@ -172,7 +180,7 @@ E.items.forEach((it, n) => {
 E.items.forEach((it, n) => {
   if (it.type !== 'methode') return;
   const S = $('ex' + n), pas = S.querySelector('.pas'), ps = S.querySelector('.pas-suiv'); let pi = 0;
-  const montrer = () => { pas.innerHTML = pasHtml(it.etapes, pi); ps.disabled = pi >= it.etapes.length - 1; S.querySelector('.cc').hidden = pi < it.etapes.length - 1; };
+  const montrer = () => { pas.innerHTML = pasHtml(it.etapes, pi); labelSuiv(ps, it.etapes, pi); S.querySelector('.cc').hidden = pi < it.etapes.length - 1; };
   ps.onclick = () => { if (pi < it.etapes.length - 1) { pi++; montrer(); jouer(it.etapes[pi].v); } };
   S.querySelector('.pas-son').onclick = () => jouer(it.etapes[pi].v);
   montrer();

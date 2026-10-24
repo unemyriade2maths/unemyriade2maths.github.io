@@ -398,3 +398,8 @@ a.carte-partie:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(
 .tc-c-haut { flex-wrap: nowrap !important; align-items: center; } .tcq { flex: 1; }
 .item-nav { margin-top: 8px; } .rubrique > .item[hidden] + .item { border-top: 0; padding-top: 0; } .rubrique > .item { border-top: 0 !important; padding-top: 0 !important; }
 pre.blocks { margin: 4px 0 12px; overflow-x: auto; } .scratchblocks { overflow-x: auto; }
+.q-titre { margin: 12px 0 6px; font-weight: 800; color: var(--orange-fonce); background: #FFF1DF; display: inline-block; padding: 4px 12px; border-radius: 999px; }
+.pas .q-titre:first-child { margin-top: 0; }
+.pas-suiv { min-height: 48px; padding: 0 22px; }
+.pas-suiv:disabled { background: #B9C7BE; opacity: 1; }
+.pas-cpt { text-align: center; font-size: 14px; font-weight: 700; color: var(--gris); margin: 10px 0 0; }

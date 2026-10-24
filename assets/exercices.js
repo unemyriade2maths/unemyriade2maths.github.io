@@ -94,34 +94,35 @@ dire [multiple de 7]
 sinon
 dire [non]
 fin</pre>
-            <p>Que dit le lutin si on donne <strong>n = 91</strong>, puis <strong>n = 100</strong> ?</p>`,
-          v: 'Débranché. Voici un programme Scratch. Que dit le lutin si on donne n égale quatre-vingt-onze, puis n égale cent ?',
+            <p><span class="q">a)</span> Que dit le lutin si on donne <strong>n = 91</strong> ?</p><p><span class="q">b)</span> Que dit le lutin si on donne <strong>n = 100</strong> ?</p>`,
+          v: 'Débranché. Voici un programme Scratch. Question a : que dit le lutin si on donne n égale quatre-vingt-onze ? Question b : que dit le lutin si on donne n égale cent ?',
           champs: [
-            { lab: 'Pour n = 91, le lutin dit :', choix: ['multiple de 7', 'non'], rep: 'multiple de 7' },
-            { lab: 'Pour n = 100, le lutin dit :', choix: ['multiple de 7', 'non'], rep: 'non' }],
+            { q: 'a', lab: 'Pour n = 91, le lutin dit :', choix: ['multiple de 7', 'non'], rep: 'multiple de 7' },
+            { q: 'b', lab: 'Pour n = 100, le lutin dit :', choix: ['multiple de 7', 'non'], rep: 'non' }],
           indices: [
             '« n modulo 7 » est le reste de la division euclidienne de n par 7.',
             'Fais la division euclidienne de 91 par 7, puis de 100 par 7.'],
           correction: [
-            { h: '<p class="calc">91 = 7 × 13 + 0</p><p>Le reste est 0, donc 91 modulo 7 = 0 : le lutin dit « multiple de 7 ».</p>', v: 'Correction. Quatre-vingt-onze, égale sept fois treize, plusse zéro. Le reste est zéro : le lutin dit « multiple de sept ».' },
-            { h: '<p class="calc">100 = 7 × 14 + 2</p><p>Le reste est 2, donc 100 modulo 7 = 2 : le lutin dit « non ».</p>', v: 'Cent égale sept fois quatorze, plusse deux. Le reste est deux, pas zéro : le lutin dit « non ».' }],
-          cc: 'Pour 91, le lutin dit « multiple de 7 » ; pour 100, il dit « non ».' },
-        { type: 'exo', rub: 'tableur', titre: 'Qu’affiche chaque case ?',
+            { q: 'a', h: '<p class="calc">91 = 7 × 13 + 0</p><p>Le reste est 0, donc 91 modulo 7 = 0 : le lutin dit « multiple de 7 ».</p>', v: 'Correction. Quatre-vingt-onze, égale sept fois treize, plusse zéro. Le reste est zéro : le lutin dit « multiple de sept ».' },
+            { q: 'b', h: '<p class="calc">100 = 7 × 14 + 2</p><p>Le reste est 2, donc 100 modulo 7 = 2 : le lutin dit « non ».</p>', v: 'Cent égale sept fois quatorze, plusse deux. Le reste est deux, pas zéro : le lutin dit « non ».' }],
+          cc: 'a) Pour 91, le lutin dit « multiple de 7 ». b) Pour 100, il dit « non ».' },
+        { type: 'exo', rub: 'tableur', titre: 'Les formules ENT et MOD',
           enonce: `<div class="tableur"><div class="fx"><span>fx</span>=ENT(389/15)</div>
             <table><tr><th></th><th>A</th><th>B</th></tr><tr><th>1</th><td class="sel">=ENT(389/15)</td><td>=MOD(389;15)</td></tr><tr><th>2</th><td></td><td></td></tr></table></div>
-            <p>On tape ces deux formules dans les cases A1 et B1, puis Entrée. <strong>Qu’affiche chaque case ?</strong></p>`,
+            <p>On tape ces deux formules dans les cases A1 et B1, puis Entrée.</p><p><span class="q">a)</span> Qu’affiche la case A1 ?</p><p><span class="q">b)</span> Qu’affiche la case B1 ?</p>`,
           v: "Tableur. On tape égale ENT de trois cent quatre-vingt-neuf sur quinze dans la case A1, et égale MOD de trois cent quatre-vingt-neuf point-virgule quinze dans la case B1. Qu'affiche chaque case ?",
           champs: [
-            { lab: 'La case A1 affiche :', rep: ['25'], court: true },
-            { lab: 'La case B1 affiche :', rep: ['14'], court: true }],
+            { q: 'a', lab: 'La case A1 affiche :', rep: ['25'], court: true },
+            { q: 'b', lab: 'La case B1 affiche :', rep: ['14'], court: true }],
           indices: [
             'ENT garde la partie entière de la division : c’est le quotient.',
             'MOD donne le reste de la division euclidienne.',
             'Pose la division euclidienne de 389 par 15.'],
           correction: [
-            { h: { pot: [389, 15, 4], apres: '<p class="formule grand">389 = 15 × 25 + 14 &nbsp; avec &nbsp; 14 &lt; 15</p>' }, v: 'Correction. On pose la division : trois cent quatre-vingt-neuf, égale quinze fois vingt-cinq, plusse quatorze.' },
-            { h: '<p>A1 : <strong>=ENT(389/15)</strong> affiche <strong>25</strong>, le quotient.</p><p>B1 : <strong>=MOD(389;15)</strong> affiche <strong>14</strong>, le reste.</p>', v: 'La case A1 affiche vingt-cinq : c’est le quotient. La case B1 affiche quatorze : c’est le reste.' }],
-          cc: 'La case A1 affiche 25 (le quotient) et la case B1 affiche 14 (le reste).' },
+            { q: 'a', h: { pot: [389, 15, 4], apres: '<p class="formule grand">389 = 15 × 25 + 14 &nbsp; avec &nbsp; 14 &lt; 15</p>' }, v: 'Correction. On pose la division : trois cent quatre-vingt-neuf, égale quinze fois vingt-cinq, plusse quatorze.' },
+            { q: 'a', h: '<p>=ENT(389/15) garde la partie entière de la division : c’est le quotient, donc la case A1 affiche <strong>25</strong>.</p>', v: 'ENT garde la partie entière de la division : c’est le quotient, donc la case A1 affiche vingt-cinq.' },
+            { q: 'b', h: '<p>=MOD(389;15) donne le reste de la division euclidienne, donc la case B1 affiche <strong>14</strong>.</p>', v: 'MOD donne le reste de la division euclidienne, donc la case B1 affiche quatorze.' }],
+          cc: 'a) La case A1 affiche 25, le quotient. b) La case B1 affiche 14, le reste.' },
       ],
     },
   },

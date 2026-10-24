@@ -56,11 +56,12 @@ const AUDIO = {
 "Avec ta calculatrice : mille trois cent trente-quatre est-il divisible par vingt-trois ?": "c27414c6032c.mp3",
 "Correction. La calculatrice affiche cinquante-huit.": "336f317c410a.mp3",
 "Le résultat, cinquante-huit, est un nombre entier, donc mille trois cent trente-quatre égale vingt-trois fois cinquante-huit.": "e4e5ab154968.mp3",
-"Débranché. Voici un programme Scratch. Que dit le lutin si on donne n égale quatre-vingt-onze, puis n égale cent ?": "6650e0654971.mp3",
+"Débranché. Voici un programme Scratch. Question a : que dit le lutin si on donne n égale quatre-vingt-onze ? Question b : que dit le lutin si on donne n égale cent ?": "f6ee48e0efe2.mp3",
 "Correction. Quatre-vingt-onze, égale sept fois treize, plusse zéro. Le reste est zéro : le lutin dit « multiple de sept ».": "03bfe23ac525.mp3",
 "Cent égale sept fois quatorze, plusse deux. Le reste est deux, pas zéro : le lutin dit « non ».": "0943eacef580.mp3",
 "Tableur. On tape égale ENT de trois cent quatre-vingt-neuf sur quinze dans la case A1, et égale MOD de trois cent quatre-vingt-neuf point-virgule quinze dans la case B1. Qu'affiche chaque case ?": "e68564547e62.mp3",
 "Correction. On pose la division : trois cent quatre-vingt-neuf, égale quinze fois vingt-cinq, plusse quatorze.": "aa9328a5ab3b.mp3",
-"La case A1 affiche vingt-cinq : c’est le quotient. La case B1 affiche quatorze : c’est le reste.": "d91c77f7cee6.mp3",
+"ENT garde la partie entière de la division : c’est le quotient, donc la case A1 affiche vingt-cinq.": "18d82acbb3c3.mp3",
+"MOD donne le reste de la division euclidienne, donc la case B1 affiche quatorze.": "f1a09edb8e55.mp3",
 "Top Chrono. Tu as six minutes pour cinq questions, sans calculatrice. Lis la question, écris ta réponse, puis clique sur Valider. Si tu bloques, clique sur Suivante : la question reviendra à la fin, s'il te reste du temps. Une réponse validée ne se change plus. À la fin, tu vois ton score et la correction.": "7e45ab533b27.mp3"
 };
