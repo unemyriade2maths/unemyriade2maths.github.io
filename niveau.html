@@ -24,7 +24,10 @@ const n = NIVEAUX[k] || NIVEAUX['3e'];
 document.getElementById('sous').textContent = ESPACES[n.espace] + ' · ' + n.nom;
 
 document.title = 'Une myriade de maths – ' + n.nom;
-const cur = n.enCours ? CHAPITRES[n.enCours] : null, prec = n.precedent ? CHAPITRES[n.precedent] : null;
+const prog = PROGRESSION[k] || [];
+const idx = prog.findIndex(x => x.id === n.enCours);
+const cur = n.enCours ? chapitre(n.enCours) : null;
+const prec = idx > 0 ? prog[idx - 1] : null, suiv = idx >= 0 && idx < prog.length - 1 ? prog[idx + 1] : null;
 let h = '';
 if (cur) {
   h += `<a class="carte-chap" href="chapitre.html?c=${n.enCours}">
@@ -32,14 +35,21 @@ if (cur) {
 } else {
   h += `<div class="carte-chap"><span class="pastille">Bientôt</span><h2>Les chapitres arrivent bientôt</h2><p>En attendant, retrouve les vidéos sur la chaîne.</p></div>`;
 }
-if (prec) {
-  h += `<a class="carte-prec" href="chapitre.html?c=${n.precedent}"><span class="lettre" aria-hidden="true">←</span>
-    <span><small>Chapitre précédent</small><strong>${prec.titre}</strong></span></a>`;
+if (prec || suiv) {
+  h += '<div class="voisins">';
+  h += prec ? `<a class="carte-prec" href="chapitre.html?c=${prec.id}"><span><small>← Chapitre précédent</small><strong>${prec.titre}</strong></span></a>` : '<span></span>';
+  h += suiv ? `<a class="carte-prec suiv" href="chapitre.html?c=${suiv.id}"><span><small>Chapitre suivant →</small><strong>${suiv.titre}</strong></span></a>` : '<span></span>';
+  h += '</div>';
 }
-const autres = Object.entries(CHAPITRES).filter(([id, c]) => c.niveau === k && id !== n.enCours && id !== n.precedent);
-if (autres.length) {
-  h += `<section class="bloc"><h3>Les autres chapitres</h3>` +
-    autres.map(([id, c]) => `<a class="ligne" href="chapitre.html?c=${id}"><span>${c.titre}</span><span class="fl">→</span></a>`).join('') + `</section>`;
+if (prog.length) {
+  h += '<section class="bloc"><h3>Tous les chapitres de l’année</h3>';
+  let per = 0;
+  prog.forEach((x, i) => {
+    if (x.periode !== per) { per = x.periode; h += `<p class="periode">Période ${per}</p>`; }
+    const etat = i < idx ? '<span class="badge ok">Fait</span>' : (i === idx ? '<span class="badge todo">En cours</span>' : '');
+    h += `<a class="ligne${i === idx ? ' actuel' : ''}" href="chapitre.html?c=${x.id}"><span><span class="num">${i + 1}</span> ${x.titre}</span>${etat}</a>`;
+  });
+  h += '</section>';
 }
 h += `<section class="bloc"><h3>Les vidéos</h3><a class="ligne" href="${CHAINE}"><span>La chaîne Une myriade de maths</span><span class="fl">▶</span></a></section>`;
 document.getElementById('contenu').innerHTML = h;

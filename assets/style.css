@@ -117,3 +117,11 @@ input[type=text]:focus { outline: 3px solid var(--orange); border-color: var(--v
 .classe .ch { font-size: 14px; font-weight: 700; color: var(--gris); }
 .duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .et-aussi { margin: 22px 0 0; color: var(--vert); font-size: 18px; }
+.voisins { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.voisins .carte-prec { margin-top: 0; padding: 14px; }
+.voisins .carte-prec strong { font-size: 15px; }
+.voisins .suiv { background: var(--vert-clair); border-color: #CFE3D5; text-align: right; justify-content: flex-end; }
+.voisins .suiv small { color: var(--vert); }
+.periode { margin: 14px 0 6px; font-size: 13px; font-weight: 800; color: var(--orange-fonce); text-transform: uppercase; }
+.ligne .num { display: inline-flex; width: 26px; height: 26px; border-radius: 8px; background: #FFF1DF; color: var(--orange-fonce); font-size: 13px; font-weight: 800; align-items: center; justify-content: center; margin-right: 6px; }
+.ligne.actuel { border: 2px solid var(--orange); }

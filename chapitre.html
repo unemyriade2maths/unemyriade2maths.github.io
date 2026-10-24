@@ -28,7 +28,7 @@
 <script src="assets/data.js"></script>
 <script>
 const id = new URLSearchParams(location.search).get('c') || 'arithmetique';
-const c = CHAPITRES[id] || CHAPITRES.arithmetique;
+const c = chapitre(id) || CHAPITRES.arithmetique;
 const $ = (x) => document.getElementById(x);
 $('titre').textContent = c.titre; $('niv').textContent = 'CHAPITRE · ' + c.niveau;
 $('retour').href = 'niveau.html?n=' + c.niveau; document.title = c.titre + ' – Une myriade de maths';

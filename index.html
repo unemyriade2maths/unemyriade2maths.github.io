@@ -32,7 +32,7 @@
       <strong>Espace accompagnement</strong><span>Un suivi personnalisé, du collège au lycée</span>
     </a>
     <a class="carte-espace creme" href="creation-contenu.html">
-      <strong>Création de contenu</strong><span>Diapos et supports sur mesure pour les enseignants</span>
+      <strong>Création de contenu</strong><span>Supports sur mesure et contenus à vendre pour les enseignants</span>
     </a>
   </div>
 
@@ -53,7 +53,7 @@
 <script>
 for (const e of ['college', 'lycee']) {
   document.getElementById(e).innerHTML = Object.entries(NIVEAUX).filter(([k, n]) => n.espace === e).map(([k, n]) => {
-    const ch = n.enCours ? CHAPITRES[n.enCours] : null;
+    const ch = n.enCours ? chapitre(n.enCours) : null;
     return `<a class="classe" href="niveau.html?n=${k}"><span class="gros">${n.nom}</span><span class="ch">${ch ? ch.titre : 'Bientôt'}</span></a>`;
   }).join('');
 }
