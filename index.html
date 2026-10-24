@@ -10,26 +10,33 @@
 <body>
 <svg class="feuille g" aria-hidden="true" viewBox="0 0 150 150"><path d="M75 140 C20 120 0 60 30 10 C60 40 110 60 75 140 Z" fill="#2E8B57"/><path d="M75 140 C40 100 30 60 30 10" stroke="#1F6F3D" stroke-width="3" fill="none"/></svg>
 <svg class="feuille d" aria-hidden="true" viewBox="0 0 150 150"><path d="M75 140 C20 120 0 60 30 10 C60 40 110 60 75 140 Z" fill="#6FAF6E"/><path d="M75 140 C40 100 30 60 30 10" stroke="#1F6F3D" stroke-width="3" fill="none"/></svg>
-<div class="page">
+<div class="page large">
   <header class="logo">
     <p>Une myriade de <span>maths</span></p>
     <div class="trait"></div>
   </header>
   <p class="sous">Méthodes, corrections et exercices · collège et lycée</p>
-  <main class="espaces">
-    <a class="carte-espace vert" href="espace.html?e=college">
-      <strong>Espace collège</strong><span>De la 6e à la 3e : leçons, vidéos, exercices corrigés</span>
-    </a>
-    <a class="carte-espace vert2" href="espace.html?e=lycee">
-      <strong>Espace lycée</strong><span>2de, 1re, Terminale</span>
-    </a>
+
+  <section class="bloc-espace college">
+    <h2>Espace collège</h2>
+    <div class="classes" id="college"></div>
+  </section>
+
+  <section class="bloc-espace lycee">
+    <h2>Espace lycée</h2>
+    <div class="classes" id="lycee"></div>
+  </section>
+
+  <div class="duo">
     <a class="carte-espace orange" href="accompagnement.html">
       <strong>Espace accompagnement</strong><span>Un suivi personnalisé, du collège au lycée</span>
     </a>
     <a class="carte-espace creme" href="creation-contenu.html">
       <strong>Création de contenu</strong><span>Diapos et supports sur mesure pour les enseignants</span>
     </a>
-  </main>
+  </div>
+
+  <h3 class="et-aussi">Et aussi</h3>
   <section class="petits">
     <a class="petit" href="revisions.html"><strong>Révisions brevet et bac</strong><span>Automatismes, fiches-méthodes</span></a>
     <a class="petit" href="outils.html"><strong>Boîte à outils</strong><span>Nombres premiers, critères, carrés…</span></a>
@@ -42,5 +49,14 @@
     <span>© 2026 Une myriade de maths</span>
   </footer>
 </div>
+<script src="assets/data.js"></script>
+<script>
+for (const e of ['college', 'lycee']) {
+  document.getElementById(e).innerHTML = Object.entries(NIVEAUX).filter(([k, n]) => n.espace === e).map(([k, n]) => {
+    const ch = n.enCours ? CHAPITRES[n.enCours] : null;
+    return `<a class="classe" href="niveau.html?n=${k}"><span class="gros">${n.nom}</span><span class="ch">${ch ? ch.titre : 'Bientôt'}</span></a>`;
+  }).join('');
+}
+</script>
 </body>
 </html>

@@ -9,7 +9,7 @@
 </head>
 <body>
 <div class="page">
-  <div class="haut"><a id="retour" href="espace.html" style="font-weight:800;text-decoration:none;min-height:44px;display:inline-flex;align-items:center">← Toutes les classes</a></div>
+  <div class="haut"><a id="retour" href="index.html" style="font-weight:800;text-decoration:none;min-height:44px;display:inline-flex;align-items:center">← Accueil</a></div>
   <header class="logo" style="padding-top:4px">
     <p>Une myriade de <span>maths</span></p>
     <div class="trait"></div>
@@ -22,7 +22,7 @@
 const k = new URLSearchParams(location.search).get('n') || '3e';
 const n = NIVEAUX[k] || NIVEAUX['3e'];
 document.getElementById('sous').textContent = ESPACES[n.espace] + ' · ' + n.nom;
-document.getElementById('retour').href = 'espace.html?e=' + n.espace;
+
 document.title = 'Une myriade de maths – ' + n.nom;
 const cur = n.enCours ? CHAPITRES[n.enCours] : null, prec = n.precedent ? CHAPITRES[n.precedent] : null;
 let h = '';

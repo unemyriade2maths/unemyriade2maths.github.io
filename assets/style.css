@@ -106,3 +106,14 @@ input[type=text]:focus { outline: 3px solid var(--orange); border-color: var(--v
 .tableau th, .tableau td { border: 1px solid #CFE3D5; padding: 8px 10px; text-align: left; }
 .tableau th { background: var(--vert-clair); color: var(--vert); }
 .bientot { color: var(--gris); font-style: italic; }
+.page.large { max-width: 900px; }
+.bloc-espace { border-radius: 24px; padding: 18px; margin-bottom: 14px; }
+.bloc-espace h2 { margin: 0 0 12px; font-family: 'Baloo 2', sans-serif; font-size: 28px; line-height: 1.1; }
+.bloc-espace.college { background: var(--vert); color: #FFF; }
+.bloc-espace.lycee { background: #2E8B57; color: #FFF; }
+.classes { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.classe { display: flex; flex-direction: column; gap: 4px; background: #FFF; color: var(--encre); text-decoration: none; border-radius: 16px; padding: 14px; min-height: 92px; }
+.classe .gros { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 34px; line-height: 1; color: var(--vert); }
+.classe .ch { font-size: 14px; font-weight: 700; color: var(--gris); }
+.duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.et-aussi { margin: 22px 0 0; color: var(--vert); font-size: 18px; }
