@@ -16,7 +16,7 @@
   </div>
 </header>
 <div class="page zone-exos" id="zone">
-  <nav class="sommaire" id="sommaire" aria-label="Rubriques de la partie"></nav>
+  <nav class="sommaire" id="sommaire" role="tablist" aria-label="Rubriques de la partie"></nav>
   <div id="liste"></div>
   <div id="fin"></div>
 </div>
@@ -59,7 +59,8 @@ const carte = (it, n) => {
       <div class="flash-rep" hidden></div><button class="btn essai flash-go">Commencer</button></div></div>`;
   if (it.type === 'guide') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}</h3>
       <div class="enonce">${btnSon(it.v)}${it.enonce}</div>
-      <div class="guide-zone"><div class="guide-pot"></div><div class="guide-pas"></div></div>
+      <div class="guide-pot"></div><div class="guide-actuelle"></div>
+      <div class="guide-faites" hidden><p class="g-titre">Déjà fait</p></div>
       <p class="cc" hidden>${it.cc}</p></div>`;
   return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}${it.ceinture ? ` <span class="ceinture">Ceinture ${it.ceinture}</span>` : ''}</h3>
     <div class="enonce">${btnSon(it.v)}${it.enonce}</div>
@@ -79,10 +80,10 @@ let html = '', som = '';
 RUBRIQUES.forEach(([r, nom, ico]) => {
   const its = E.items.map((it, n) => [it, n]).filter(([it]) => it.rub === r);
   if (!its.length) return;
-  som += `<a href="#r-${r}"><span aria-hidden="true">${ico}</span> ${nom}</a>`;
+  som += `<button role="tab" data-r="${r}" aria-selected="false"><span aria-hidden="true">${ico}</span> ${nom}</button>`;
   html += `<section class="rubrique" id="r-${r}"><h2 class="rub-titre"><span class="rub-ico" aria-hidden="true">${ico}</span>${nom}</h2>${its.map(([it, n]) => carte(it, n)).join('')}</section>`;
 });
-$('sommaire').innerHTML = som;
+$('sommaire').innerHTML = som + '<button role="tab" data-r="fin" aria-selected="false"><span aria-hidden="true">🏁</span> Fin de chapitre</button>';
 $('liste').innerHTML = html;
 
 document.querySelectorAll('.mini-son').forEach(b => b.onclick = () => jouer(decodeURIComponent(b.dataset.v)));
@@ -167,42 +168,50 @@ E.items.forEach((it, n) => {
   S.querySelector('.pas-son').onclick = () => jouer(it.etapes[pi].v);
   montrer();
 });
-// --- exercices guidés : une étape à la fois, la potence avance quand c'est juste
+// --- exercices guidés (courts) : la question en cours reste sous l'image ;
+// quand la réponse est juste, l'image fait l'étape de la correction et la question descend dans la liste « déjà fait ».
 E.items.forEach((it, n) => {
   if (it.type !== 'guide') return;
-  const S = $('ex' + n), zp = S.querySelector('.guide-pot'), zq = S.querySelector('.guide-pas');
-  let k = 0;
+  const S = $('ex' + n), zp = S.querySelector('.guide-pot'), za = S.querySelector('.guide-actuelle'), zf = S.querySelector('.guide-faites');
   zp.innerHTML = potence(it.pot[0], it.pot[1], 0);
   const etape = (i) => {
     const e = it.etapes[i], id = `g${n}_${i}`;
-    zq.insertAdjacentHTML('beforeend', `<div class="g-etape question" data-touches="${(e.touches || []).join(' ')}">
+    za.innerHTML = `<div class="g-etape question" data-touches="${(e.touches || []).join(' ')}">
       <label class="lab" for="${id}"><span class="g-num">${i + 1}</span> ${e.q}</label>
-      <div class="g-ligne"><input type="text" id="${id}" class="${e.touches ? '' : 'court'}" autocomplete="off" ${e.touches ? '' : 'inputmode="numeric"'}><button class="btn verif g-ok">OK</button></div>
-      <p class="g-msg" hidden></p></div>`);
-    const D = zq.lastElementChild, inp = D.querySelector('input'), msg = D.querySelector('.g-msg');
-    let essais = 0;
+      <div class="g-ligne"><input type="text" id="${id}" class="court" autocomplete="off" inputmode="numeric"><button class="btn verif g-ok">OK</button></div>
+      <p class="g-msg" hidden></p></div>`;
+    const inp = za.querySelector('input'), msg = za.querySelector('.g-msg'); let essais = 0;
     const valider = () => {
-      const ok = e.rep.some(r => norm(r) === norm(inp.value));
-      if (ok) {
-        D.classList.add('juste'); D.classList.remove('faux'); inp.disabled = true; D.querySelector('.g-ok').remove();
-        msg.hidden = true;
-        if (e.k !== k) { k = e.k; zp.innerHTML = potence(it.pot[0], it.pot[1], k); }
-        if (i < it.etapes.length - 1) { etape(i + 1); zq.lastElementChild.querySelector('input').focus(); }
-        else S.querySelector('.cc').hidden = false;
-      } else {
-        essais++; D.classList.add('faux'); msg.hidden = false;
-        msg.textContent = essais === 1 ? 'Pas tout à fait, réessaie.' : 'Coup de pouce : ' + e.aide;
+      if (!e.rep.some(r => norm(r) === norm(inp.value))) {
+        essais++; za.firstElementChild.classList.add('faux'); msg.hidden = false;
+        msg.textContent = essais === 1 ? 'Pas tout à fait, réessaie.' : 'Coup de pouce : ' + e.aide; return;
       }
+      zp.innerHTML = potence(it.pot[0], it.pot[1], e.k);
+      zp.classList.remove('anime'); void zp.offsetWidth; zp.classList.add('anime');
+      zf.insertAdjacentHTML('beforeend', `<p class="g-fait"><span class="g-num">${i + 1}</span> ${e.q} <strong>${inp.value.trim()}</strong> ✓</p>`);
+      zf.hidden = false;
+      if (i < it.etapes.length - 1) { etape(i + 1); za.querySelector('input').focus({ preventScroll: true }); }
+      else { za.innerHTML = it.fin; S.querySelector('.cc').hidden = false; }
     };
-    D.querySelector('.g-ok').onclick = valider;
+    za.querySelector('.g-ok').onclick = valider;
     inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') valider(); });
   };
   etape(0);
 });
 // --- fin de chapitre
-$('fin').innerHTML = `<section class="rubrique fin-chap"><h2 class="rub-titre"><span class="rub-ico" aria-hidden="true">🏁</span>Fin de chapitre</h2>
+$('fin').innerHTML = `<section class="rubrique fin-chap" id="r-fin"><h2 class="rub-titre"><span class="rub-ico" aria-hidden="true">🏁</span>Fin de chapitre</h2>
   <a class="ligne" href="bilan.html?c=${cid}&t=qcm"><span>QCM de fin de chapitre</span><span class="fl">→</span></a>
   <a class="ligne" href="bilan.html?c=${cid}&t=ds"><span>Simulation du DS</span><span class="fl">→</span></a></section>`;
+// --- onglets : une seule rubrique visible à la fois
+const ouvrir = (r) => {
+  if (!$('r-' + r)) r = $('sommaire').querySelector('[role=tab]').dataset.r;
+  document.querySelectorAll('.rubrique').forEach(x => x.hidden = x.id !== 'r-' + r);
+  document.querySelectorAll('#sommaire [role=tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.r === r));
+  const b = $('sommaire').querySelector(`[data-r="${r}"]`); if (b) b.scrollIntoView({ block: 'nearest', inline: 'center' });
+  son.pause();
+};
+document.querySelectorAll('#sommaire [role=tab]').forEach(b => b.onclick = () => { history.replaceState(null, '', '#' + b.dataset.r); ouvrir(b.dataset.r); window.scrollTo({ top: 0 }); });
+ouvrir(location.hash.slice(1));
 </script>
 </body>
 </html>

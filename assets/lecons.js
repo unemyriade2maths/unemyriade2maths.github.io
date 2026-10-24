@@ -109,3 +109,14 @@ function potence(a, b, k) {
   g += `</div><div class="pd"><div class="pdiv">${b}</div><div class="pquot">${quot}</div></div></div>`;
   return g;
 }
+
+// Divisions successives, présentées en colonne : n | diviseur premier.
+function divsucc(n) {
+  const L = []; let x = n, p = 2;
+  while (x > 1) { while (x % p) p++; L.push([x, p]); x /= p; }
+  L.push([1, '']);
+  const C = { 2: '#E07B00', 3: '#7B3FB5', 5: '#1F5FC4', 7: '#8B5A2B', 11: '#B03A3A', 13: '#2E8B57' };
+  return `<div class="divsucc">${L.map(([a, b]) => `<span>${a}</span><span style="color:${C[b] || '#C76A0E'}">${b}</span>`).join('')}</div>`;
+}
+// Fraction écrite l'une au-dessus de l'autre.
+const frac = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;

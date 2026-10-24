@@ -17,6 +17,7 @@
 </header>
 <div class="page" id="zone"></div>
 <script src="assets/data.js"></script>
+<script src="assets/lecons.js"></script>
 <script src="assets/bilans.js"></script>
 <script>
 const P = new URLSearchParams(location.search), cid = P.get('c') || 'arithmetique', t = P.get('t') || 'qcm';
@@ -40,7 +41,7 @@ if (t === 'qcm') {
       q.classList.add('fini', ok ? 'juste' : 'faux');
       q.querySelectorAll('.opt')[x.r].classList.add('bonne');
       const C = q.querySelector('.qcm-corr'); C.hidden = false;
-      C.innerHTML = `<strong>${ok ? 'Juste !' : 'La bonne réponse : ' + x.o[x.r]}</strong> ${x.e}<p class="cc">${x.cc}</p>`;
+      C.innerHTML = `<p><strong>${ok ? 'Juste !' : 'La bonne réponse : ' + x.o[x.r]}</strong></p><div class="lignes">${x.e}</div><p class="cc">${x.cc}</p>`;
     });
     $('valider').hidden = true;
     $('score').innerHTML = `<div class="verdict ${s >= 7 ? 'ok' : 'non'}">Ton score : ${s} / ${B.qcm.length}. ${s >= 7 ? 'Bravo, tu es prêt pour le DS !' : 'Revois les parties où tu t’es trompé, puis recommence.'}</div>
@@ -48,14 +49,17 @@ if (t === 'qcm') {
     $('score').scrollIntoView({ behavior: 'smooth' });
   };
 } else {
-  const D = B.ds, total = D.exos.reduce((a, e) => a + e.pts, 0);
+  const D = B.ds, total = D.exos.reduce((a, e) => a + e.corr.length * 3, 0);
   $('titre').textContent = 'Simulation du DS'; document.title = 'Simulation du DS – ' + ch.titre;
-  Z.innerHTML = `<div class="ds-debut" id="debut"><h2>${D.titre}</h2><p>Durée : <strong>${D.duree} minutes</strong> · noté sur ${total}.</p><p>${D.consigne}</p>
-      <p>Prends une feuille et ton crayon. Quand tu cliques sur « Commencer », le chrono démarre. À la fin, tu corriges ta copie avec le barème.</p>
+  Z.innerHTML = `<div class="ds-debut" id="debut"><h2>${D.titre}</h2><p>Durée : <strong>${D.duree} minutes</strong>.</p><div class="rappel">${D.consigne}</div>
+      <p>Prends une feuille et ton crayon. Quand tu cliques sur « Commencer », le chrono démarre. À la fin, tu corriges ta copie : pour chaque question, coche les points que tu as gagnés.</p>
       <button class="btn verif large" id="go">Commencer le DS</button></div>
-    <div id="sujet" hidden><div class="ds-chrono" id="chrono"></div>
-      ${D.exos.map((e, i) => `<section class="ds-exo"><h3 class="exo-titre">${e.titre} <span class="ceinture">${e.pts} points</span></h3><div class="enonce">${e.enonce}</div>
-        <div class="ds-corr" hidden>${e.corr.map((c, k) => `<div class="ds-item">${c.h}<label class="ds-pt"><input type="checkbox" data-pts="${c.pts}"> J’ai juste : ${c.pts} pt${c.pts > 1 ? 's' : ''}</label></div>`).join('')}</div></section>`).join('')}
+    <div id="sujet" hidden><div class="ds-chrono" id="chrono"></div><div class="rappel">${D.consigne}</div>
+      ${D.exos.map((e, i) => `<section class="ds-exo"><h3 class="exo-titre">${e.titre} <span class="ceinture">${e.corr.length * 3} points</span></h3><div class="enonce">${e.enonce}</div>
+        <div class="ds-corr" hidden><h3>Correction</h3>${e.corr.map(c => `<div class="ds-q"><p class="ds-lettre"><span class="q">${c.q}.</span></p>
+          <div class="ds-ligne"><span class="ds-tag">Calcul</span><div class="lignes">${c.calc}</div><label class="ds-pt"><input type="checkbox" data-pts="1"> 1 pt</label></div>
+          <div class="ds-ligne"><span class="ds-tag">Réponse</span><div class="lignes">${c.rep}</div><label class="ds-pt"><input type="checkbox" data-pts="1"> 1 pt</label></div>
+          <div class="ds-ligne"><span class="ds-tag">Phrase réponse</span><div class="lignes"><p class="cc">${c.phrase}</p></div><label class="ds-pt"><input type="checkbox" data-pts="1"> 1 pt</label></div></div>`).join('')}</div></section>`).join('')}
       <button class="btn verif large" id="rendre">Je rends ma copie</button><div id="note"></div></div>`;
   let fin = 0, tm = null;
   const tic = () => {
@@ -65,7 +69,7 @@ if (t === 'qcm') {
     if (r === 0) { clearInterval(tm); $('chrono').textContent = '⏱ Temps écoulé : pose ton crayon !'; }
   };
   $('go').onclick = () => { $('debut').hidden = true; $('sujet').hidden = false; fin = Date.now() + D.duree * 60000; tic(); tm = setInterval(tic, 1000); window.scrollTo({ top: 0 }); };
-  const calc = () => { let n = 0; Z.querySelectorAll('.ds-pt input:checked').forEach(c => n += +c.dataset.pts); $('note').innerHTML = `<div class="verdict ${n >= total / 2 ? 'ok' : 'non'}">Ta note : ${n} / ${total}</div>`; };
+  const calc = () => { let n = 0; Z.querySelectorAll('.ds-pt input:checked').forEach(c => n += +c.dataset.pts); $('note').innerHTML = `<div class="verdict ${n >= total / 2 ? 'ok' : 'non'}">Tes points : ${n} / ${total}, soit ${(Math.round(n / total * 40) / 2).toString().replace('.', ',')} / 20</div>`; };
   $('rendre').onclick = () => {
     clearInterval(tm); $('chrono').textContent = 'Copie rendue : corrige-toi avec le barème.';
     Z.querySelectorAll('.ds-corr').forEach(c => c.hidden = false); $('rendre').hidden = true; calc();

@@ -37,7 +37,7 @@
     <div class="verdict" id="verdict"></div>
     <div class="correction">
       <h3>Correction complète</h3>
-      <p style="margin:0 0 4px"><span class="q">a.</span> Divisions successives : <span id="steps"></span></p>
+      <p style="margin:0 0 4px"><span class="q">a.</span> Divisions successives :</p><div id="steps"></div>
       <p class="cc" style="margin:0 0 10px">CC : <span class="n"></span> = <span class="deco"></span></p>
       <p style="margin:0 0 6px"><span class="q">b.</span> Chaque case = ligne × colonne.</p>
       <div class="grille" id="solution"></div>
@@ -46,6 +46,7 @@
     <button class="btn essai" id="bEssai"></button>
   </div>
 </div>
+<script src="assets/lecons.js"></script>
 <script src="assets/clavier.js" defer></script>
 <script>
 const V = [
@@ -106,7 +107,7 @@ $('bVerif').onclick = () => {
   const nb = [okA, okB, okC].filter(Boolean).length;
   $('verdict').className = 'verdict ' + (nb === 3 ? 'ok' : 'non');
   $('verdict').textContent = nb === 3 ? 'Bravo, tout est juste !' : nb + ' question(s) juste(s) sur 3 : compare avec la correction.';
-  $('steps').textContent = v.steps; $('liste').textContent = divs.join(' ; ');
+  $('steps').innerHTML = divsucc(v.n); $('liste').textContent = divs.join(' ; ');
   const fin = i >= V.length - 1;
   $('bEssai').textContent = fin ? 'Plus de nouvel essai pour cet exercice' : 'Nouvel essai (encore ' + (V.length - 1 - i) + ')';
   $('bEssai').disabled = fin;

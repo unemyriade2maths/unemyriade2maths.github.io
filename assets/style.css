@@ -166,7 +166,8 @@ input[type=text]:focus { outline: 3px solid var(--orange); border-color: var(--v
 .pl.moins { color: #C76A0E; }
 .pl.moins span:not(:empty) { border-bottom: 3px solid #C76A0E; }
 .pl.neuf { animation: entree .45s ease both; }
-.pl.reste span:not(:empty) { color: #FFF; background: #D9534F; border-radius: 8px; }
+.pl.reste span:not(:empty) { color: #D9534F; }
+.pl.reste { background: #FDECEC; border-radius: 8px; }
 .pl span.tige::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 3px dashed var(--orange); }
 .pl span.depart { color: var(--orange-texte); }
 .pl span.abaisse { color: var(--orange-texte); }
@@ -261,10 +262,7 @@ kbd { display: inline-block; min-width: 34px; padding: 6px 8px; margin: 2px; bor
 h3.exo-titre { font-size: 22px; }
 .methode { background: #FFF; border: 2px solid var(--vert); border-radius: 18px; padding: 14px 16px; }
 .meth { margin: 0 0 10px; padding-left: 22px; } .meth li { margin: 6px 0; }
-.guide-zone { display: grid; gap: 18px; margin-top: 18px; }
-@media (min-width: 620px) { .guide-zone { grid-template-columns: auto 1fr; align-items: start; } .guide-pot { position: sticky; top: 70px; } }
-.guide-pot { background: var(--vert-clair); border-radius: 16px; padding: 10px 14px; position: sticky; top: 58px; z-index: 3; }
-.guide-pas { display: flex; flex-direction: column; gap: 18px; }
+.guide-pot { background: var(--vert-clair); border-radius: 16px; padding: 10px 14px; }
 .g-etape { animation: entree .35s ease both; }
 .g-num { display: inline-flex; width: 26px; height: 26px; border-radius: 50%; background: var(--orange); color: var(--encre); font-size: 13px; align-items: center; justify-content: center; margin-right: 4px; }
 .g-ligne { display: flex; gap: 10px; align-items: center; }
@@ -318,3 +316,33 @@ h3.exo-titre { font-size: 22px; }
 .tc-sol { margin: 6px 0 0; font-weight: 700; color: var(--vert); }
 .tc-q.faux .tc-sol { color: #A12222; }
 .archive { margin-top: 22px; }
+
+/* divisions successives en colonne, fractions */
+.divsucc { display: inline-grid; grid-template-columns: auto auto; margin: 6px 0 10px; font-weight: 800; font-size: 19px; }
+.divsucc span { padding: 3px 12px; text-align: right; }
+.divsucc span:nth-child(odd) { border-right: 3px solid var(--encre); }
+.divsucc span:nth-child(even) { text-align: left; color: var(--orange-texte); }
+.frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 3px; }
+.frac span:first-child { border-bottom: 2px solid currentColor; padding: 0 4px; }
+.frac span:last-child { padding: 0 4px; }
+.lignes p { margin: 0 0 8px; }
+.rappel { background: #FFF1DF; border-left: 5px solid var(--orange); border-radius: 10px; padding: 10px 12px; margin: 12px 0; font-size: 15px; }
+.ds-corr h3 { margin: 0 0 4px; color: var(--vert); }
+.ds-q { padding: 12px 0; } .ds-q + .ds-q { border-top: 2px solid #CFE3D5; }
+.ds-lettre { margin: 0 0 6px; font-size: 18px; }
+.ds-ligne { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: start; background: #FFF; border-radius: 12px; padding: 10px 12px; margin-top: 8px; }
+.ds-tag { grid-column: 1 / -1; font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--gris); letter-spacing: .03em; }
+.ds-ligne .lignes p:last-child { margin-bottom: 0; }
+.ds-ligne .ds-pt { margin: 0; white-space: nowrap; }
+.sommaire button { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 999px; background: #FFF; border: 2px solid #CFE3D5; color: var(--vert); font: 800 14px Nunito, sans-serif; cursor: pointer; }
+.sommaire button[aria-selected="true"] { background: var(--vert); border-color: var(--vert); color: #FFF; }
+.rubrique .rub-titre { display: none; }
+.rubrique { margin-top: 18px; }
+.guide-pot { margin-top: 16px; display: flex; justify-content: center; }
+.guide-pot.anime .pl.neuf { animation: entree .6s ease both; }
+.guide-pot.anime .pquot { animation: entree .6s ease both; }
+.guide-actuelle { margin-top: 16px; background: #FFF6EA; border: 2px solid var(--orange); border-radius: 16px; padding: 14px; }
+.guide-faites { margin-top: 14px; }
+.g-titre { margin: 0 0 6px; font-size: 13px; font-weight: 800; color: var(--gris); text-transform: uppercase; }
+.g-fait { margin: 0 0 6px; color: var(--vert); font-weight: 700; animation: entree .35s ease both; }
+.g-fait strong { color: var(--encre); }
