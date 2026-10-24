@@ -19,7 +19,7 @@
   <div class="onglets" role="tablist" aria-label="Rubriques">
     <button role="tab" aria-selected="true" data-t="lecon">Leçon</button>
     <button role="tab" aria-selected="false" data-t="videos">Vidéos</button>
-    <button role="tab" aria-selected="false" data-t="exos">Exercices</button>
+    <button role="tab" aria-selected="false" data-t="exos">Par partie</button>
   </div>
   <section id="lecon"></section>
   <section id="videos" hidden></section>
@@ -28,6 +28,7 @@
 <script src="assets/data.js"></script>
 <script src="assets/lecons.js"></script>
 <script src="assets/exercices.js"></script>
+<script src="assets/bilans.js"></script>
 <script>
 const id = new URLSearchParams(location.search).get('c') || 'arithmetique';
 const c = chapitre(id) || CHAPITRES.arithmetique;
@@ -46,11 +47,12 @@ $('videos').innerHTML = '<h3 style="color:var(--vert)">Les vidéos</h3>' + (c.vi
         <span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="fl">▶</span></button>
       <div class="lecteur" id="lect${i}" hidden></div></div>`).join('')
   : vide('Bientôt disponible.'));
-$('exos').innerHTML = '<h3 style="color:var(--vert)">Exercices</h3>' + (c.videos.length
+$('exos').innerHTML = '<h3 style="color:var(--vert)">Leçon, méthode et exercices de chaque partie</h3>' + (c.videos.length
   ? c.videos.map((v, i) => v.sansExo ? '' : ((EXOS[id] || {})[i + 1]
       ? `<a class="ligne" href="exercices.html?c=${id}&p=${i + 1}"><span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="fl">→</span></a>`
       : `<div class="ligne"><span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="badge todo">Bientôt</span></div>`)).join('')
-  : vide('Bientôt disponible.'));
+  : vide('Bientôt disponible.'))
+  + (typeof BILANS !== 'undefined' && BILANS[id] ? `<h3 style="color:var(--vert);margin-top:22px">🏁 Fin de chapitre</h3><a class="ligne" href="bilan.html?c=${id}&t=qcm"><span>QCM de fin de chapitre</span><span class="fl">→</span></a><a class="ligne" href="bilan.html?c=${id}&t=ds"><span>Simulation du DS</span><span class="fl">→</span></a>` : '');
 document.querySelectorAll('.video button').forEach(b => b.addEventListener('click', () => {
   const i = b.dataset.i, v = c.videos[i], box = $('lect' + i), open = box.hidden;
   document.querySelectorAll('.lecteur').forEach(x => { x.hidden = true; x.innerHTML = ''; });

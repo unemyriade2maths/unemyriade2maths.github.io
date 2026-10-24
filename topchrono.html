@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Top Chrono – Une myriade de maths</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="entete" style="background:var(--bleu)">
+  <div class="page" style="padding-bottom:0">
+    <a href="index.html">← Accueil</a>
+    <small>5 QUESTIONS · 6 MINUTES · SANS CALCULATRICE</small>
+    <h1>Top Chrono</h1>
+  </div>
+</header>
+<div class="page zone-exos">
+  <nav class="niv-choix" id="niveaux" aria-label="Choisis ta classe"></nav>
+  <div id="contenu"></div>
+</div>
+<script src="assets/data.js"></script>
+<script src="assets/topchrono.js"></script>
+<script src="assets/clavier.js" defer></script>
+<script>
+const P = new URLSearchParams(location.search), k = P.get('n') || '3e', num = +P.get('num') || 0;
+const $ = (x) => document.getElementById(x);
+$('niveaux').innerHTML = Object.keys(NIVEAUX).map(x => `<a href="topchrono.html?n=${x}" class="${x === k ? 'actif' : ''}">${x}</a>`).join('');
+const d0 = new Date(), auj = d0.getFullYear() + '-' + String(d0.getMonth() + 1).padStart(2, '0') + '-' + String(d0.getDate()).padStart(2, '0');
+const fr = (d) => new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+const tous = (TOPCHRONO[k] || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+const dispo = tous.filter(t => t.date <= auj), futur = tous.filter(t => t.date > auj).pop();
+const T = num ? dispo.find(t => t.num === num) : dispo[0];
+const norm = (s) => s.replace(/\s+/g, '').replace(/\./g, ',').replace(/[x*]/gi, '×').toLowerCase();
+let h = '';
+if (!T) h = `<div class="tc-carte"><h2>Pas encore de Top Chrono pour la ${k}</h2><p>${futur ? 'Le premier arrive le ' + fr(futur.date) + '.' : 'Il arrive bientôt.'}</p></div>`;
+else {
+  h = `<div class="tc-carte"><div class="tc-haut"><h2>Top Chrono n°${T.num}</h2><span>${T.theme} · ${fr(T.date)}</span></div>
+    <div id="depart"><p>Tu as 6 minutes pour répondre aux 5 questions. Prêt ?</p><button class="btn verif large" id="go">Lancer le chrono</button></div>
+    <div id="jeu" hidden><div class="ds-chrono" id="chrono"></div>
+    ${T.questions.map((q, i) => `<div class="tc-q question" data-touches="${q.rep.some(r => r.includes('/')) ? '/' : ''}"><span class="lettre">Q${'ABCDE'[i]}</span>
+      <div><p>${q.q}</p><input type="text" autocomplete="off" aria-label="Réponse Q${'ABCDE'[i]}"><p class="tc-sol" hidden></p></div></div>`).join('')}
+    <button class="btn verif large" id="valider">Valider</button><div id="score"></div></div></div>`;
+}
+if (futur && T) h += `<p class="consigne" style="margin-top:14px">Prochain Top Chrono : ${fr(futur.date)}.</p>`;
+const anciens = dispo.filter(t => t !== T);
+if (anciens.length) h += `<section class="bloc archive"><h3>Les Top Chrono précédents</h3>${anciens.map(t => `<a class="ligne" href="topchrono.html?n=${k}&num=${t.num}"><span>Top Chrono n°${t.num} · ${t.theme}</span><span class="badge ok">${fr(t.date)}</span></a>`).join('')}</section>`;
+$('contenu').innerHTML = h;
+if (T) {
+  let fin = 0, tm = null, fini = false;
+  const valider = () => {
+    if (fini) return; fini = true; clearInterval(tm); let s = 0;
+    document.querySelectorAll('.tc-q').forEach((Q, i) => {
+      const q = T.questions[i], inp = Q.querySelector('input'), ok = q.rep.some(r => norm(r) === norm(inp.value)); if (ok) s++;
+      Q.classList.add(ok ? 'juste' : 'faux'); inp.disabled = true;
+      const so = Q.querySelector('.tc-sol'); so.hidden = false; so.textContent = (ok ? '✓ ' : '✗ ') + q.sol;
+    });
+    $('valider').hidden = true; $('chrono').textContent = 'Terminé !';
+    $('score').innerHTML = `<div class="verdict ${s >= 3 ? 'ok' : 'non'}">Score : ${s} / 5</div><button class="btn essai" onclick="location.reload()">Recommencer</button>`;
+  };
+  const tic = () => {
+    const r = Math.max(0, fin - Date.now()), m = Math.floor(r / 60000), sec = Math.floor(r / 1000) % 60;
+    $('chrono').textContent = `⏱ ${m} min ${String(sec).padStart(2, '0')} s`; $('chrono').classList.toggle('presque', r < 60000);
+    if (r === 0) valider();
+  };
+  $('go').onclick = () => { $('depart').hidden = true; $('jeu').hidden = false; fin = Date.now() + 6 * 60000; tic(); tm = setInterval(tic, 1000); document.querySelector('.tc-q input').focus(); };
+  $('valider').onclick = valider;
+}
+</script>
+</body>
+</html>

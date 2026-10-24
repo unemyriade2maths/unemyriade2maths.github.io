@@ -51,6 +51,7 @@ if (prog.length) {
   });
   h += '</section>';
 }
+h += `<a class="ligne" style="margin-top:16px;border:2px solid var(--bleu)" href="topchrono.html?n=${k}"><span>⏱ Le Top Chrono de la ${n.nom}</span><span class="fl">→</span></a>`;
 h += `<section class="bloc"><h3>Les vidéos</h3><a class="ligne" href="${CHAINE}"><span>La chaîne Une myriade de maths</span><span class="fl">▶</span></a></section>`;
 document.getElementById('contenu').innerHTML = h;
 </script>

@@ -16,7 +16,9 @@
   </div>
 </header>
 <div class="page zone-exos" id="zone">
+  <nav class="sommaire" id="sommaire" aria-label="Rubriques de la partie"></nav>
   <div id="liste"></div>
+  <div id="fin"></div>
 </div>
 <script src="assets/data.js"></script>
 <script src="assets/lecons.js"></script>
@@ -27,7 +29,7 @@
 const P = new URLSearchParams(location.search), cid = P.get('c') || 'arithmetique', pid = P.get('p') || '1';
 const E = EXOS[cid][pid];
 const $ = (x) => document.getElementById(x);
-$('titre').textContent = 'Partie ' + pid + ' · ' + E.titre;
+$('titre').textContent = 'Partie ' + pid + ' · ' + E.titre; $('niv').textContent = 'ARITHMÉTIQUE · PARTIE ' + pid;
 $('retour').href = 'chapitre.html?c=' + cid;
 document.title = 'Exercices – ' + E.titre;
 const son = new Audio();
@@ -36,20 +38,30 @@ const btnSon = (t) => AUDIO[t] ? `<button class="mini-son" data-v="${encodeURICo
 const norm = (s) => s.replace(/\s+/g, '').replace(/[x*]/gi, '×').replace(/\./g, ',').toLowerCase();
 const rendu = (h) => typeof h === 'string' ? h : potence(...h.pot) + (h.apres || '');
 
-let html = '';
-E.items.forEach((it, n) => {
-  if (it.type === 'lien') {
-    html += `<section class="exo"><h2 class="exo-titre">${it.titre}</h2><a class="ligne" href="${it.page}"><span>${it.texte}</span><span class="fl">→</span></a></section>`;
-    return;
+const pasHtml = (et, pi) => {
+  let h = '';
+  for (let j = 0; j <= pi; j++) {
+    const x = et[j].h;
+    if (typeof x === 'string') h += `<div class="etape${j === pi ? ' nouvelle' : ''}">${x}</div>`;
+    else if (j === pi || typeof et[j + 1].h === 'string') h += `<div class="etape pot">${rendu(x)}</div>`;
   }
-  if (it.type === 'flash') {
-    html += `<section class="exo flash" id="ex${n}"><h2 class="exo-titre">⚡ ${it.titre}</h2><p class="consigne">${it.consigne}</p>
+  return h;
+};
+const carte = (it, n) => {
+  if (it.type === 'lecon') return `<div class="item" id="ex${n}">${it.parties.map(l => `<a class="ligne" href="lecon.html?c=${cid}&p=${l}"><span><span class="lettre">${l}</span> ${LECONS[cid][l].titre} · les diapos</span><span class="fl">▶</span></a>`).join('')}</div>`;
+  if (it.type === 'lien') return `<div class="item"><h3 class="exo-titre">${it.titre}</h3><a class="ligne" href="${it.page}"><span>${it.texte}</span><span class="fl">→</span></a></div>`;
+  if (it.type === 'methode') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}</h3><div class="methode">${it.resume}
+      <div class="pas"></div><div class="pas-barre"><button class="btn rond plein pas-suiv" aria-label="Étape suivante">▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
+      <p class="cc" hidden>${it.cc}</p></div></div>`;
+  if (it.type === 'flash') return `<div class="item flash" id="ex${n}"><p class="consigne">${it.consigne}</p>
       <div class="flash-carte"><div class="flash-num"></div><p class="flash-q"></p><div class="chrono"><span></span></div>
       <div class="vf"><button class="btn vrai">Vrai</button><button class="btn faux">Faux</button></div>
-      <div class="flash-rep" hidden></div><button class="btn essai flash-go">Commencer</button></div></section>`;
-    return;
-  }
-  html += `<section class="exo" id="ex${n}"><h2 class="exo-titre">${it.titre}${it.ceinture ? ` <span class="ceinture">Ceinture ${it.ceinture}</span>` : ''}</h2>
+      <div class="flash-rep" hidden></div><button class="btn essai flash-go">Commencer</button></div></div>`;
+  if (it.type === 'guide') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}</h3>
+      <div class="enonce">${btnSon(it.v)}${it.enonce}</div>
+      <div class="guide-zone"><div class="guide-pot"></div><div class="guide-pas"></div></div>
+      <p class="cc" hidden>${it.cc}</p></div>`;
+  return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}${it.ceinture ? ` <span class="ceinture">Ceinture ${it.ceinture}</span>` : ''}</h3>
     <div class="enonce">${btnSon(it.v)}${it.enonce}</div>
     <div class="questions">${it.champs.map((c, k) => c.choix
       ? `<div class="question" data-k="${k}"><span class="lab">${c.lab}</span><div class="choix">${c.choix.map(o => `<button class="opt" data-o="${o}">${o}</button>`).join('')}</div></div>`
@@ -61,9 +73,16 @@ E.items.forEach((it, n) => {
     <div class="verdict" hidden></div>
     <div class="correction" hidden><h3>Correction</h3><div class="pas"></div>
       <div class="pas-barre"><button class="btn rond plein pas-suiv" aria-label="Étape suivante">▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
-      <p class="cc" hidden>${it.cc}</p></div>
-  </section>`;
+      <p class="cc" hidden>${it.cc}</p></div></div>`;
+};
+let html = '', som = '';
+RUBRIQUES.forEach(([r, nom, ico]) => {
+  const its = E.items.map((it, n) => [it, n]).filter(([it]) => it.rub === r);
+  if (!its.length) return;
+  som += `<a href="#r-${r}"><span aria-hidden="true">${ico}</span> ${nom}</a>`;
+  html += `<section class="rubrique" id="r-${r}"><h2 class="rub-titre"><span class="rub-ico" aria-hidden="true">${ico}</span>${nom}</h2>${its.map(([it, n]) => carte(it, n)).join('')}</section>`;
 });
+$('sommaire').innerHTML = som;
 $('liste').innerHTML = html;
 
 document.querySelectorAll('.mini-son').forEach(b => b.onclick = () => jouer(decodeURIComponent(b.dataset.v)));
@@ -117,13 +136,8 @@ E.items.forEach((it, n) => {
   if (ab) ab.onclick = () => { const a = S.querySelector('.aide'); a.hidden = !a.hidden; };
   const C = S.querySelector('.correction'), pas = S.querySelector('.pas'), ps = S.querySelector('.pas-suiv');
   const montrer = () => {
-    const et = it.correction; let h = '';
-    for (let j = 0; j <= pi; j++) {
-      const x = et[j].h;
-      if (typeof x === 'string') h += `<div class="etape${j === pi ? ' nouvelle' : ''}">${x}</div>`;
-      else if (j === pi || typeof et[j + 1].h === 'string') h += `<div class="etape pot">${rendu(x)}</div>`;
-    }
-    pas.innerHTML = h; ps.disabled = pi >= et.length - 1;
+    const et = it.correction;
+    pas.innerHTML = pasHtml(et, pi); ps.disabled = pi >= et.length - 1;
     S.querySelector('.cc').hidden = pi < et.length - 1;
   };
   ps.onclick = () => { if (pi < it.correction.length - 1) { pi++; montrer(); jouer(it.correction[pi].v); } };
@@ -144,6 +158,51 @@ E.items.forEach((it, n) => {
   };
 });
 
+// --- méthodes (pas à pas)
+E.items.forEach((it, n) => {
+  if (it.type !== 'methode') return;
+  const S = $('ex' + n), pas = S.querySelector('.pas'), ps = S.querySelector('.pas-suiv'); let pi = 0;
+  const montrer = () => { pas.innerHTML = pasHtml(it.etapes, pi); ps.disabled = pi >= it.etapes.length - 1; S.querySelector('.cc').hidden = pi < it.etapes.length - 1; };
+  ps.onclick = () => { if (pi < it.etapes.length - 1) { pi++; montrer(); jouer(it.etapes[pi].v); } };
+  S.querySelector('.pas-son').onclick = () => jouer(it.etapes[pi].v);
+  montrer();
+});
+// --- exercices guidés : une étape à la fois, la potence avance quand c'est juste
+E.items.forEach((it, n) => {
+  if (it.type !== 'guide') return;
+  const S = $('ex' + n), zp = S.querySelector('.guide-pot'), zq = S.querySelector('.guide-pas');
+  let k = 0;
+  zp.innerHTML = potence(it.pot[0], it.pot[1], 0);
+  const etape = (i) => {
+    const e = it.etapes[i], id = `g${n}_${i}`;
+    zq.insertAdjacentHTML('beforeend', `<div class="g-etape question" data-touches="${(e.touches || []).join(' ')}">
+      <label class="lab" for="${id}"><span class="g-num">${i + 1}</span> ${e.q}</label>
+      <div class="g-ligne"><input type="text" id="${id}" class="${e.touches ? '' : 'court'}" autocomplete="off" ${e.touches ? '' : 'inputmode="numeric"'}><button class="btn verif g-ok">OK</button></div>
+      <p class="g-msg" hidden></p></div>`);
+    const D = zq.lastElementChild, inp = D.querySelector('input'), msg = D.querySelector('.g-msg');
+    let essais = 0;
+    const valider = () => {
+      const ok = e.rep.some(r => norm(r) === norm(inp.value));
+      if (ok) {
+        D.classList.add('juste'); D.classList.remove('faux'); inp.disabled = true; D.querySelector('.g-ok').remove();
+        msg.hidden = true;
+        if (e.k !== k) { k = e.k; zp.innerHTML = potence(it.pot[0], it.pot[1], k); }
+        if (i < it.etapes.length - 1) { etape(i + 1); zq.lastElementChild.querySelector('input').focus(); }
+        else S.querySelector('.cc').hidden = false;
+      } else {
+        essais++; D.classList.add('faux'); msg.hidden = false;
+        msg.textContent = essais === 1 ? 'Pas tout à fait, réessaie.' : 'Coup de pouce : ' + e.aide;
+      }
+    };
+    D.querySelector('.g-ok').onclick = valider;
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') valider(); });
+  };
+  etape(0);
+});
+// --- fin de chapitre
+$('fin').innerHTML = `<section class="rubrique fin-chap"><h2 class="rub-titre"><span class="rub-ico" aria-hidden="true">🏁</span>Fin de chapitre</h2>
+  <a class="ligne" href="bilan.html?c=${cid}&t=qcm"><span>QCM de fin de chapitre</span><span class="fl">→</span></a>
+  <a class="ligne" href="bilan.html?c=${cid}&t=ds"><span>Simulation du DS</span><span class="fl">→</span></a></section>`;
 </script>
 </body>
 </html>

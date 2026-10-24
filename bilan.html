@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fin de chapitre – Une myriade de maths</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="entete">
+  <div class="page" style="padding-bottom:0">
+    <a id="retour" href="chapitre.html">← Le chapitre</a>
+    <small id="niv">FIN DE CHAPITRE</small>
+    <h1 id="titre"></h1>
+  </div>
+</header>
+<div class="page" id="zone"></div>
+<script src="assets/data.js"></script>
+<script src="assets/bilans.js"></script>
+<script>
+const P = new URLSearchParams(location.search), cid = P.get('c') || 'arithmetique', t = P.get('t') || 'qcm';
+const B = BILANS[cid], ch = chapitre(cid), $ = (x) => document.getElementById(x), Z = $('zone');
+$('retour').href = 'chapitre.html?c=' + cid; $('niv').textContent = 'FIN DE CHAPITRE · ' + ch.titre.toUpperCase();
+
+if (t === 'qcm') {
+  $('titre').textContent = 'QCM de fin de chapitre'; document.title = 'QCM – ' + ch.titre;
+  Z.innerHTML = `<p class="consigne" style="margin-top:18px">Pour chaque question, choisis la bonne réponse, puis valide à la fin.</p>
+    ${B.qcm.map((x, i) => `<div class="qcm" data-i="${i}"><p class="qcm-q"><span class="g-num">${i + 1}</span> ${x.q}</p>
+      <div class="choix">${x.o.map((o, j) => `<button class="opt" data-j="${j}">${o}</button>`).join('')}</div><div class="qcm-corr" hidden></div></div>`).join('')}
+    <button class="btn verif large" id="valider">Valider mes réponses</button><div id="score"></div>`;
+  Z.querySelectorAll('.qcm').forEach(q => q.querySelectorAll('.opt').forEach(o => o.onclick = () => {
+    if (q.classList.contains('fini')) return;
+    q.querySelectorAll('.opt').forEach(x => x.classList.remove('choisi')); o.classList.add('choisi');
+  }));
+  $('valider').onclick = () => {
+    let s = 0;
+    Z.querySelectorAll('.qcm').forEach(q => {
+      const x = B.qcm[q.dataset.i], c = q.querySelector('.opt.choisi'), ok = c && +c.dataset.j === x.r; if (ok) s++;
+      q.classList.add('fini', ok ? 'juste' : 'faux');
+      q.querySelectorAll('.opt')[x.r].classList.add('bonne');
+      const C = q.querySelector('.qcm-corr'); C.hidden = false;
+      C.innerHTML = `<strong>${ok ? 'Juste !' : 'La bonne réponse : ' + x.o[x.r]}</strong> ${x.e}<p class="cc">${x.cc}</p>`;
+    });
+    $('valider').hidden = true;
+    $('score').innerHTML = `<div class="verdict ${s >= 7 ? 'ok' : 'non'}">Ton score : ${s} / ${B.qcm.length}. ${s >= 7 ? 'Bravo, tu es prêt pour le DS !' : 'Revois les parties où tu t’es trompé, puis recommence.'}</div>
+      <button class="btn essai" onclick="location.reload()">Recommencer le QCM</button>`;
+    $('score').scrollIntoView({ behavior: 'smooth' });
+  };
+} else {
+  const D = B.ds, total = D.exos.reduce((a, e) => a + e.pts, 0);
+  $('titre').textContent = 'Simulation du DS'; document.title = 'Simulation du DS – ' + ch.titre;
+  Z.innerHTML = `<div class="ds-debut" id="debut"><h2>${D.titre}</h2><p>Durée : <strong>${D.duree} minutes</strong> · noté sur ${total}.</p><p>${D.consigne}</p>
+      <p>Prends une feuille et ton crayon. Quand tu cliques sur « Commencer », le chrono démarre. À la fin, tu corriges ta copie avec le barème.</p>
+      <button class="btn verif large" id="go">Commencer le DS</button></div>
+    <div id="sujet" hidden><div class="ds-chrono" id="chrono"></div>
+      ${D.exos.map((e, i) => `<section class="ds-exo"><h3 class="exo-titre">${e.titre} <span class="ceinture">${e.pts} points</span></h3><div class="enonce">${e.enonce}</div>
+        <div class="ds-corr" hidden>${e.corr.map((c, k) => `<div class="ds-item">${c.h}<label class="ds-pt"><input type="checkbox" data-pts="${c.pts}"> J’ai juste : ${c.pts} pt${c.pts > 1 ? 's' : ''}</label></div>`).join('')}</div></section>`).join('')}
+      <button class="btn verif large" id="rendre">Je rends ma copie</button><div id="note"></div></div>`;
+  let fin = 0, tm = null;
+  const tic = () => {
+    const r = Math.max(0, fin - Date.now()), m = Math.floor(r / 60000), s = Math.floor(r / 1000) % 60;
+    $('chrono').textContent = `⏱ ${m} min ${String(s).padStart(2, '0')} s`;
+    $('chrono').classList.toggle('presque', r < 5 * 60000);
+    if (r === 0) { clearInterval(tm); $('chrono').textContent = '⏱ Temps écoulé : pose ton crayon !'; }
+  };
+  $('go').onclick = () => { $('debut').hidden = true; $('sujet').hidden = false; fin = Date.now() + D.duree * 60000; tic(); tm = setInterval(tic, 1000); window.scrollTo({ top: 0 }); };
+  const calc = () => { let n = 0; Z.querySelectorAll('.ds-pt input:checked').forEach(c => n += +c.dataset.pts); $('note').innerHTML = `<div class="verdict ${n >= total / 2 ? 'ok' : 'non'}">Ta note : ${n} / ${total}</div>`; };
+  $('rendre').onclick = () => {
+    clearInterval(tm); $('chrono').textContent = 'Copie rendue : corrige-toi avec le barème.';
+    Z.querySelectorAll('.ds-corr').forEach(c => c.hidden = false); $('rendre').hidden = true; calc();
+    Z.querySelectorAll('.ds-pt input').forEach(c => c.onchange = calc);
+    Z.querySelector('.ds-corr').scrollIntoView({ behavior: 'smooth' });
+  };
+}
+</script>
+</body>
+</html>

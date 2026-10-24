@@ -23,26 +23,8 @@
   </nav>
 
   <h2 id="flash">Top Chrono</h2>
-  <p>5 questions, 2 minutes, sans calculatrice. Prêt ? Lance le chrono !</p>
-  <div class="enonce">
-    <p><strong>Série 1 · Arithmétique (3e)</strong></p>
-    <p>1. 51 est-il un nombre premier ?</p>
-    <p>2. Quel est le reste de la division euclidienne de 47 par 5 ?</p>
-    <p>3. Décompose 36 en produit de facteurs premiers.</p>
-    <p>4. La fraction 18/24 est-elle irréductible ?</p>
-    <p style="margin:0">5. 2 340 est-il divisible par 9 ?</p>
-  </div>
-  <div class="boutons">
-    <button class="btn indice-b" id="chrono">Lancer le chrono (2:00)</button>
-    <button class="btn verif" onclick="document.getElementById('rep-flash').hidden=false">Voir les réponses</button>
-  </div>
-  <div class="correction" id="rep-flash" hidden>
-    <p style="margin:0 0 4px">1. Non : 5 + 1 = 6, donc 51 = 3 × 17.</p>
-    <p style="margin:0 0 4px">2. 47 = 5 × 9 + 2 : le reste est 2.</p>
-    <p style="margin:0 0 4px">3. 36 = 2² × 3².</p>
-    <p style="margin:0 0 4px">4. Non : 18 et 24 sont divisibles par 6 ; 18/24 = 3/4.</p>
-    <p style="margin:0">5. Oui : 2 + 3 + 4 + 0 = 9.</p>
-  </div>
+  <p>5 questions, 6 minutes, sans calculatrice. Un nouveau Top Chrono par classe, de la 6e à la terminale.</p>
+  <a class="ligne" href="topchrono.html"><span>Faire le Top Chrono de ma classe</span><span class="fl">→</span></a>
 
   <h2 id="enigmes">Énigmes</h2>
   <h3 style="margin:8px 0">L’énigme de la semaine</h3>
@@ -80,14 +62,6 @@
   <h2 id="escape">Escape games</h2>
   <p>Des escape games de maths à vivre en classe : énigmes, cadenas, indices cachés…</p>
   <p class="bientot">Bientôt disponible. Enseignants : voir <a href="creation-contenu.html">Création de contenu</a>.</p>
-<script>
-let t = null;
-document.getElementById('chrono').onclick = function () {
-  if (t) return; let s = 120; const b = this;
-  t = setInterval(() => { s--; b.textContent = 'Temps restant ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-    if (s <= 0) { clearInterval(t); t = null; b.textContent = 'Temps écoulé ! Relancer'; } }, 1000);
-};
-</script>
 </div>
 </body>
 </html>

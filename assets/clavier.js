@@ -17,8 +17,11 @@
     K.innerHTML = '<p>Touches</p>' + t.map(x => `<button type="button" data-t="${x}">${x === ';' ? ' ; ' : x}</button>`).join('')
       + '<button type="button" class="eff" data-t="⌫" aria-label="Effacer">⌫</button>';
     K.hidden = false;
-    const z = zone.getBoundingClientRect(), r = Q.getBoundingClientRect();
-    K.style.setProperty('--y', Math.max(0, r.top - z.top) + 'px');
+    if (window.matchMedia('(min-width: 900px)').matches) {
+      if (K.parentNode !== zone) zone.appendChild(K);
+      const z = zone.getBoundingClientRect(), r = Q.getBoundingClientRect();
+      K.style.setProperty('--y', Math.max(0, r.top - z.top) + 'px');
+    } else if (Q.nextSibling !== K) Q.after(K);   // sur téléphone : juste sous la question
     K.querySelectorAll('button').forEach(b => {
       b.addEventListener('pointerdown', e => e.preventDefault());
       b.onclick = () => {
