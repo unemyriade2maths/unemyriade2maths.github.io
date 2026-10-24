@@ -96,3 +96,13 @@ input[type=text]:focus { outline: 3px solid var(--orange); border-color: var(--v
 .etapes li { counter-increment: e; display: flex; gap: 12px; align-items: flex-start; margin: 10px 0; }
 .etapes li::before { content: counter(e); min-width: 34px; height: 34px; border-radius: 50%; background: var(--orange); color: var(--encre); font-weight: 800; display: flex; align-items: center; justify-content: center; }
 .contact { display: block; text-align: center; background: var(--vert); color: #FFF; text-decoration: none; font-weight: 800; border-radius: 14px; padding: 14px; margin-top: 18px; min-height: 48px; }
+.petits { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 16px; }
+.petit { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: var(--encre); background: var(--vert-clair); border: 2px solid #CFE3D5; border-radius: 16px; padding: 14px; min-height: 90px; }
+.petit strong { color: var(--vert); font-size: 16px; }
+.petit span { font-size: 13px; color: var(--gris); }
+.tuiles { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.tuiles span { min-width: 48px; text-align: center; padding: 8px 6px; border-radius: 10px; background: #E3F2E7; color: var(--vert); font-weight: 800; }
+.tableau { width: 100%; border-collapse: collapse; margin: 8px 0; }
+.tableau th, .tableau td { border: 1px solid #CFE3D5; padding: 8px 10px; text-align: left; }
+.tableau th { background: var(--vert-clair); color: var(--vert); }
+.bientot { color: var(--gris); font-style: italic; }
