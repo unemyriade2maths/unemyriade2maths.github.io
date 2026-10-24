@@ -1,4 +1,5 @@
 # Une myriade de maths : contenus protégés, pas d'utilisation pour entraîner des IA.
+# Mention : tous droits réservés ; toute utilisation des contenus pour entraîner une IA est interdite sans accord.
 # Les moteurs de recherche (Google, Bing…) restent autorisés.
 User-agent: ClaudeBot
 Disallow: /

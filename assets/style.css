@@ -403,3 +403,4 @@ pre.blocks { margin: 4px 0 12px; overflow-x: auto; } .scratchblocks { overflow-x
 .pas-suiv { min-height: 48px; padding: 0 22px; }
 .pas-suiv:disabled { background: #B9C7BE; opacity: 1; }
 .pas-cpt { text-align: center; font-size: 14px; font-weight: 700; color: var(--gris); margin: 10px 0 0; }
+.droits { max-width: 640px; margin: 28px auto 18px; padding: 0 18px; text-align: center; font-size: 12px; color: var(--gris); line-height: 1.4; }

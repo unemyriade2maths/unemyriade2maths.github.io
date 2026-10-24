@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="index, follow, noai, noimageai">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Exercices – Une myriade de maths</title>
 <link rel="icon" href="assets/logo.png">
@@ -328,5 +329,6 @@ $('retourSom').onclick = () => { history.replaceState(null, '', location.pathnam
 document.querySelectorAll('.carte-rub').forEach(b => b.onclick = () => { history.replaceState(null, '', '#' + b.dataset.r); ouvrir(b.dataset.r); window.scrollTo({ top: 0 }); });
 ouvrir(location.hash.slice(1) || 'menu');
 </script>
+<footer class="droits">© 2026 Une myriade de maths – tous droits réservés. Toute reproduction des contenus, et toute utilisation pour entraîner une intelligence artificielle, sont interdites sans mon accord.</footer>
 </body>
 </html>
