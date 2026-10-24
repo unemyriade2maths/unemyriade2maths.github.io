@@ -79,9 +79,9 @@ const CHAPITRES = {
       { titre: 'PGCD : les applications', id: '' },
       { titre: 'PPCM : définition et méthode', id: '' },
       { titre: 'PPCM : les applications', id: '' },
-      { titre: 'Curiosités des nombres premiers', id: '' },
+      { titre: 'Curiosités des nombres premiers', id: '', sansExo: true },
       { titre: 'Nombres parfaits et nombres amicaux', id: '' }],
-    exercices: [{ titre: 'Exercice 3 · Diviseurs avec un tableau', page: 'exercice-diviseurs.html' }],
+    exercices: [],
   },
 };
 

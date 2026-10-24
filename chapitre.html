@@ -26,6 +26,8 @@
   <section id="exos" hidden></section>
 </div>
 <script src="assets/data.js"></script>
+<script src="assets/lecons.js"></script>
+<script src="assets/exercices.js"></script>
 <script>
 const id = new URLSearchParams(location.search).get('c') || 'arithmetique';
 const c = chapitre(id) || CHAPITRES.arithmetique;
@@ -34,7 +36,9 @@ $('titre').textContent = c.titre; $('niv').textContent = 'CHAPITRE · ' + c.nive
 $('retour').href = 'niveau.html?n=' + c.niveau; document.title = c.titre + ' – Une myriade de maths';
 const vide = (t) => `<p class="sous" style="text-align:left">${t}</p>`;
 $('lecon').innerHTML = '<h3 style="color:var(--vert)">Les diapos de la leçon</h3>' + (c.lecon.length
-  ? c.lecon.map(([l, t]) => `<a class="ligne" href="#"><span><span class="lettre">${l}</span> ${t}</span></a>`).join('')
+  ? c.lecon.map(([l, t]) => (LECONS[id] || {})[l]
+      ? `<a class="ligne" href="lecon.html?c=${id}&p=${l}"><span><span class="lettre">${l}</span> ${t}</span><span class="fl">▶</span></a>`
+      : `<div class="ligne"><span><span class="lettre">${l}</span> ${t}</span><span class="badge todo">Bientôt</span></div>`).join('')
   : vide('Bientôt disponible.'));
 $('videos').innerHTML = '<h3 style="color:var(--vert)">Les vidéos</h3>' + (c.videos.length
   ? c.videos.map((v, i) => `<div class="video">
@@ -42,8 +46,10 @@ $('videos').innerHTML = '<h3 style="color:var(--vert)">Les vidéos</h3>' + (c.vi
         <span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="fl">▶</span></button>
       <div class="lecteur" id="lect${i}" hidden></div></div>`).join('')
   : vide('Bientôt disponible.'));
-$('exos').innerHTML = '<h3 style="color:var(--vert)">Exercices</h3>' + (c.exercices.length
-  ? c.exercices.map(e => `<a class="ligne" href="${e.page}"><span>${e.titre}</span><span class="fl">→</span></a>`).join('')
+$('exos').innerHTML = '<h3 style="color:var(--vert)">Exercices</h3>' + (c.videos.length
+  ? c.videos.map((v, i) => v.sansExo ? '' : ((EXOS[id] || {})[i + 1]
+      ? `<a class="ligne" href="exercices.html?c=${id}&p=${i + 1}"><span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="fl">→</span></a>`
+      : `<div class="ligne"><span><small style="color:var(--orange-fonce)">Partie ${i + 1}</small><br>${v.titre}</span><span class="badge todo">Bientôt</span></div>`)).join('')
   : vide('Bientôt disponible.'));
 document.querySelectorAll('.video button').forEach(b => b.addEventListener('click', () => {
   const i = b.dataset.i, v = c.videos[i], box = $('lect' + i), open = box.hidden;

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercices – Une myriade de maths</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="entete">
+  <div class="page" style="padding-bottom:0">
+    <a id="retour" href="chapitre.html">← Le chapitre</a>
+    <small id="niv">EXERCICES</small>
+    <h1 id="titre"></h1>
+  </div>
+</header>
+<div class="page zone-exos" id="zone">
+  <div id="liste"></div>
+</div>
+<script src="assets/data.js"></script>
+<script src="assets/lecons.js"></script>
+<script src="assets/exercices.js"></script>
+<script src="assets/audio.js"></script>
+<script src="assets/clavier.js" defer></script>
+<script>
+const P = new URLSearchParams(location.search), cid = P.get('c') || 'arithmetique', pid = P.get('p') || '1';
+const E = EXOS[cid][pid];
+const $ = (x) => document.getElementById(x);
+$('titre').textContent = 'Partie ' + pid + ' · ' + E.titre;
+$('retour').href = 'chapitre.html?c=' + cid;
+document.title = 'Exercices – ' + E.titre;
+const son = new Audio();
+const jouer = (t) => { const f = AUDIO[t]; if (!f) return; son.pause(); son.src = 'audio/' + f; son.play().catch(() => {}); };
+const btnSon = (t) => AUDIO[t] ? `<button class="mini-son" data-v="${encodeURIComponent(t)}" aria-label="Écouter">🔊</button>` : '';
+const norm = (s) => s.replace(/\s+/g, '').replace(/[x*]/gi, '×').replace(/\./g, ',').toLowerCase();
+const rendu = (h) => typeof h === 'string' ? h : potence(...h.pot) + (h.apres || '');
+
+let html = '';
+E.items.forEach((it, n) => {
+  if (it.type === 'lien') {
+    html += `<section class="exo"><h2 class="exo-titre">${it.titre}</h2><a class="ligne" href="${it.page}"><span>${it.texte}</span><span class="fl">→</span></a></section>`;
+    return;
+  }
+  if (it.type === 'flash') {
+    html += `<section class="exo flash" id="ex${n}"><h2 class="exo-titre">⚡ ${it.titre}</h2><p class="consigne">${it.consigne}</p>
+      <div class="flash-carte"><div class="flash-num"></div><p class="flash-q"></p><div class="chrono"><span></span></div>
+      <div class="vf"><button class="btn vrai">Vrai</button><button class="btn faux">Faux</button></div>
+      <div class="flash-rep" hidden></div><button class="btn essai flash-go">Commencer</button></div></section>`;
+    return;
+  }
+  html += `<section class="exo" id="ex${n}"><h2 class="exo-titre">${it.titre}${it.ceinture ? ` <span class="ceinture">Ceinture ${it.ceinture}</span>` : ''}</h2>
+    <div class="enonce">${btnSon(it.v)}${it.enonce}</div>
+    <div class="questions">${it.champs.map((c, k) => c.choix
+      ? `<div class="question" data-k="${k}"><span class="lab">${c.lab}</span><div class="choix">${c.choix.map(o => `<button class="opt" data-o="${o}">${o}</button>`).join('')}</div></div>`
+      : `<div class="question" data-k="${k}" data-touches="${(c.touches || []).join(' ')}"><label class="lab" for="c${n}_${k}">${c.lab}</label>
+         <input type="text" id="c${n}_${k}" class="${c.court ? 'court' : ''}" autocomplete="off" ${c.touches ? '' : 'inputmode="numeric"'} placeholder="${c.place || ''}"></div>`).join('')}</div>
+    <div class="indices"></div>
+    ${it.aide ? `<button class="btn aide-b">${it.aide.bouton}</button><div class="aide" hidden>${it.aide.html}</div>` : ''}
+    <div class="boutons"><button class="btn indice-b">💡 Indice (1/${it.indices.length})</button><button class="btn verif">Vérifier</button></div>
+    <div class="verdict" hidden></div>
+    <div class="correction" hidden><h3>Correction</h3><div class="pas"></div>
+      <div class="pas-barre"><button class="btn rond plein pas-suiv" aria-label="Étape suivante">▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
+      <p class="cc" hidden>${it.cc}</p></div>
+  </section>`;
+});
+$('liste').innerHTML = html;
+
+document.querySelectorAll('.mini-son').forEach(b => b.onclick = () => jouer(decodeURIComponent(b.dataset.v)));
+
+// --- questions flash
+E.items.forEach((it, n) => {
+  if (it.type !== 'flash') return;
+  const S = $('ex' + n), q = S.querySelector('.flash-q'), num = S.querySelector('.flash-num'), rep = S.querySelector('.flash-rep');
+  const barre = S.querySelector('.chrono span'), go = S.querySelector('.flash-go'), vf = S.querySelector('.vf');
+  let i = -1, t = null, score = 0;
+  vf.hidden = true; S.querySelector('.chrono').hidden = true;
+  const repondre = (r) => {
+    clearTimeout(t); vf.hidden = true; barre.style.transition = 'none';
+    const Q = it.questions[i], bon = r === Q.rep; if (bon) score++;
+    rep.hidden = false; rep.className = 'flash-rep ' + (bon ? 'ok' : 'non');
+    rep.innerHTML = `<strong>${r === null ? 'Temps écoulé !' : (bon ? 'Bravo !' : 'Pas tout à fait.')}</strong> C’est ${Q.rep ? 'vrai' : 'faux'} : ${Q.expl}`;
+    go.hidden = false; go.textContent = i < it.questions.length - 1 ? 'Question suivante' : 'Voir mon score';
+  };
+  const suivante = () => {
+    i++;
+    if (i >= it.questions.length) {
+      num.textContent = ''; q.textContent = `Ton score : ${score} / ${it.questions.length}`; rep.hidden = true; vf.hidden = true;
+      S.querySelector('.chrono').hidden = true; go.textContent = 'Recommencer'; i = -1; score = 0; return;
+    }
+    const Q = it.questions[i]; num.textContent = `Question ${i + 1} / ${it.questions.length}`; q.textContent = Q.q;
+    rep.hidden = true; vf.hidden = false; go.hidden = true; S.querySelector('.chrono').hidden = false;
+    barre.style.transition = 'none'; barre.style.width = '100%'; void barre.offsetWidth;
+    barre.style.transition = `width ${it.duree}s linear`; barre.style.width = '0%';
+    t = setTimeout(() => repondre(null), it.duree * 1000);
+    jouer(Q.v);
+  };
+  go.onclick = suivante;
+  S.querySelector('.vrai').onclick = () => repondre(true);
+  S.querySelector('.faux').onclick = () => repondre(false);
+});
+
+// --- exercices
+E.items.forEach((it, n) => {
+  if (it.type !== 'exo') return;
+  const S = $('ex' + n); let ni = 0, pi = 0;
+  S.querySelectorAll('.choix').forEach(g => g.querySelectorAll('.opt').forEach(o => o.onclick = () => {
+    g.querySelectorAll('.opt').forEach(x => x.classList.remove('choisi')); o.classList.add('choisi');
+  }));
+  const bi = S.querySelector('.indice-b');
+  bi.onclick = () => {
+    if (ni >= it.indices.length) return;
+    S.querySelector('.indices').insertAdjacentHTML('beforeend', `<div class="indice"><small>Indice ${ni + 1}</small>${it.indices[ni]}</div>`);
+    ni++; bi.textContent = ni < it.indices.length ? `💡 Indice (${ni + 1}/${it.indices.length})` : '💡 Plus d’indice'; bi.disabled = ni >= it.indices.length;
+  };
+  const ab = S.querySelector('.aide-b');
+  if (ab) ab.onclick = () => { const a = S.querySelector('.aide'); a.hidden = !a.hidden; };
+  const C = S.querySelector('.correction'), pas = S.querySelector('.pas'), ps = S.querySelector('.pas-suiv');
+  const montrer = () => {
+    const et = it.correction; let h = '';
+    for (let j = 0; j <= pi; j++) {
+      const x = et[j].h;
+      if (typeof x === 'string') h += `<div class="etape${j === pi ? ' nouvelle' : ''}">${x}</div>`;
+      else if (j === pi || typeof et[j + 1].h === 'string') h += `<div class="etape pot">${rendu(x)}</div>`;
+    }
+    pas.innerHTML = h; ps.disabled = pi >= et.length - 1;
+    S.querySelector('.cc').hidden = pi < et.length - 1;
+  };
+  ps.onclick = () => { if (pi < it.correction.length - 1) { pi++; montrer(); jouer(it.correction[pi].v); } };
+  S.querySelector('.pas-son').onclick = () => jouer(it.correction[pi].v);
+  S.querySelector('.verif').onclick = () => {
+    let bons = 0;
+    it.champs.forEach((c, k) => {
+      const Q = S.querySelector(`.question[data-k="${k}"]`); let ok;
+      if (c.choix) { const o = Q.querySelector('.opt.choisi'); ok = o && o.dataset.o === c.rep; }
+      else { const v = norm(Q.querySelector('input').value); ok = c.rep.some(r => norm(r) === v); }
+      Q.classList.toggle('juste', !!ok); Q.classList.toggle('faux', !ok); if (ok) bons++;
+    });
+    const V = S.querySelector('.verdict'); V.hidden = false;
+    const tout = bons === it.champs.length;
+    V.className = 'verdict ' + (tout ? 'ok' : 'non');
+    V.textContent = tout ? 'Bravo, tout est juste ! Regarde la correction pas à pas.' : `${bons} réponse${bons > 1 ? 's' : ''} juste${bons > 1 ? 's' : ''} sur ${it.champs.length}. Regarde la correction pas à pas.`;
+    if (C.hidden) { C.hidden = false; pi = 0; montrer(); jouer(it.correction[0].v); }
+  };
+});
+
+</script>
+</body>
+</html>
