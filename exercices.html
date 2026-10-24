@@ -62,6 +62,22 @@ const carte = (it, n) => {
       ${it.parties.length > 1 ? `<div class="choix-lecon">${it.parties.map((l, j) => `<button class="opt${j ? '' : ' choisi'}" data-l="${l}"><span class="lettre">${l}</span> ${LECONS[cid][l].titre}</button>`).join('')}</div>` : ''}
       <div class="lecteur-lecon"></div>
       <details class="revoir video-partie"><summary>▶ Voir la vidéo de cette partie</summary><div class="lecteur"></div></details></div>`;
+  if (it.type === 'tableau') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre} <span class="ceinture">Ceinture ${it.ceinture}</span> <span class="essai-num"></span></h3>
+    <div class="enonce"><p><strong>On considère le nombre <span class="nn"></span>.</strong></p>
+      <p><span class="q">a)</span> Décompose <span class="nn"></span> en produit de facteurs premiers.</p>
+      <p><span class="q">b)</span> Complète le tableau des diviseurs.</p>
+      <p><span class="q">c)</span> Écris tous les diviseurs de <span class="nn"></span> dans l’ordre croissant.</p></div>
+    <div class="questions">
+      <div class="question" data-touches="× ² ³"><label class="lab" for="t${n}a"><span class="q">a)</span> <span class="nn"></span> =</label><input id="t${n}a" type="text" autocomplete="off" placeholder="ex. : 2 × 3²"></div>
+      <div class="question"><p class="lab"><span class="q">b)</span> Le tableau</p><div class="grille t-grille"></div></div>
+      <div class="question" data-touches=";"><label class="lab" for="t${n}c"><span class="q">c)</span> Les diviseurs de <span class="nn"></span> :</label><input id="t${n}c" type="text" autocomplete="off" inputmode="numeric" placeholder="ex. : 1 ; 2 ; …"></div></div>
+    <div class="indices"></div>
+    <div class="boutons"><button class="btn indice-b"></button><button class="btn verif">Vérifier</button></div>
+    <div class="verdict" hidden></div>
+    <div class="correction" hidden><h3>Correction</h3><div class="pas"></div><p class="pas-cpt"></p>
+      <div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button></div>
+      <p class="cc fin-cc" hidden></p></div>
+    <button class="btn essai t-essai" hidden></button></div>`;
   if (it.type === 'lien') return `<div class="item"><h3 class="exo-titre">${it.titre}</h3><a class="ligne" href="${it.page}"><span>${it.texte}</span><span class="fl">→</span></a></div>`;
   if (it.type === 'methode') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}</h3><div class="methode">${it.resume}
       <div class="pas"></div><p class="pas-cpt"></p><div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
@@ -176,6 +192,60 @@ E.items.forEach((it, n) => {
   };
 });
 
+// --- exercice du tableau des diviseurs, avec « Nouvel essai » (autres nombres)
+E.items.forEach((it, n) => {
+  if (it.type !== 'tableau') return;
+  const S = $('ex' + n), V = it.variantes, SUP = ['⁰', '¹', '²', '³'];
+  const g = S.querySelector('.t-grille'), C = S.querySelector('.correction'), pas = S.querySelector('.pas'), ps = S.querySelector('.pas-suiv'), bi = S.querySelector('.indice-b');
+  let i = 0, ni = 0, pi = 0, et = [];
+  const tab = (v, sol) => {
+    let h = `<div class="grille" style="grid-template-columns:repeat(${v.b[1] + 2}, minmax(0, 1fr))"><div class="h-lig">×</div>`;
+    for (let j = 0; j <= v.b[1]; j++) h += `<div class="h-col">${v.b[0]}${SUP[j]}</div>`;
+    for (let r = 0; r <= v.a[1]; r++) {
+      h += `<div class="h-lig">${v.a[0]}${SUP[r]}</div>`;
+      for (let j = 0; j <= v.b[1]; j++) { const x = v.a[0] ** r * v.b[0] ** j; h += sol ? `<div class="c-sol">${x}</div>` : `<input type="text" inputmode="numeric" data-x="${x}" aria-label="case ${v.a[0]}${SUP[r]} × ${v.b[0]}${SUP[j]}">`; }
+    }
+    return h + '</div>';
+  };
+  const indices = (v) => [`Pour décomposer ${v.n}, utilise les divisions successives : divise uniquement par des nombres premiers.`,
+    `Les lignes du tableau sont les puissances de ${v.a[0]}, les colonnes celles de ${v.b[0]}. Rappel : un nombre puissance 0 vaut 1.`,
+    'Chaque case = ligne × colonne. Pour la question c, range tous les nombres du tableau du plus petit au plus grand.'];
+  const majIndice = () => { const H = indices(V[i]); bi.textContent = ni >= H.length ? '💡 Plus d’indice' : `💡 Indice (${ni + 1}/${H.length})`; bi.disabled = ni >= H.length; };
+  const charger = () => {
+    const v = V[i]; ni = 0;
+    S.querySelectorAll('.nn').forEach(e => e.textContent = v.n);
+    S.querySelector('.essai-num').textContent = `Essai ${i + 1} / ${V.length}`;
+    S.querySelectorAll('.questions input').forEach(x => x.value = '');
+    S.querySelectorAll('.question').forEach(x => x.classList.remove('juste', 'faux'));
+    g.innerHTML = tab(v, false).replace(/^<div class="grille"[^>]*>|<\/div>$/g, ''); g.style.gridTemplateColumns = `repeat(${v.b[1] + 2}, minmax(0, 1fr))`;
+    S.querySelector('.indices').innerHTML = ''; S.querySelector('.verdict').hidden = true; C.hidden = true; S.querySelector('.t-essai').hidden = true;
+    majIndice();
+  };
+  bi.onclick = () => { const H = indices(V[i]); if (ni >= H.length) return; S.querySelector('.indices').insertAdjacentHTML('beforeend', `<div class="indice"><small>Indice ${ni + 1}</small>${H[ni]}</div>`); ni++; majIndice(); };
+  const montrer = () => { pas.innerHTML = pasHtml(et, pi); labelSuiv(ps, et, pi); S.querySelector('.fin-cc').hidden = pi < et.length - 1; };
+  ps.onclick = () => { if (pi < et.length - 1) { pi++; montrer(); } };
+  S.querySelector('.verif').onclick = () => {
+    const v = V[i], Q = S.querySelectorAll('.question');
+    const nrm = x => x.replace(/\s/g, '').replace(/[x*]/g, '×').replace(/\^2/g, '²').replace(/\^1/g, '');
+    const cases = [...g.querySelectorAll('input')];
+    const divs = cases.map(e => +e.dataset.x).sort((a, b) => a - b), donnes = (Q[2].querySelector('input').value.match(/\d+/g) || []).map(Number);
+    const ok = [nrm(Q[0].querySelector('input').value) === nrm(v.deco), cases.every(e => +e.value === +e.dataset.x), donnes.length === divs.length && donnes.every((x, k) => x === divs[k])];
+    ok.forEach((b, k) => { Q[k].classList.toggle('juste', b); Q[k].classList.toggle('faux', !b); });
+    const nb = ok.filter(Boolean).length, V2 = S.querySelector('.verdict'); V2.hidden = false;
+    V2.className = 'verdict ' + (nb === 3 ? 'ok' : 'non');
+    V2.textContent = nb === 3 ? 'Bravo, tout est juste ! Regarde la correction pas à pas.' : `${nb} réponse${nb > 1 ? 's' : ''} juste${nb > 1 ? 's' : ''} sur 3. Regarde la correction pas à pas.`;
+    et = [
+      { q: 'a', h: `<p>Divisions successives :</p>${divsucc(v.n)}<p class="cc">La décomposition de ${v.n} en produit de facteurs premiers est ${v.deco}.</p>` },
+      { q: 'b', h: `<p>Chaque case = ligne × colonne.</p>${tab(v, true)}<p class="cc">Le tableau donne tous les diviseurs de ${v.n}.</p>` },
+      { q: 'c', h: `<p class="cc">Les diviseurs de ${v.n} sont ${divs.join(' ; ')}.</p>` }];
+    S.querySelector('.fin-cc').textContent = `${v.n} a ${divs.length} diviseurs.`;
+    C.hidden = false; pi = 0; montrer();
+    const fin = i >= V.length - 1, be = S.querySelector('.t-essai'); be.hidden = false;
+    be.textContent = fin ? 'Plus de nouvel essai pour cet exercice : passe au suivant !' : `Nouvel essai, avec un autre nombre (encore ${V.length - 1 - i})`; be.disabled = fin;
+  };
+  S.querySelector('.t-essai').onclick = () => { if (i < V.length - 1) { i++; charger(); S.scrollIntoView({ behavior: 'smooth' }); } };
+  charger();
+});
 // --- méthodes (pas à pas)
 E.items.forEach((it, n) => {
   if (it.type !== 'methode') return;

@@ -67,7 +67,11 @@ const EXOS = {
             { h: '<p class="calc">196 ÷ 14 = 14</p><p>Le résultat 14 est un nombre entier,</p>', v: "Correction. Cent quatre-vingt-seize divisé par quatorze, égale quatorze : c'est un nombre entier." },
             { h: '<p>donc 196 = 14 × 14.</p>', v: 'Donc, cent quatre-vingt-seize, égale quatorze fois quatorze.' }],
           cc: 'Oui, 196 est un multiple de 14.' },
-        { type: 'lien', rub: 'exo', titre: 'Exercice 3', texte: 'Les diviseurs d’un nombre avec un tableau', page: 'exercice-diviseurs.html' },
+        { type: 'tableau', rub: 'exo', titre: 'Exercice 3', ceinture: 'jaune', variantes: [
+          { n: 45, deco: '3² × 5', a: [5, 1], b: [3, 2] },
+          { n: 98, deco: '2 × 7²', a: [2, 1], b: [7, 2] },
+          { n: 63, deco: '3² × 7', a: [7, 1], b: [3, 2] },
+          { n: 75, deco: '3 × 5²', a: [3, 1], b: [5, 2] }] },
         { type: 'exo', rub: 'calc', titre: 'Est-ce un multiple ?',
           enonce: '<p>Avec ta calculatrice : <strong>1 334</strong> est-il divisible par <strong>23</strong> ?</p>',
           v: 'Avec ta calculatrice : mille trois cent trente-quatre est-il divisible par vingt-trois ?',
