@@ -1,4 +1,4 @@
-// Top Chrono : 5 questions (QA à QE), 6 minutes, sans calculatrice. Il fonctionne comme mes Rapidos.
+// Top Chrono : 5 questions (Q1 à Q5), 6 minutes, sans calculatrice. Il fonctionne comme mes Rapidos (questions numérotées Q1 à Q5).
 // Chaque Top Chrono s'affiche à partir de sa date (AAAA-MM-JJ). Une série = plusieurs Top Chrono sur les mêmes compétences.
 // Le n°1 d'une série a une correction détaillée (det) et sa vidéo ; les suivants ont une correction rapide (sol).
 const f = (a, b) => frac(a, b);

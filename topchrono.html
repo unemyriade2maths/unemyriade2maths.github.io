@@ -35,7 +35,7 @@ const tous = (TOPCHRONO[k] || []).slice().sort((a, b) => b.date.localeCompare(a.
 const dispo = tous.filter(t => t.date <= auj), futur = tous.filter(t => t.date > auj).pop();
 const T = num ? dispo.find(t => t.num === num) : dispo[0];
 const norm = (s) => s.replace(/\s+/g, '').replace(/\./g, ',').replace(/[x*]/gi, '×').toLowerCase();
-const L = 'ABCDE';
+const L = ['1', '2', '3', '4', '5'];
 let h = '';
 if (!T) h = `<div class="tc-carte"><h2>Pas encore de Top Chrono pour la ${k}</h2><p>${futur ? 'Le premier arrive le ' + fr(futur.date) + '.' : 'Il arrive bientôt.'}</p></div>`;
 else {
@@ -65,7 +65,7 @@ if (T) {
     `<span class="${rep[i] !== null ? 'fait' : ''}${file[0] === i ? ' actuel' : ''}">Q${L[i]}</span>`).join('');
   const afficher = () => {
     const i = file[0], q = T.questions[i], dernier = file.length === 1;
-    $('une').innerHTML = `<p class="tc-num">Question Q${L[i]}</p><p class="tc-enonce">${q.q}</p>
+    $('une').innerHTML = `<p class="tc-num">Question ${i + 1} / ${T.questions.length}</p><p class="tc-enonce">${q.q}</p>
       <div class="question" data-touches="${q.rep.some(r => r.includes('/')) ? '/' : ''}"><input type="text" id="champ" autocomplete="off" aria-label="Ta réponse"></div>
       <div class="boutons"><button class="btn verif" id="valider">Valider</button><button class="btn indice-b" id="passer" ${dernier ? 'disabled' : ''}>Suivante ▶</button></div>
       ${dernier && rep.filter(x => x === null).length === 1 ? '<p class="consigne" style="margin-top:10px">C’est la dernière question.</p>' : ''}`;
