@@ -27,6 +27,7 @@ function dire(html) {
   let t = String(html);
   t = t.replace(/<span class="frac"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g, ' $1 sur $2 ');
   t = t.replace(/<div class="divsucc">[\s\S]*?<\/div>/g, ' ');
+  t = t.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/←/g, '. ').replace(/≠/g, ' n’est pas égal à ').replace(/\[([A-Z]+)\]/g, '$1').replace(/(\d) m\b/g, '$1 mètres').replace(/ℓ/g, 'la longueur');
   t = t.replace(/<\/p>|<br>|<\/li>/g, '. ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
   t = t.replace(/(\d+)\/(\d+)/g, '$1 sur $2');
   t = t.replace(/(PGCD|PPCM)\s*\((\d+)\s*;\s*(\d+)(?:\s*;\s*(\d+))?\)/g, (m0, f, a, b, c) => 'le ' + f + ' de ' + a + (c ? ', de ' + b + ' et de ' + c : ' et de ' + b));

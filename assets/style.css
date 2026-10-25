@@ -435,3 +435,15 @@ details.notion summary::-webkit-details-marker { display: none; }
 .liste-prem { font-weight: 800; font-size: 18px; line-height: 1.8; color: var(--vert); }
 .hl-t { color: var(--orange-texte); text-decoration: underline; }
 .calc s, .frac s { text-decoration-color: #D9534F; text-decoration-thickness: 2px; }
+
+/* Pythagore : figures et rédaction en deux colonnes (ce qu'on écrit · pourquoi) */
+.fig { display: block; margin: 6px auto 10px; max-width: 100%; height: auto; }
+.redac { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 2px 16px; align-items: baseline; text-align: left; margin: 0 0 8px; }
+.redac .l { font-weight: 700; color: var(--encre); font-size: 17px; }
+.redac .p { color: var(--gris); font-size: 14px; font-style: italic; }
+.calc + .redac, .redac + .redac { margin-top: 0; }
+@media (max-width: 560px) { .redac { grid-template-columns: 1fr; margin-bottom: 10px; } .redac .p { font-size: 13px; } }
+.guide-pot:has(.fig) { flex-direction: column; align-items: stretch; }
+.guide-pot .fig { width: auto; max-height: 230px; }
+.guide-pot.anime .fig, .guide-pot.anime .redac:last-child { animation: entree .6s ease both; }
+.g-fin { font-weight: 800; color: var(--vert); margin: 4px 0; }
