@@ -232,7 +232,7 @@ kbd { display: inline-block; min-width: 34px; padding: 6px 8px; margin: 2px; bor
 .clavier-flottant button { min-width: 50px; min-height: 50px; border-radius: 12px; border: 2px solid #CFE3D5; background: var(--vert-clair); font: 800 22px Nunito, sans-serif; color: var(--encre); cursor: pointer; }
 .clavier-flottant button.eff { color: #A12222; border-color: #F2C4C4; background: #FFF; }
 @media (min-width: 900px) {
-  .page.zone-exos { max-width: 820px; padding-right: 160px; }
+  .page.zone-exos { max-width: 820px; }
   .clavier-flottant { position: absolute; left: auto; right: 18px; bottom: auto; top: var(--y, 0); width: 124px; transition: top .4s cubic-bezier(.3, .8, .3, 1); }
 }
 
@@ -447,3 +447,12 @@ details.notion summary::-webkit-details-marker { display: none; }
 .guide-pot .fig { width: auto; max-height: 230px; }
 .guide-pot.anime .fig, .guide-pot.anime .redac:last-child { animation: entree .6s ease both; }
 .g-fin { font-weight: 800; color: var(--vert); margin: 4px 0; }
+/* caractères mathématiques : toujours visibles sous la réponse, un clic suffit */
+.car-maths { margin: 8px 0 0; }
+.car-maths p { margin: 0 0 4px; font-size: 12px; font-weight: 800; color: var(--vert); text-transform: uppercase; letter-spacing: .04em; }
+.car-touches { display: flex; flex-wrap: wrap; gap: 6px; }
+.car-touches button { min-width: 46px; min-height: 46px; border-radius: 12px; border: 2px solid #CFE3D5; background: var(--vert-clair); font: 800 21px Nunito, sans-serif; color: var(--encre); cursor: pointer; }
+.car-touches button:active { transform: scale(.94); background: #DCEFE2; }
+.car-touches button.eff { color: #A12222; border-color: #F2C4C4; background: #FFF; font-size: 17px; }
+.clavier-flottant { display: none !important; }
+.g-rappel { margin: 6px 0 0; padding: 6px 10px; border-radius: 10px; background: var(--bleu-clair); color: var(--bleu); font-weight: 700; font-size: 15px; }

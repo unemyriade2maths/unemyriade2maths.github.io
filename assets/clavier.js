@@ -1,39 +1,29 @@
-// Clavier de touches spéciales : il se place à côté de la question en cours
-// et n'affiche que les touches utiles (attribut data-touches de la question).
+// Caractères mathématiques : une barre de touches toujours visible sous chaque question qui en a besoin
+// (attribut data-touches). Un seul clic écrit le caractère dans la réponse de cette question.
 (function () {
-  const zone = document.querySelector('.zone-exos');
-  const K = document.createElement('div');
-  K.className = 'clavier-flottant'; K.hidden = true; K.setAttribute('aria-label', 'Touches spéciales');
-  zone.appendChild(K);
+  const zone = document.querySelector('.zone-exos') || document.body;
   const ESP = ['×', '÷', '+', '−', '=', '<', '>'];
-  let cible = null, cache = null;
-  document.addEventListener('focusin', (ev) => {
-    const inp = ev.target;
-    if (!inp.matches || !inp.matches('input[type=text]')) return;
-    const Q = inp.closest('[data-touches]');
-    const t = Q ? Q.dataset.touches.split(' ').filter(Boolean) : [];
-    clearTimeout(cache); cible = inp;
-    if (!t.length) { K.hidden = true; return; }
-    K.innerHTML = '<p>Touches</p>' + t.map(x => `<button type="button" data-t="${x}">${x === ';' ? ' ; ' : x}</button>`).join('')
-      + '<button type="button" class="eff" data-t="⌫" aria-label="Effacer">⌫</button>';
-    K.hidden = false;
-    if (window.matchMedia('(min-width: 900px)').matches) {
-      if (K.parentNode !== zone) zone.appendChild(K);
-      const z = zone.getBoundingClientRect(), r = Q.getBoundingClientRect();
-      K.style.setProperty('--y', Math.max(0, r.top - z.top) + 'px');
-    } else if (Q.nextSibling !== K) Q.after(K);   // sur téléphone : juste sous la question
-    K.querySelectorAll('button').forEach(b => {
-      b.addEventListener('pointerdown', e => e.preventDefault());
+  const poser = (Q) => {
+    const t = (Q.dataset.touches || '').split(' ').filter(Boolean);
+    if (!t.length || Q.querySelector('.car-maths')) return;
+    const inp = Q.querySelector('input[type=text]'); if (!inp) return;
+    const B = document.createElement('div');
+    B.className = 'car-maths'; B.setAttribute('aria-label', 'Caractères mathématiques');
+    B.innerHTML = '<p>Caractères mathématiques</p><div class="car-touches">' + t.map(x => `<button type="button" data-t="${x}">${x === ';' ? ' ; ' : x}</button>`).join('')
+      + '<button type="button" class="eff" data-t="⌫" aria-label="Effacer">⌫</button></div>';
+    (inp.closest('.g-ligne') || inp).after(B);
+    B.querySelectorAll('button').forEach(b => {
+      b.addEventListener('pointerdown', e => e.preventDefault());   // le curseur reste dans la réponse
       b.onclick = () => {
-        const s = cible.selectionStart ?? cible.value.length, e = cible.selectionEnd ?? s, k = b.dataset.t;
-        if (k === '⌫') { const a = s === e ? Math.max(0, s - 1) : s; cible.value = cible.value.slice(0, a) + cible.value.slice(e); cible.setSelectionRange(a, a); }
-        else {
-          const t2 = ESP.includes(k) ? ' ' + k + ' ' : (k === ';' ? ' ; ' : k);
-          cible.value = cible.value.slice(0, s) + t2 + cible.value.slice(e); cible.setSelectionRange(s + t2.length, s + t2.length);
-        }
-        cible.focus();
+        const actif = document.activeElement === inp, fin = inp.value.length;
+        const s = actif ? (inp.selectionStart ?? fin) : fin, e = actif ? (inp.selectionEnd ?? s) : s, k = b.dataset.t;
+        if (k === '⌫') { const a = s === e ? Math.max(0, s - 1) : s; inp.value = inp.value.slice(0, a) + inp.value.slice(e); inp.focus(); inp.setSelectionRange(a, a); return; }
+        const t2 = ESP.includes(k) ? ' ' + k + ' ' : (k === ';' ? ' ; ' : k);
+        inp.value = inp.value.slice(0, s) + t2 + inp.value.slice(e); inp.focus(); inp.setSelectionRange(s + t2.length, s + t2.length);
       };
     });
-  });
-  document.addEventListener('focusout', () => { cache = setTimeout(() => { K.hidden = true; }, 200); });
+  };
+  const tout = () => zone.querySelectorAll('[data-touches]').forEach(poser);
+  tout();
+  new MutationObserver(tout).observe(zone, { childList: true, subtree: true });   // questions ajoutées ensuite (exercice guidé)
 })();

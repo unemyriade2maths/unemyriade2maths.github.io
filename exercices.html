@@ -42,6 +42,30 @@ const son = new Audio();
 const jouer = (t) => { const f = AUDIO[t]; if (!f) return; son.pause(); son.src = 'audio/' + f; son.play().catch(() => {}); };
 const btnSon = (t) => AUDIO[t] ? `<button class="mini-son" data-v="${encodeURIComponent(t)}" aria-label="Écouter">🔊</button>` : '';
 const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').replace(/[*]/g, '×').replace(/(\d)x(\d)/gi, '$1×$2').replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/\./g, ',').toLowerCase();
+// une égalité de Pythagore : PN = NP, les deux carrés de droite dans n'importe quel ordre, 2 ou ² ou ^2.
+// Mais on commence par l'hypoténuse (membre de gauche imposé), et un sommet s'écrit en majuscule.
+const canon = (x) => {
+  let t = norm(x).replace(/[\[\]]/g, '');
+  if (/^[a-z]{2}$/.test(t)) return t.split('').sort().join('');
+  if (t.includes('=') && /^[a-z0-9²,+=−√-]+$/.test(t)) {
+    t = t.replace(/([a-z]{2})2(?=[+=−-]|$)/g, '$1²');
+    return t.split('=').map(m => m.split('+').map(u => u.replace(/^([a-z])([a-z])²$/, (q, a, b) => [a, b].sort().join('') + '²')).sort().join('+')).join('=');
+  }
+  return t;
+};
+// 'ok', 'faux', ou { rappel } : un rappel de convention ne compte pas comme une erreur
+const juger = (reps, val) => {
+  const v = String(val || '').trim(), bon = (x) => reps.some(r => canon(r) === canon(x));
+  const inverse = v.includes('=') ? v.split('=').reverse().join('=') : null;
+  const juste = bon(v), retourne = !juste && inverse && bon(inverse);
+  if ((juste || retourne) && reps.some(r => /[A-Z]/.test(r) && /^[\[\]A-Z²=+−\s]+$/.test(r))) {   // seulement pour des noms de points
+    const m = v.replace(/\bc?m\b/g, '').match(/[a-z]/);
+    if (m) return { rappel: `Attention à la convention : un point se nomme avec une lettre majuscule. Écris « ${m[0].toUpperCase()} » et non « ${m[0]} ».` };
+  }
+  if (juste) return 'ok';
+  if (retourne) return { rappel: `On commence toujours par l’hypoténuse : écris d’abord « ${reps[0].split('=')[0]} = … ».` };
+  return 'faux';
+};
 const rendu = (h) => typeof h === 'string' ? h : potence(...h.pot) + (h.apres || '');
 
 const pasHtml = (et, pi) => {
@@ -182,13 +206,17 @@ E.items.forEach((it, n) => {
   ps.onclick = () => { if (pi < it.correction.length - 1) { pi++; montrer(); jouer(voixDe(it.correction[pi])); } };
   S.querySelector('.pas-son').onclick = () => jouer(voixDe(it.correction[pi]));
   S.querySelector('.verif').onclick = () => {
-    let bons = 0;
-    it.champs.forEach((c, k) => {
-      const Q = S.querySelector(`.question[data-k="${k}"]`); let ok;
-      if (c.choix) { const o = Q.querySelector('.opt.choisi'); ok = o && o.dataset.o === c.rep; }
-      else { const v = norm(Q.querySelector('input').value); ok = c.rep.some(r => norm(r) === v); }
-      Q.classList.toggle('juste', !!ok); Q.classList.toggle('faux', !ok); if (ok) bons++;
+    let bons = 0, rappels = 0;
+    S.querySelectorAll('.g-rappel').forEach(x => x.remove());
+    const res = it.champs.map((c, k) => {
+      const Q = S.querySelector(`.question[data-k="${k}"]`);
+      if (c.choix) { const o = Q.querySelector('.opt.choisi'); return o && o.dataset.o === c.rep ? 'ok' : 'faux'; }
+      return juger(c.rep, Q.querySelector('input').value);
     });
+    // un rappel de convention : on le montre sous la réponse, et on laisse l'élève corriger avant de vérifier
+    res.forEach((r, k) => { if (r.rappel) { rappels++; S.querySelector(`.question[data-k="${k}"]`).insertAdjacentHTML('beforeend', `<p class="g-rappel">${r.rappel}</p>`); } });
+    if (rappels) return;
+    res.forEach((r, k) => { const Q = S.querySelector(`.question[data-k="${k}"]`), ok = r === 'ok'; Q.classList.toggle('juste', ok); Q.classList.toggle('faux', !ok); if (ok) bons++; });
     const V = S.querySelector('.verdict'); V.hidden = false;
     const tout = bons === it.champs.length;
     V.className = 'verdict ' + (tout ? 'ok' : 'non');
@@ -269,25 +297,35 @@ E.items.forEach((it, n) => {
   zp.innerHTML = visuel(0);
   const etape = (i) => {
     const e = it.etapes[i], id = `g${n}_${i}`;
+    // une étape est soit une réponse à taper, soit un choix (boutons)
+    const champ = e.choix
+      ? `<div class="choix g-choix">${e.choix.map(o => `<button class="opt" data-o="${o}">${o}</button>`).join('')}</div>`
+      : `<div class="g-ligne"><input type="text" id="${id}" class="${e.touches || e.texte ? '' : 'court'}" autocomplete="off" ${e.touches || e.texte ? '' : 'inputmode="numeric"'} placeholder="${e.place || ''}"><button class="btn verif g-ok">OK</button></div>`;
     za.innerHTML = `<div class="g-etape question" data-touches="${(e.touches || []).join(' ')}">
-      <label class="lab" for="${id}"><span class="g-num">${i + 1}</span> ${e.q}</label>
-      <div class="g-ligne"><input type="text" id="${id}" class="${e.touches || e.texte ? '' : 'court'}" autocomplete="off" ${e.touches || e.texte ? '' : 'inputmode="numeric"'} placeholder="${e.place || ''}"><button class="btn verif g-ok">OK</button></div>
+      <label class="lab" ${e.choix ? '' : `for="${id}"`}><span class="g-num">${i + 1}</span> ${e.q}</label>
+      ${champ}
       <p class="g-msg" hidden></p></div>`;
     const inp = za.querySelector('input'), msg = za.querySelector('.g-msg'); let essais = 0;
-    const valider = () => {
-      if (!e.rep.some(r => norm(r) === norm(inp.value))) {
+    const valider = (val) => {
+      const j = juger(e.rep, val);
+      if (j.rappel) { msg.hidden = false; msg.className = 'g-msg g-rappel'; msg.textContent = j.rappel; return; }
+      msg.className = 'g-msg';
+      if (j !== 'ok') {
         essais++; za.firstElementChild.classList.add('faux'); msg.hidden = false;
         msg.textContent = essais === 1 ? 'Pas tout à fait, réessaie.' : 'Coup de pouce : ' + e.aide; return;
       }
       zp.innerHTML = visuel(e.k);
       zp.classList.remove('anime'); void zp.offsetWidth; zp.classList.add('anime');
-      zf.insertAdjacentHTML('beforeend', `<p class="g-fait"><span class="g-num">${i + 1}</span> ${e.q} <strong>${inp.value.trim()}</strong> ✓</p>`);
+      zf.insertAdjacentHTML('beforeend', `<p class="g-fait"><span class="g-num">${i + 1}</span> ${e.q} <strong>${val.trim()}</strong> ✓</p>`);
       zf.hidden = false;
-      if (i < it.etapes.length - 1) { etape(i + 1); za.querySelector('input').focus({ preventScroll: true }); }
+      if (i < it.etapes.length - 1) { etape(i + 1); const x = za.querySelector('input'); if (x) x.focus({ preventScroll: true }); }
       else { za.innerHTML = it.fin; S.querySelector('.cc').hidden = false; }
     };
-    za.querySelector('.g-ok').onclick = valider;
-    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') valider(); });
+    if (e.choix) za.querySelectorAll('.g-choix .opt').forEach(b => b.onclick = () => valider(b.dataset.o));
+    else {
+      za.querySelector('.g-ok').onclick = () => valider(inp.value);
+      inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') valider(inp.value); });
+    }
   };
   etape(0);
 });
