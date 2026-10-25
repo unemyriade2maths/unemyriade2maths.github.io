@@ -21,6 +21,7 @@ function lecteurDiapos(box, L, jouer, arreter) {
     let html = '';
     for (let j = 0; j <= ei; j++) {
       const h = D.etapes[j].h;
+      if (D.etapes[j].r && j < ei && D.etapes.slice(j + 1, ei + 1).some(e => e.r)) continue;
       if (typeof h === 'string') html += `<div class="etape${j === ei ? ' nouvelle' : ''}">${h}</div>`;
       else if (j === ei || typeof D.etapes[j + 1].h === 'string') html += `<div class="etape pot">${rendu(h)}</div>`;
     }
@@ -31,7 +32,7 @@ function lecteurDiapos(box, L, jouer, arreter) {
     const r = D.etapes.length - 1 - ei;
     q('.d-cpt').textContent = r ? `Étape ${ei + 1} / ${D.etapes.length} de cette diapo · encore ${r} clic${r > 1 ? 's' : ''}` : (di < L.diapos.length - 1 ? `Diapo complète ✓ · clique pour la diapo suivante` : 'Fin de la leçon ✓');
   };
-  const ecouter = () => jouer(L.diapos[di].etapes[ei].v);
+  const ecouter = () => jouer(voixDe(L.diapos[di].etapes[ei]));
   const avancer = () => {
     const D = L.diapos[di];
     if (ei < D.etapes.length - 1) ei++; else if (di < L.diapos.length - 1) { di++; ei = 0; } else return;

@@ -428,3 +428,10 @@ details.notion summary::-webkit-details-marker { display: none; }
 .seance li::before { content: counter(s); width: 22px; height: 22px; border-radius: 50%; background: var(--orange); color: var(--encre); font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
 .apercu { display: flex; flex-direction: column; gap: 4px; margin: 0 0 6px; }
 .apercu span { font-weight: 600; } .apercu b { display: inline-block; width: 22px; color: var(--orange-fonce); }
+.frise { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin: 6px 0; }
+.frise span { width: 22px; height: 22px; border-radius: 4px; }
+.frise span.hl { outline: 3px solid var(--encre); outline-offset: 2px; }
+.frise .pts { width: auto; height: auto; font-weight: 800; color: var(--gris); }
+.liste-prem { font-weight: 800; font-size: 18px; line-height: 1.8; color: var(--vert); }
+.hl-t { color: var(--orange-texte); text-decoration: underline; }
+.calc s, .frac s { text-decoration-color: #D9534F; text-decoration-thickness: 2px; }
