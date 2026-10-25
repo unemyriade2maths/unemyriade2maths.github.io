@@ -26,7 +26,7 @@
       { titre: 'Par 2, par 5 et par 10', cadre: true, etapes: [
         { h: '<p class="puce">Divisible par <strong>2</strong> si le chiffre des unités est 0, 2, 4, 6 ou 8 : c’est un nombre pair.</p>' },
         { h: '<p class="puce">Divisible par <strong>5</strong> si le chiffre des unités est 0 ou 5.</p>' },
-        { h: '<p class="puce">Divisible par <strong>10</strong> si le chiffre des unités est 0.</p>' },
+        { h: '<p class="puce">Divisible par <strong>10</strong> si le chiffre des unités est 0.</p>', v: 'Pour être divisible par dix, le chiffre des unités doit être un zéro.' },
         { h: '<p class="cc">Exemple : 745 se termine par 5, donc 745 est divisible par 5.</p>' }] },
       { titre: 'Par 3 et par 9', cadre: true, etapes: [
         { h: '<p class="puce">Divisible par <strong>3</strong> si la somme de ses chiffres est divisible par 3.</p>' },
@@ -71,7 +71,7 @@
       { titre: 'Méthode : rendre une fraction irréductible', etapes: [
         { h: `<p class="question">Rendons ${fr(60, 126)} irréductible.</p><p>On décompose le numérateur et le dénominateur en produit de facteurs premiers.</p>` },
         { h: '<p class="calc">60 = 2 × 2 × 3 × 5</p><p class="calc">126 = 2 × 3 × 3 × 7</p>' },
-        { h: `<p class="calc">${fr('<s>2</s> × 2 × <s>3</s> × 5', '<s>2</s> × <s>3</s> × 3 × 7')} = ${fr('2 × 5', '3 × 7')}</p>`, v: 'On barre les facteurs communs : un deux en haut et en bas, un trois en haut et en bas. Il reste deux fois cinq, sur trois fois sept.' },
+        { h: `<p class="calc">${fr('<s>2</s> × 2 × <s>3</s> × 5', '<s>2</s> × <s>3</s> × 3 × 7')} = ${fr('2 × 5', '3 × 7')}</p>`, v: 'On barre les facteurs communs en haut et en bas : le facteur deux, puis le facteur trois. Il reste deux fois cinq, sur trois fois sept.' },
         { h: `<p class="cc">La fraction irréductible égale à ${fr(60, 126)} est ${fr(10, 21)}.</p>` }] }] },
     E: { titre: 'Décomposition en produit de facteurs premiers', diapos: [
       { titre: 'Définition', cadre: true, etapes: [
@@ -147,8 +147,8 @@
         { h: '<p class="puce ok">2 × 5 + 1 = 11, et 11 est premier, donc 5 est un nombre premier de Sophie Germain.</p>' },
         { h: '<p class="puce non">2 × 13 + 1 = 27 = 3 × 9, et 27 n’est pas premier, donc 13 n’en est pas un.</p>' }] },
       { titre: 'Les nombres premiers palindromes', cadre: true, etapes: [
-        { h: '<p>Un <strong>palindrome</strong> se lit de la même façon dans les deux sens : 101, 131, 191.</p>' },
-        { h: '<p class="puce ok">101, 131 et 191 sont des nombres premiers palindromes.</p>' },
+        { h: '<p>Un <strong>palindrome</strong> se lit de la même façon dans les deux sens : 101, 131, 191.</p>', v: 'Un nombre palindrome se lit de la même façon dans les deux sens. Par exemple : cent un, cent trente et un, et cent quatre-vingt-onze.' },
+        { h: '<p class="puce ok">101, 131 et 191 sont des nombres premiers palindromes.</p>', v: 'Les nombres cent un, cent trente et un, et cent quatre-vingt-onze, sont des nombres premiers palindromes.' },
         { h: '<p class="puce non">121 est un palindrome, mais 121 = 11 × 11, donc 121 n’est pas premier.</p>' }] },
       { titre: 'Attention : erreur fréquente', alerte: true, etapes: [
         { h: '<p class="barre">« 121 est premier, car il n’est divisible ni par 2, ni par 3, ni par 5 »</p>' },
@@ -324,7 +324,7 @@
       { q: '1 est un nombre premier.', rep: false, expl: '1 n’a qu’un seul diviseur, donc 1 n’est pas premier.' },
       { q: '2 est le seul nombre premier pair.', rep: true, expl: 'Tous les autres nombres pairs sont divisibles par 2, donc ils ne sont pas premiers.' },
       { q: '51 est un nombre premier.', rep: false, expl: '51 = 3 × 17, donc 51 n’est pas premier.' },
-      { q: '37 est un nombre premier.', rep: true, expl: '37 est dans la liste des nombres premiers, donc 37 est premier.' }] },
+      { q: '37 est un nombre premier.', v: 'Le nombre trente-sept est un nombre premier. Vrai, ou faux ?', rep: true, expl: '37 est dans la liste des nombres premiers, donc 37 est premier.' }] },
     { type: 'guide', rub: 'guide', titre: 'Rendre une fraction irréductible', enonce: `<p>Rends la fraction ${fr(72, 120)} irréductible, étape par étape.</p>`,
       vis: [`<p class="calc">${fr(72, 120)}</p>`, `<p class="calc">72 = 2³ × 3²</p>`, `<p class="calc">72 = 2³ × 3²</p><p class="calc">120 = 2³ × 3 × 5</p>`, `<p class="calc">72 = 2³ × 3²</p><p class="calc">120 = 2³ × 3 × 5</p><p>facteurs communs : 2³ × 3 = 24</p>`, `<p class="calc">${fr(72, 120)} = ${fr('72 ÷ 24', '120 ÷ 24')} = ${fr(3, 5)}</p>`],
       etapes: [

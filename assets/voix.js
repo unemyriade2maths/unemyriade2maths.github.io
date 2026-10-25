@@ -35,11 +35,12 @@ function dire(html) {
   t = t.replace(/√/g, ' racine carrée de ').replace(/≈/g, ' environ ').replace(/×/g, ' fois ').replace(/÷/g, ' divisé par ')
        .replace(/ = /g, ', égale ').replace(/=/g, ' égale ').replace(/\+/g, ' plusse ').replace(/−/g, ' moins ')
        .replace(/</g, ' plus petit que ').replace(/>/g, ' plus grand que ').replace(/[()]/g, ' ').replace(/«|»/g, ' ');
+  t = t.replace(/(\d+)ᵉ/g, (m0, a) => { const w = enMots(Number(a)); return ' ' + (a === '1' ? 'premier' : w.replace(/cinq$/, 'cinqu').replace(/neuf$/, 'neuv').replace(/e$/, '') + 'ième') + ' '; });
   t = t.replace(/(\d{1,3}(?: \d{3})+|\d+)(?:,(\d+))?/g, (m0, a, b) => {
     const s = enMots(Number(a.replace(/ /g, '')));
     return ' ' + (b ? s + ' virgule ' + (b.length > 1 && b[0] === '0' ? 'zéro ' + enMots(Number(b)) : enMots(Number(b))) : s) + ' ';
   });
-  t = t.replace(/\s+([.,:;!?])/g, '$1').replace(/\.\s*\./g, '.').replace(/\s+/g, ' ').trim();
+  t = t.replace(/\s+([.,:;!?])/g, '$1').replace(/([!?])\./g, '$1').replace(/\.\s*\./g, '.').replace(/\s+/g, ' ').trim();
   return t;
 }
 // La phrase dite pour une étape : son texte « v » s'il existe, sinon le texte affiché.
