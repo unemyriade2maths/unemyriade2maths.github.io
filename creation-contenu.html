@@ -20,18 +20,18 @@
   <p><strong>Préparer moins, accompagner mieux.</strong></p>
   <p>Vous êtes enseignant ? Je transforme vos fiches d’exercices en supports prêts à projeter, au style clair et animé. Moins de temps passé à préparer, c’est plus de disponibilité pour vos élèves en classe… et pour vous, en dehors.</p>
   <h2>Mes contenus à vendre</h2>
-  <p>Je vends aussi mes propres supports, déjà prêts et testés en classe :</p>
-  <ul>
-    <li>des cours complets et leurs diaporamas ;</li>
-    <li>des escape games de maths clés en main ;</li>
-    <li>des contenus immersifs à projeter.</li>
-  </ul>
-  <p class="bientot">Le catalogue arrive bientôt. En attendant, contactez-moi.</p>
+  <p>Mes propres supports, prêts et testés en classe, rangés par notion. Chaque notion est un <strong>pack complet</strong>, en fichiers PDF <strong>non modifiables</strong>, avec mon copyright, aux couleurs douces du site.</p>
+  <div class="espace-choix" role="tablist" aria-label="Espace">
+    <button role="tab" data-e="college" aria-selected="true">Espace collège</button>
+    <button role="tab" data-e="lycee" aria-selected="false">Espace lycée</button>
+  </div>
+  <nav class="niv-choix" id="cat-niv" aria-label="Niveau"></nav>
+  <div id="cat-notions"></div>
+  <p>Escape games de maths clés en main et contenus immersifs à projeter : <span class="bientot">bientôt dans le catalogue.</span></p>
   <h2>Sur mesure</h2>
   <ul>
     <li>Des diaporamas réalisés à partir de vos fiches : énoncés, corrections pas à pas, codes couleur</li>
     <li>Des exercices vérifiés et, si besoin, réécrits pour respecter les droits d’auteur</li>
-    <li>Mes propres cours, prêts à l’emploi</li>
   </ul>
   <h2>Comment ça marche ?</h2>
   <ol class="etapes">
@@ -41,6 +41,32 @@
   </ol>
   <a class="contact" href="mailto:prof.varrin@gmail.com?subject=Cr%C3%A9ation%20de%20contenu">Contact enseignants</a>
 </div>
+<script src="assets/data.js"></script>
+<script src="assets/catalogue.js"></script>
+<script>
+const $ = (x) => document.getElementById(x);
+let esp = 'college', niv = '3e';
+const notions = (k) => (PROGRESSION[k] || []).map(x => ({ id: x.id, titre: x.titre }));
+const voir = () => {
+  document.querySelectorAll('.espace-choix [role=tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.e === esp));
+  const nivs = Object.entries(NIVEAUX).filter(([k, n]) => n.espace === esp).map(([k]) => k);
+  if (!nivs.includes(niv)) niv = nivs[nivs.length - 1];
+  $('cat-niv').innerHTML = nivs.map(k => `<a href="#" data-n="${k}" class="${k === niv ? 'actif' : ''}">${k}</a>`).join('');
+  $('cat-niv').querySelectorAll('a').forEach(a => a.onclick = (e) => { e.preventDefault(); niv = a.dataset.n; voir(); });
+  const L = notions(niv), C = CATALOGUE[niv] || {};
+  $('cat-notions').innerHTML = L.length ? L.map(x => {
+    const p = C[x.id];
+    return p && p.dispo
+      ? `<details class="notion dispo"><summary><span>${x.titre}</span><span class="badge ok">Pack disponible</span></summary>
+          <p class="pack-diapo"><strong>Le diaporama :</strong> ${p.diapo}</p>
+          <ul class="pack-liste">${PACK.map(([t, d]) => `<li><strong>${t}</strong>${d ? ' : ' + d : ''}</li>`).join('')}</ul>
+          <a class="contact" href="mailto:prof.varrin@gmail.com?subject=${encodeURIComponent('Pack ' + niv + ' – ' + x.titre)}">Demander ce pack</a></details>`
+      : `<div class="notion"><span>${x.titre}</span><span class="badge todo">Bientôt</span></div>`;
+  }).join('') : '<p class="bientot">Les packs de ce niveau arrivent bientôt.</p>';
+};
+document.querySelectorAll('.espace-choix [role=tab]').forEach(b => b.onclick = () => { esp = b.dataset.e; voir(); });
+voir();
+</script>
 <footer class="droits">© 2026 Une myriade de maths – tous droits réservés. Toute reproduction des contenus, et toute utilisation pour entraîner une intelligence artificielle, sont interdites sans mon accord.</footer>
 </body>
 </html>

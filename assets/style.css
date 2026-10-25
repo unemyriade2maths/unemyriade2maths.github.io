@@ -410,3 +410,15 @@ pre.blocks { margin: 4px 0 12px; overflow-x: auto; } .scratchblocks { overflow-x
 .carte-tc strong { font-family: 'Baloo 2', sans-serif; font-size: 22px; color: var(--orange-texte); line-height: 1.1; }
 .carte-tc small { font-weight: 800; color: var(--gris); font-size: 13px; }
 .carte-tc em { font-style: normal; font-size: 14px; color: var(--vert); font-weight: 700; }
+.espace-choix { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 0; }
+.espace-choix button { min-height: 52px; border-radius: 14px; border: 2px solid var(--vert); background: #FFF; color: var(--vert); font: 800 16px Nunito, sans-serif; cursor: pointer; }
+.espace-choix button[aria-selected="true"] { background: var(--vert); color: #FFF; }
+.notion { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #FFF; border: 2px solid #E6EDE8; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; font-weight: 700; }
+details.notion { display: block; border-color: var(--bord); background: var(--creme); }
+details.notion summary { display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; list-style: none; min-height: 28px; }
+details.notion summary::-webkit-details-marker { display: none; }
+.pack-diapo { font-weight: 500; margin: 12px 0 8px; }
+.pack-liste { margin: 0 0 4px; padding-left: 20px; font-weight: 500; } .pack-liste li { margin: 3px 0; }
+.pack-contenu { margin: 14px 0; background: var(--vert-clair); border-radius: 14px; padding: 12px 14px; }
+.pack-contenu summary { cursor: pointer; font-weight: 800; color: var(--vert); }
+.pack-format { margin: 8px 0 0; font-size: 15px; }
