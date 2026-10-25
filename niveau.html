@@ -29,7 +29,8 @@ const prog = PROGRESSION[k] || [];
 const idx = prog.findIndex(x => x.id === n.enCours);
 const cur = n.enCours ? chapitre(n.enCours) : null;
 const prec = idx > 0 ? prog[idx - 1] : null, suiv = idx >= 0 && idx < prog.length - 1 ? prog[idx + 1] : null;
-let h = '';
+let h = `<a class="carte-tc" href="topchrono.html?n=${k}"><span class="tc-ico" aria-hidden="true">⏱</span>
+  <span class="txt"><strong>Top Chrono</strong><small>5 questions · 6 minutes · sans calculatrice</small><em>Revois tes notions antérieures avec régularité.</em></span><span class="fl">→</span></a>`;
 if (cur) {
   h += `<a class="carte-chap" href="chapitre.html?c=${n.enCours}">
     <span class="pastille">Chapitre en cours</span><h2>${cur.titre}</h2><p>${cur.resume}</p><p class="go">Ouvrir le chapitre →</p></a>`;
@@ -52,7 +53,6 @@ if (prog.length) {
   });
   h += '</section>';
 }
-h += `<a class="ligne" style="margin-top:16px;border:2px solid var(--bleu)" href="topchrono.html?n=${k}"><span>⏱ Le Top Chrono de la ${n.nom}</span><span class="fl">→</span></a>`;
 h += `<section class="bloc"><h3>Les vidéos</h3><a class="ligne" href="${CHAINE}"><span>La chaîne Une myriade de maths</span><span class="fl">▶</span></a></section>`;
 document.getElementById('contenu').innerHTML = h;
 </script>
