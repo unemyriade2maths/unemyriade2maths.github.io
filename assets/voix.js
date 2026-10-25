@@ -34,7 +34,7 @@ function dire(html) {
   t = t.replace(/²/g, ' au carré').replace(/³/g, ' au cube').replace(/⁴/g, ' puissance quatre').replace(/⁵/g, ' puissance cinq').replace(/⁶/g, ' puissance six').replace(/⁰/g, ' puissance zéro');
   t = t.replace(/√/g, ' racine carrée de ').replace(/≈/g, ' environ ').replace(/×/g, ' fois ').replace(/÷/g, ' divisé par ')
        .replace(/ = /g, ', égale ').replace(/=/g, ' égale ').replace(/\+/g, ' plusse ').replace(/−/g, ' moins ')
-       .replace(/</g, ' plus petit que ').replace(/>/g, ' plus grand que ').replace(/[()]/g, ' ').replace(/«|»/g, ' ');
+       .replace(/</g, ' plus petit que ').replace(/>/g, ' plus grand que ').replace(/\)\s*,?/g, ', ').replace(/\(/g, ' ').replace(/→/g, ', puis ').replace(/\bcm\b/g, 'centimètres').replace(/«|»/g, ' ');
   t = t.replace(/(\d+)ᵉ/g, (m0, a) => { const w = enMots(Number(a)); return ' ' + (a === '1' ? 'premier' : w.replace(/cinq$/, 'cinqu').replace(/neuf$/, 'neuv').replace(/e$/, '') + 'ième') + ' '; });
   t = t.replace(/(\d{1,3}(?: \d{3})+|\d+)(?:,(\d+))?/g, (m0, a, b) => {
     const s = enMots(Number(a.replace(/ /g, '')));
