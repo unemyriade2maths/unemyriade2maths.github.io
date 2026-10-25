@@ -47,18 +47,21 @@ const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/
 const canon = (x) => {
   let t = norm(x).replace(/[\[\]]/g, '');
   if (/^[a-z]{2}$/.test(t)) return t.split('').sort().join('');
-  if (t.includes('=') && /^[a-z0-9²,+=−√-]+$/.test(t)) {
-    t = t.replace(/([a-z]{2})2(?=[+=−-]|$)/g, '$1²');
-    return t.split('=').map(m => m.split('+').map(u => u.replace(/^([a-z])([a-z])²$/, (q, a, b) => [a, b].sort().join('') + '²')).sort().join('+')).join('=');
+  if (/[=≠≈]/.test(t) && /^[a-z0-9²,+=≠≈−√-]+$/.test(t)) {
+    t = t.replace(/([a-z]{2})2(?=[+=≠≈−-]|$)/g, '$1²');
+    const terme = (u) => u.replace(/^([a-z])([a-z])(²?)$/, (q, a, b, c) => [a, b].sort().join('') + c);
+    return t.split(/([=≠≈])/).map((m, i) => i % 2 ? m : m.split('+').map(terme).sort().join('+')).join('');
   }
   return t;
 };
 // 'ok', 'faux', ou { rappel } : un rappel de convention ne compte pas comme une erreur
 const juger = (reps, val) => {
-  const v = String(val || '').trim(), bon = (x) => reps.some(r => canon(r) === canon(x));
-  const inverse = v.includes('=') ? v.split('=').reverse().join('=') : null;
+  // une chaîne d'égalités juste mais plus courte (ex. « ST² = 196 » au lieu de « ST² = 14² = 196 ») n'est pas comptée fausse
+  const chaine = (r, x) => { const R = canon(r).split('='), X = canon(x).split('='); if (R.length < 3 || X.length < 2 || X[0] !== R[0] || X[X.length - 1] !== R[R.length - 1]) return false; let k = 0; return X.every(t => { while (k < R.length && R[k] !== t) k++; return k++ < R.length; }); };
+  const v = String(val || '').trim(), bon = (x) => reps.some(r => canon(r) === canon(x) || chaine(r, x));
+  const inverse = (v.match(/=/g) || []).length === 1 ? v.split('=').reverse().join('=') : null;
   const juste = bon(v), retourne = !juste && inverse && bon(inverse);
-  if ((juste || retourne) && reps.some(r => /[A-Z]/.test(r) && /^[\[\]A-Z²=+−\s]+$/.test(r))) {   // seulement pour des noms de points
+  if ((juste || retourne) && reps.some(r => /[A-Z]/.test(r) && /^[\[\]A-Z0-9²=≠≈+−√,\s]+$/.test(r))) {   // seulement pour des noms de points
     const m = v.replace(/\bc?m\b/g, '').match(/[a-z]/);
     if (m) return { rappel: `Attention à la convention : un point se nomme avec une lettre majuscule. Écris « ${m[0].toUpperCase()} » et non « ${m[0]} ».` };
   }
@@ -107,6 +110,29 @@ const carte = (it, n) => {
       <div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button></div>
       <p class="cc fin-cc" hidden></p></div>
     <button class="btn essai t-essai" hidden></button></div>`;
+  if (it.type === 'redac') { let nb = 0; return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}${it.ceinture ? ` <span class="ceinture">Ceinture ${it.ceinture}</span>` : ''}</h3>
+    <div class="enonce">${btnSon(it.v)}${it.enonce}</div>
+    <p class="consigne r-consigne">Complète la rédaction attendue au brevet.</p>
+    <div class="redac-zone question" data-touches="${[...new Set(it.lignes.flat().filter(x => typeof x !== 'string').flatMap(x => x.touches || []))].join(' ')}">${it.lignes.map(L => `<div class="r-ligne">${L.map(x => {
+      if (typeof x === 'string') return `<span>${x}</span>`;
+      const id = nb++;
+      return x.choix ? `<select class="r-trou" data-b="${id}" aria-label="Choisis"><option value="">…</option>${x.choix.map(o => `<option>${o}</option>`).join('')}</select>`
+        : `<input type="text" class="r-trou" data-b="${id}" autocomplete="off" style="width:${x.w || 4}em" ${x.touches ? '' : 'inputmode="decimal"'} aria-label="À compléter">`; }).join('')}</div>`).join('')}</div>
+    <div class="indices"></div>
+    <div class="boutons"><button class="btn indice-b">💡 Indice (1/${it.indices.length})</button><button class="btn verif">Vérifier</button></div>
+    <div class="verdict" hidden></div>
+    <div class="correction" hidden><h3>Correction</h3><div class="pas"></div>
+      <p class="pas-cpt"></p><div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
+      <p class="cc" hidden>${it.cc}</p></div></div>`; }
+  if (it.type === 'cahier') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}${it.ceinture ? ` <span class="ceinture">Ceinture ${it.ceinture}</span>` : ''}</h3>
+    <div class="enonce">${btnSon(it.v)}${it.enonce}</div>
+    <p class="consigne">✍️ Rédige ta réponse <strong>sur ton cahier</strong>, comme au brevet. Puis compare avec la correction et coche ce que tu as bien écrit.</p>
+    <div class="indices"></div>
+    <div class="boutons"><button class="btn indice-b">💡 Indice (1/${it.indices.length})</button><button class="btn verif">J’ai fini : voir la correction</button></div>
+    <div class="correction" hidden><h3>Correction</h3><div class="pas"></div>
+      <p class="pas-cpt"></p><div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
+      <p class="cc" hidden>${it.cc}</p>
+      <div class="cocher"><p class="g-titre">Sur ma copie, j’ai bien…</p>${it.liste.map((x, i) => `<label class="coche"><input type="checkbox" data-i="${i}"> ${x}</label>`).join('')}<p class="coche-score"></p></div></div></div>`;
   if (it.type === 'lien') return `<div class="item"><h3 class="exo-titre">${it.titre}</h3><a class="ligne" href="${it.page}"><span>${it.texte}</span><span class="fl">→</span></a></div>`;
   if (it.type === 'methode') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}</h3><div class="methode">${it.resume}
       <div class="pas"></div><p class="pas-cpt"></p><div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
@@ -222,6 +248,52 @@ E.items.forEach((it, n) => {
     V.className = 'verdict ' + (tout ? 'ok' : 'non');
     V.textContent = tout ? 'Bravo, tout est juste ! Regarde la correction pas à pas.' : `${bons} réponse${bons > 1 ? 's' : ''} juste${bons > 1 ? 's' : ''} sur ${it.champs.length}. Regarde la correction pas à pas.`;
     if (C.hidden) { C.hidden = false; pi = 0; montrer(); jouer(voixDe(it.correction[0])); }
+  };
+});
+
+// --- rédaction à trous : chaque trou est vérifié ; les trous d'un même « grp » peuvent être échangés (ex. 3,6² + 4,8²)
+E.items.forEach((it, n) => {
+  if (it.type !== 'redac' && it.type !== 'cahier') return;
+  const S = $('ex' + n); let ni = 0, pi = 0;
+  const bi = S.querySelector('.indice-b');
+  bi.onclick = () => {
+    if (ni >= it.indices.length) return;
+    S.querySelector('.indices').insertAdjacentHTML('beforeend', `<div class="indice"><small>Indice ${ni + 1}</small>${it.indices[ni]}</div>`);
+    ni++; bi.textContent = ni < it.indices.length ? `💡 Indice (${ni + 1}/${it.indices.length})` : '💡 Plus d’indice'; bi.disabled = ni >= it.indices.length;
+  };
+  const C = S.querySelector('.correction'), pas = S.querySelector('.pas'), ps = S.querySelector('.pas-suiv');
+  const montrer = () => { pas.innerHTML = pasHtml(it.correction, pi); labelSuiv(ps, it.correction, pi); S.querySelector('.cc').hidden = pi < it.correction.length - 1; };
+  ps.onclick = () => { if (pi < it.correction.length - 1) { pi++; montrer(); jouer(voixDe(it.correction[pi])); } };
+  S.querySelector('.pas-son').onclick = () => jouer(voixDe(it.correction[pi]));
+  const ouvrir = () => { if (C.hidden) { C.hidden = false; pi = 0; montrer(); jouer(voixDe(it.correction[0])); } };
+  if (it.type === 'cahier') {
+    S.querySelector('.verif').onclick = ouvrir;
+    S.querySelectorAll('.coche input').forEach(x => x.onchange = () => {
+      const k = S.querySelectorAll('.coche input:checked').length, t = it.liste.length;
+      S.querySelector('.coche-score').textContent = k === t ? 'Bravo, ta rédaction est complète !' : `${k} / ${t} : complète ta copie avec ce qui manque.`;
+    });
+    return;
+  }
+  const trous = it.lignes.flat().filter(x => typeof x !== 'string');
+  S.querySelector('.verif').onclick = () => {
+    S.querySelectorAll('.g-rappel').forEach(x => x.remove());
+    const champ = (i) => S.querySelector(`.r-trou[data-b="${i}"]`), val = (i) => champ(i).value;
+    const res = trous.map((x, i) => x.choix ? (val(i) === x.rep ? 'ok' : 'faux') : juger(x.rep, val(i)));
+    // trous échangeables
+    const grps = {}; trous.forEach((x, i) => { if (x.grp) (grps[x.grp] = grps[x.grp] || []).push(i); });
+    Object.values(grps).forEach(I => {
+      const att = I.map(i => trous[i].rep), libres = [...att];
+      I.forEach(i => { const k = libres.findIndex(r => r && juger(r, val(i)) === 'ok'); res[i] = k >= 0 ? 'ok' : res[i] === 'ok' ? 'faux' : res[i]; if (k >= 0) libres[k] = null; });
+    });
+    let rappels = 0;
+    res.forEach((r, i) => { if (r.rappel) { rappels++; champ(i).closest('.r-ligne').insertAdjacentHTML('beforeend', `<p class="g-rappel">${r.rappel}</p>`); } });
+    if (rappels) return;
+    let bons = 0;
+    res.forEach((r, i) => { const ok = r === 'ok'; champ(i).classList.toggle('juste', ok); champ(i).classList.toggle('faux', !ok); if (ok) bons++; });
+    const V = S.querySelector('.verdict'); V.hidden = false;
+    V.className = 'verdict ' + (bons === trous.length ? 'ok' : 'non');
+    V.textContent = bons === trous.length ? 'Bravo, ta rédaction est complète et juste ! Regarde la correction pas à pas.' : `${bons} trou${bons > 1 ? 's' : ''} juste${bons > 1 ? 's' : ''} sur ${trous.length}. Les cases en rouge sont à revoir : regarde la correction pas à pas.`;
+    ouvrir();
   };
 });
 

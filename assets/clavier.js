@@ -2,16 +2,17 @@
 // (attribut data-touches). Un seul clic écrit le caractère dans la réponse de cette question.
 (function () {
   const zone = document.querySelector('.zone-exos') || document.body;
-  const ESP = ['×', '÷', '+', '−', '=', '<', '>'];
+  const ESP = ['×', '÷', '+', '−', '=', '<', '>', '≠', '≈'];
   const poser = (Q) => {
     const t = (Q.dataset.touches || '').split(' ').filter(Boolean);
     if (!t.length || Q.querySelector('.car-maths')) return;
-    const inp = Q.querySelector('input[type=text]'); if (!inp) return;
+    let inp = Q.querySelector('input[type=text]'); if (!inp) return;
+    Q.addEventListener('focusin', (e) => { if (e.target.matches('input[type=text]')) inp = e.target; });   // plusieurs trous : la dernière case touchée
     const B = document.createElement('div');
     B.className = 'car-maths'; B.setAttribute('aria-label', 'Caractères mathématiques');
     B.innerHTML = '<p>Caractères mathématiques</p><div class="car-touches">' + t.map(x => `<button type="button" data-t="${x}">${x === ';' ? ' ; ' : x}</button>`).join('')
       + '<button type="button" class="eff" data-t="⌫" aria-label="Effacer">⌫</button></div>';
-    (inp.closest('.g-ligne') || inp).after(B);
+    if (Q.classList.contains('redac-zone')) { B.classList.add('car-haut'); Q.prepend(B); } else (inp.closest('.g-ligne') || inp).after(B);
     B.querySelectorAll('button').forEach(b => {
       b.addEventListener('pointerdown', e => e.preventDefault());   // le curseur reste dans la réponse
       b.onclick = () => {

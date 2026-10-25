@@ -609,6 +609,88 @@ dire (h)</pre>
       cc: 'a) La rampe mesure 5 m. b) Oui, elle dépasse 4,5 m : elle est conseillée.' },
   ] };
 
+  // ---------- rédactions à compléter (attendues au brevet) ----------
+  // trou : { rep, w (largeur), touches, grp (trous échangeables) } · menu : { choix, rep }
+  const TL = ['²', '=', '+', '−', '√', '≈', '≠'];
+  const Tr = (rep, o = {}) => Object.assign({ rep: [].concat(rep) }, o);
+  const Li = (rep, w = 13) => Tr(rep, { w, touches: TL });          // une ligne entière à écrire
+  const Ch = (choix, rep) => ({ choix, rep });
+  const PYT = Ch(['Pythagore', 'Thalès'], 'Pythagore');
+  const RECI = (rep) => Ch(['la réciproque', 'la contraposée'], rep), EST = (rep) => Ch(['est rectangle', 'n’est pas rectangle'], rep);
+  const enRedac = (part, titre, o) => { const it = X[part].items.find(i => i.titre === titre); it.type = 'redac'; delete it.champs; if (part < 6) it.correction.forEach(e => delete e.q); Object.assign(it, o); };
+  const enCahier = (part, titre, o) => { const it = X[part].items.find(i => i.titre === titre); it.type = 'cahier'; delete it.champs; Object.assign(it, o); };
+
+  enRedac(3, 'Exercice 1', { lignes: [
+    ['Je sais que le triangle KLM est rectangle en ', Tr('K', { w: 2.5 }), '.'],
+    ['Son hypoténuse est le côté ', Tr(seg('LM'), { w: 3.5 }), '.'],
+    ['Les conditions sont réunies pour appliquer le théorème de ', PYT, '.'],
+    ['D’après le théorème de Pythagore, on a : ', Tr(eg('LM', 'KL', 'KM'), { w: 10, touches: T2 })],
+    ['LM² = ', Tr('3,6', { grp: 'a' }), '² + ', Tr('4,8', { grp: 'a' }), '²'],
+    ['LM² = ', Tr('12,96', { grp: 'b', w: 4.5 }), ' + ', Tr('23,04', { grp: 'b', w: 4.5 })],
+    ['LM² = ', Tr('36')],
+    ['LM = √', Tr('36'), ' = ', Tr('6'), ' cm'],
+    ['Phrase réponse : la longueur LM mesure ', Tr('6'), ' cm.']] });
+  enRedac(3, 'Exercice 2', { lignes: [
+    ['Je sais que le triangle ABC est rectangle en ', Tr('B', { w: 2.5 }), '.'],
+    ['Son hypoténuse est le côté ', Tr(seg('AC'), { w: 3.5 }), '.'],
+    ['Les conditions sont réunies pour appliquer le théorème de ', PYT, '.'],
+    ['D’après le théorème de Pythagore, on a : ', Tr(eg('AC', 'AB', 'BC'), { w: 10, touches: T2 })],
+    [Li('AC²=5²+9²')],
+    [Li('AC²=25+81=106')],
+    [Li(['AC=√106', 'AC=√106cm'], 9), ' ← valeur exacte'],
+    [Li(['AC≈10,3', 'AC≈10,3cm'], 9), ' ← arrondi au dixième'],
+    ['Phrase réponse : la longueur AC mesure √', Tr('106'), ' cm, soit environ ', Tr('10,3'), ' cm.']] });
+  enRedac(4, 'Exercice 1', { lignes: [
+    ['Je sais que le triangle UVW est rectangle en ', Tr('U', { w: 2.5 }), '.'],
+    ['Son hypoténuse est le côté ', Tr(seg('VW'), { w: 3.5 }), '.'],
+    ['Les conditions sont réunies pour appliquer le théorème de ', PYT, '.'],
+    ['D’après le théorème de Pythagore, on a : ', Tr(eg('VW', 'UV', 'UW'), { w: 10, touches: T2 })],
+    ['', Tr('9'), '² = ', Tr('5'), '² + UW²'],
+    ['', Tr('81'), ' = ', Tr('25'), ' + UW²'],
+    ['UW² = ', Tr('81'), ' − ', Tr('25'), ' ← on isole UW² : on soustrait'],
+    ['UW² = ', Tr('56')],
+    ['UW = √', Tr('56'), ' cm ← valeur exacte'],
+    ['UW ≈ ', Tr('7,5'), ' cm ← arrondi au dixième'],
+    ['Phrase réponse : la longueur UW mesure √', Tr('56'), ' cm, soit environ ', Tr('7,5'), ' cm.']] });
+  enRedac(5, 'Exercice 1', { lignes: [
+    ['Le plus grand côté est ', Tr(seg('ST'), { w: 3.5 }), ' : c’est la possible hypoténuse.'],
+    ['D’une part : ', Li('ST²=14²=196', 11)],
+    ['D’autre part : ', Li('RS²+RT²=10²+8²=100+64=164', 17)],
+    ['On en déduit que ', Li('ST²≠RS²+RT²', 11), '.'],
+    ['Donc, d’après ', RECI('la contraposée'), ' du théorème de Pythagore, le triangle RST ', EST('n’est pas rectangle'), '.']] });
+  enRedac(5, 'Exercice 2', { lignes: [
+    ['Le plus grand côté est ', Tr(seg('AC'), { w: 3.5 }), ' : c’est la possible hypoténuse.'],
+    ['D’une part : ', Li('AC²=11²=121', 11)],
+    ['D’autre part : ', Li('AB²+BC²=7²+9²=49+81=130', 17)],
+    ['On en déduit que ', Li('AC²≠AB²+BC²', 11), '.'],
+    ['Donc, d’après ', RECI('la contraposée'), ' du théorème de Pythagore, le triangle ABC ', EST('n’est pas rectangle'), '.']] });
+  enRedac(6, 'Exercice 1', { lignes: [
+    ['a) Je sais que le triangle DEF est rectangle en ', Tr('D', { w: 2.5 }), '.'],
+    ['Son hypoténuse est le côté ', Tr(seg('EF'), { w: 3.5 }), '.'],
+    ['Les conditions sont réunies pour appliquer le théorème de ', PYT, '.'],
+    ['D’après le théorème de Pythagore, on a : ', Tr(eg('EF', 'DE', 'DF'), { w: 10, touches: T2 })],
+    [Li('EF²=160²+120²', 13)],
+    [Li('EF²=25600+14400=40000', 16)],
+    [Li(['EF=√40000=200', 'EF=√40000=200m'], 13)],
+    ['b) Un tour = ', Li(['160+200+120=480', 'DE+EF+FD=160+200+120=480'], 13), ' m'],
+    ['Phrase réponse : EF mesure ', Tr('200'), ' m et un tour de parcours mesure ', Tr('480'), ' m.']] });
+  enRedac(6, 'Exercice 2', { lignes: [
+    ['a) Je sais que le triangle MIC est rectangle en ', Tr('I', { w: 2.5 }), '.'],
+    ['Son hypoténuse est le côté ', Tr(seg('MC'), { w: 3.5 }), '.'],
+    ['Les conditions sont réunies pour appliquer le théorème de ', PYT, '.'],
+    ['D’après le théorème de Pythagore, on a : ', Tr(eg('MC', 'MI', 'IC'), { w: 10, touches: T2 })],
+    [Li('MC²=12²+9²=144+81=225', 16)],
+    [Li(['MC=√225=15', 'MC=√225=15cm'], 12)],
+    ['b) Le plus grand côté du triangle MAC est ', Tr(seg('AC'), { w: 3.5 }), ' : c’est la possible hypoténuse.'],
+    ['D’une part : ', Li('AC²=25²=625', 11)],
+    ['D’autre part : ', Li('MA²+MC²=20²+15²=400+225=625', 17)],
+    ['On en déduit que ', Li('AC²=MA²+MC²', 11), '.'],
+    ['Donc, d’après ', RECI('la réciproque'), ' du théorème de Pythagore, le triangle MAC ', EST('est rectangle'), ' en ', Tr('M', { w: 2.5 }), '.'],
+    ['Phrase réponse : MC mesure ', Tr('15'), ' cm et le triangle MAC est rectangle en ', Tr('M', { w: 2.5 }), '.']] });
+  enCahier(6, 'Exercice 3 · comme au brevet', { liste: [
+    'écrit que le triangle est rectangle (le sol est perpendiculaire au mur) ;', 'nommé l’hypoténuse : la rampe ;', 'écrit que les conditions sont réunies pour appliquer le théorème de Pythagore ;',
+    'cité le théorème et écrit l’égalité en commençant par l’hypoténuse ;', 'remplacé, calculé, puis pris la racine carrée ;', 'écrit l’unité (m) ;', 'fini par une phrase réponse pour a) et pour b).'] });
+
   // ---------- QCM et DS ----------
   if (typeof BILANS !== 'undefined') BILANS['3e-3'] = {
     qcm: [

@@ -456,3 +456,16 @@ details.notion summary::-webkit-details-marker { display: none; }
 .car-touches button.eff { color: #A12222; border-color: #F2C4C4; background: #FFF; font-size: 17px; }
 .clavier-flottant { display: none !important; }
 .g-rappel { margin: 6px 0 0; padding: 6px 10px; border-radius: 10px; background: var(--bleu-clair); color: var(--bleu); font-weight: 700; font-size: 15px; }
+/* rédaction à trous (Pythagore) */
+.redac-zone { background: #FFF; border: 2px solid #CFE3D5; border-radius: 16px; padding: 12px 14px; margin: 10px 0; }
+.r-ligne { font-weight: 700; font-size: 17px; line-height: 2.3; margin: 0 0 4px; }
+.redac-zone .r-trou { font: 800 17px Nunito, sans-serif; min-width: 2.6em; height: auto; min-height: 0; box-shadow: none; display: inline-block; max-width: 100%; padding: 2px 6px; margin: 0 3px; border: 2px dashed var(--orange); border-radius: 8px; background: var(--creme); color: var(--bleu); vertical-align: baseline; }
+.redac-zone select.r-trou { padding: 3px 4px; }
+.redac-zone .r-trou.juste { border-style: solid; border-color: var(--vert); background: #F3FAF5; }
+.redac-zone .r-trou.faux { border-style: solid; border-color: #D9534F; background: #FDF1F0; }
+.r-ligne .car-maths { line-height: 1.2; }
+.cocher { margin-top: 14px; padding: 10px 14px; border-radius: 14px; background: var(--vert-clair); }
+.coche { display: block; margin: 6px 0; font-weight: 700; cursor: pointer; }
+.coche input { width: 20px; height: 20px; vertical-align: -4px; margin-right: 6px; accent-color: var(--vert); }
+.coche-score { font-weight: 800; color: var(--vert); margin: 6px 0 0; }
+.car-maths.car-haut { position: sticky; top: 0; z-index: 3; background: #FFF; padding: 6px 0 8px; margin: -4px 0 8px; border-bottom: 1px solid #E3EFE7; }
