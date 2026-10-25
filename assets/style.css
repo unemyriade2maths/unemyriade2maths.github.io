@@ -422,3 +422,9 @@ details.notion summary::-webkit-details-marker { display: none; }
 .pack-contenu { margin: 14px 0; background: var(--vert-clair); border-radius: 14px; padding: 12px 14px; }
 .pack-contenu summary { cursor: pointer; font-weight: 800; color: var(--vert); }
 .pack-format { margin: 8px 0 0; font-size: 15px; }
+.pack-h { margin: 14px 0 6px; font-size: 15px; color: var(--vert); }
+.seance { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0; list-style: none; counter-reset: s; }
+.seance li { counter-increment: s; background: #FFF; border: 1px solid var(--bord); border-radius: 999px; padding: 5px 12px 5px 6px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+.seance li::before { content: counter(s); width: 22px; height: 22px; border-radius: 50%; background: var(--orange); color: var(--encre); font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
+.apercu { display: flex; flex-direction: column; gap: 4px; margin: 0 0 6px; }
+.apercu span { font-weight: 600; } .apercu b { display: inline-block; width: 22px; color: var(--orange-fonce); }

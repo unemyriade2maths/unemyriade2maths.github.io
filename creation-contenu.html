@@ -20,7 +20,8 @@
   <p><strong>Préparer moins, accompagner mieux.</strong></p>
   <p>Vous êtes enseignant ? Je transforme vos fiches d’exercices en supports prêts à projeter, au style clair et animé. Moins de temps passé à préparer, c’est plus de disponibilité pour vos élèves en classe… et pour vous, en dehors.</p>
   <h2>Mes contenus à vendre</h2>
-  <p>Mes propres supports, prêts et testés en classe, rangés par notion. Chaque notion est un <strong>pack complet</strong>, en fichiers PDF <strong>non modifiables</strong>, avec mon copyright, aux couleurs douces du site.</p>
+  <p>Mes propres supports, prêts et testés en classe, rangés par notion. Chaque notion est un <strong>pack complet</strong>, aux couleurs douces du site.</p>
+  <div class="rappel"><strong>Formats et droits.</strong> Les fiches sont en PDF <strong>non modifiables</strong>. Le diaporama est <strong>modifiable</strong>, pour que vous puissiez y ajouter vos propres éléments ; mon copyright figure sur chaque fiche et chaque diapo. Licence pour un usage personnel, dans vos classes : partage, diffusion et revente interdits.</div>
   <div class="espace-choix" role="tablist" aria-label="Espace">
     <button role="tab" data-e="college" aria-selected="true">Espace collège</button>
     <button role="tab" data-e="lycee" aria-selected="false">Espace lycée</button>
@@ -58,8 +59,12 @@ const voir = () => {
     const p = C[x.id];
     return p && p.dispo
       ? `<details class="notion dispo"><summary><span>${x.titre}</span><span class="badge ok">Pack disponible</span></summary>
-          <p class="pack-diapo"><strong>Le diaporama :</strong> ${p.diapo}</p>
+          <h4 class="pack-h">Dans le pack</h4>
           <ul class="pack-liste">${PACK.map(([t, d]) => `<li><strong>${t}</strong>${d ? ' : ' + d : ''}</li>`).join('')}</ul>
+          <h4 class="pack-h">L’organisation d’une séance dans le diaporama</h4>
+          <ol class="seance">${SEANCE.map(x => `<li>${x}</li>`).join('')}</ol>
+          <h4 class="pack-h">Aperçu du cours${p.seances ? ` (${p.seances} séances)` : ''}</h4>
+          <p class="apercu">${p.parties.map((t, j) => `<span><b>${'ABCDEFGHIJ'[j]}</b> ${t}</span>`).join('')}</p>
           <a class="contact" href="mailto:prof.varrin@gmail.com?subject=${encodeURIComponent('Pack ' + niv + ' – ' + x.titre)}">Demander ce pack</a></details>`
       : `<div class="notion"><span>${x.titre}</span><span class="badge todo">Bientôt</span></div>`;
   }).join('') : '<p class="bientot">Les packs de ce niveau arrivent bientôt.</p>';
