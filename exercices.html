@@ -41,32 +41,35 @@ document.title = 'Exercices – ' + E.titre;
 const son = new Audio();
 const jouer = (t) => { const f = AUDIO[t]; if (!f) return; son.pause(); son.src = 'audio/' + f; son.play().catch(() => {}); };
 const btnSon = (t) => AUDIO[t] ? `<button class="mini-son" data-v="${encodeURIComponent(t)}" aria-label="Écouter">🔊</button>` : '';
-const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').replace(/[*]/g, '×').replace(/(\d)x(\d)/gi, '$1×$2').replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/\./g, ',').toLowerCase();
-// une égalité de Pythagore : PN = NP, les deux carrés de droite dans n'importe quel ordre, 2 ou ² ou ^2.
-// Mais on commence par l'hypoténuse (membre de gauche imposé), et un sommet s'écrit en majuscule.
+const norm = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '').replace(/[*]/g, '×').replace(/(\d)x(\d)/gi, '$1×$2').replace(/\./g, ',').toLowerCase();
+// une égalité de Pythagore : PN = NP, les deux carrés de droite dans n'importe quel ordre.
+// Mais on commence par l'hypoténuse (membre de gauche imposé), un sommet s'écrit en majuscule, et le carré s'écrit avec la touche ².
 const canon = (x) => {
   let t = norm(x).replace(/[\[\]]/g, '');
   if (/^[a-z]{2}$/.test(t)) return t.split('').sort().join('');
   if (/[=≠≈]/.test(t) && /^[a-z0-9²,+=≠≈−√-]+$/.test(t)) {
-    t = t.replace(/([a-z]{2})2(?=[+=≠≈−-]|$)/g, '$1²');
     const terme = (u) => u.replace(/^([a-z])([a-z])(²?)$/, (q, a, b, c) => [a, b].sort().join('') + c);
     return t.split(/([=≠≈])/).map((m, i) => i % 2 ? m : m.split('+').map(terme).sort().join('+')).join('');
   }
   return t;
 };
+// ce que l'élève aurait voulu écrire avec la touche ² (ou ³) : « ^2 », « AB2 »
+const carres = (v) => v.replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/\b([A-Za-z]{2})2\b/g, '$1²');
 // 'ok', 'faux', ou { rappel } : un rappel de convention ne compte pas comme une erreur
 const juger = (reps, val) => {
   // une chaîne d'égalités juste mais plus courte (ex. « ST² = 196 » au lieu de « ST² = 14² = 196 ») n'est pas comptée fausse
   const chaine = (r, x) => { const R = canon(r).split('='), X = canon(x).split('='); if (R.length < 3 || X.length < 2 || X[0] !== R[0] || X[X.length - 1] !== R[R.length - 1]) return false; let k = 0; return X.every(t => { while (k < R.length && R[k] !== t) k++; return k++ < R.length; }); };
   const v = String(val || '').trim(), bon = (x) => reps.some(r => canon(r) === canon(x) || chaine(r, x));
-  const inverse = (v.match(/=/g) || []).length === 1 ? v.split('=').reverse().join('=') : null;
-  const juste = bon(v), retourne = !juste && inverse && bon(inverse);
+  const inverse = (x) => (x.match(/=/g) || []).length === 1 ? x.split('=').reverse().join('=') : null;
+  const juste = bon(v), retourne = !juste && inverse(v) && bon(inverse(v));
   if ((juste || retourne) && reps.some(r => /[A-Z]/.test(r) && /^[\[\]A-Z0-9²=≠≈+−√,\s]+$/.test(r))) {   // seulement pour des noms de points
     const m = v.replace(/\bc?m\b/g, '').match(/[a-z]/);
     if (m) return { rappel: `Attention à la convention : un point se nomme avec une lettre majuscule. Écris « ${m[0].toUpperCase()} » et non « ${m[0]} ».` };
   }
   if (juste) return 'ok';
   if (retourne) return { rappel: `On commence toujours par l’hypoténuse : écris d’abord « ${reps[0].split('=')[0]} = … ».` };
+  const c = carres(v);
+  if (c !== v && (bon(c) || (inverse(c) && bon(inverse(c))))) return { rappel: 'Pour écrire « au carré », utilise la touche ² des caractères mathématiques (et pas 2 ni ^2).' };
   return 'faux';
 };
 const rendu = (h) => typeof h === 'string' ? h : potence(...h.pot) + (h.apres || '');
@@ -196,7 +199,7 @@ E.items.forEach((it, n) => {
       num.textContent = ''; q.textContent = `Ton score : ${score} / ${it.questions.length}`; rep.hidden = true; vf.hidden = true;
       S.querySelector('.chrono').hidden = true; go.textContent = 'Recommencer'; i = -1; score = 0; return;
     }
-    const Q = it.questions[i]; num.textContent = `Question ${i + 1} / ${it.questions.length}`; q.textContent = Q.q;
+    const Q = it.questions[i]; num.textContent = `Question ${i + 1} / ${it.questions.length}`; q.innerHTML = Q.q;
     rep.hidden = true; vf.hidden = false; go.hidden = true; S.querySelector('.chrono').hidden = false;
     barre.style.transition = 'none'; barre.style.width = '100%'; void barre.offsetWidth;
     barre.style.transition = `width ${it.duree}s linear`; barre.style.width = '0%';

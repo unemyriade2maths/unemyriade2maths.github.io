@@ -469,3 +469,16 @@ details.notion summary::-webkit-details-marker { display: none; }
 .coche input { width: 20px; height: 20px; vertical-align: -4px; margin-right: 6px; accent-color: var(--vert); }
 .coche-score { font-weight: 800; color: var(--vert); margin: 6px 0 0; }
 .car-maths.car-haut { position: sticky; top: 0; z-index: 3; background: #FFF; padding: 6px 0 8px; margin: -4px 0 8px; border-bottom: 1px solid #E3EFE7; }
+/* la barre de la racine carrée couvre tout le nombre */
+.rac { white-space: nowrap; }
+.rac .rad { border-top: 2px solid currentColor; padding: 1px 2px 0 1px; margin-left: 1px; }
+/* égalité en couleurs : hypoténuse orange, côtés de l'angle droit bleus */
+.c-hyp { color: #E07B00; font-weight: 900; } .c-cote { color: #3B7BD9; font-weight: 900; }
+/* écran de calculatrice et touches */
+.calc-ecran { max-width: 250px; }
+.touches kbd.appui { background: var(--orange); color: #FFF; border-color: var(--orange); }
+.duo-calc { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px 18px; margin: 8px 0; }
+.duo-calc .touches { margin: 4px 0; }
+/* les étapes de la rédaction au brevet */
+.etapes-brevet { margin: 10px 0 0; padding: 8px 14px; border-radius: 12px; background: var(--bleu-clair); }
+.etapes-brevet ol { margin: 4px 0 0; padding-left: 22px; } .etapes-brevet li { margin: 2px 0; font-size: 15px; }

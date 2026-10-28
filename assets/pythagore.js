@@ -2,7 +2,7 @@
 // Les figures sont dessinées en SVG à partir des vraies longueurs.
 (function () {
   // ---------- figures ----------
-  const COUL = { trait: '#232328', hyp: '#F08A24', droit: '#1F6F3D', lab: '#1F4FA0', inc: '#C76A0E' };
+  const COUL = { trait: '#232328', hyp: '#F08A24', cote: '#3B7BD9', droit: '#1F6F3D', lab: '#1F4FA0', inc: '#C76A0E' };
   const memeSeg = (s, t) => s === t || s === t[1] + t[0];
   // o.P : points (y vers le haut) · o.seg : segments · o.droit : [[sommet, voisin1, voisin2]] · o.lab : longueurs affichées
   // o.hyp : segments en orange · o.pts : noms à écrire (par défaut tous)
@@ -18,8 +18,8 @@
     const f = (n) => Math.round(n * 10) / 10;
     let svg = '';
     (o.seg || []).forEach(sg => {
-      const [a, b] = [T(sg[0]), T(sg[1])], h = (o.hyp || []).some(t => memeSeg(sg, t));
-      svg += `<line x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}" stroke="${h ? COUL.hyp : COUL.trait}" stroke-width="${h ? 4.5 : 2.2}" stroke-linecap="round"/>`;
+      const [a, b] = [T(sg[0]), T(sg[1])], h = (o.hyp || []).some(t => memeSeg(sg, t)), c = (o.cotes || []).some(t => memeSeg(sg, t));
+      svg += `<line x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}" stroke="${h ? COUL.hyp : c ? COUL.cote : COUL.trait}" stroke-width="${h ? 4.5 : c ? 3.4 : 2.2}" stroke-linecap="round"/>`;
     });
     (o.droit || []).forEach(([v, a, b]) => {
       const V = T(v), u = unit(T(a)[0] - V[0], T(a)[1] - V[1]), w = unit(T(b)[0] - V[0], T(b)[1] - V[1]), q = 12;
@@ -43,7 +43,9 @@
     const [p, q, r] = n, x = (b * b + c * c - a * a) / (2 * c), y = Math.sqrt(Math.max(0, b * b - x * x));
     const P = { [p]: [0, 0], [q]: [c, 0], [r]: [x, y] };
     const vois = { [p]: [q, r], [q]: [p, r], [r]: [p, q] };
-    return fig(Object.assign({}, o, { P, seg: [p + q, q + r, r + p], droit: o.droit ? [[o.droit, ...vois[o.droit]]] : [] }));
+    // hypoténuse en orange et côtés de l'angle droit en bleu, dès que l'hypoténuse est repérée
+    const cotes = o.droit && (o.hyp || []).length ? vois[o.droit].map(x => o.droit + x) : [];
+    return fig(Object.assign({}, o, { P, seg: [p + q, q + r, r + p], droit: o.droit ? [[o.droit, ...vois[o.droit]]] : [], cotes }));
   };
   // une ligne de rédaction : à gauche ce qu'on écrit, à droite pourquoi
   const R = (l, p) => `<div class="redac"><span class="l">${l}</span>${p ? `<span class="p">← ${p}</span>` : ''}</div>`;
@@ -56,9 +58,29 @@
   // exercice guidé : à chaque bonne réponse, la figure se code et la rédaction s'écrit ligne par ligne
   const pasVis = (figK, lignes, nb) => nb.map((n, k) => figK(k) + Rs(lignes.slice(0, n)));
   // ma méthode : 1) le triangle est rectangle, 2) son hypoténuse, 3) les conditions sont réunies, 4) on applique le théorème
-  const CONDL = ['Les conditions sont réunies pour appliquer le théorème de Pythagore.', 'le triangle est rectangle et son hypoténuse est repérée'];
+  const CONDL = ['Les conditions sont réunies pour appliquer le théorème de Pythagore.', 'le triangle est rectangle : cela suffit pour appliquer le théorème'];
   const COND = R(...CONDL);
   const CHOIX = { q: 'Peut-on appliquer le théorème de Pythagore ?', choix: ['Oui, car le triangle est rectangle', 'Oui, car on connaît deux longueurs', 'Non'], rep: ['Oui, car le triangle est rectangle'], aide: 'Le théorème de Pythagore s’applique seulement dans un triangle rectangle.' };
+  // égalité en couleurs : l'hypoténuse en orange, les côtés de l'angle droit en bleu
+  const EQ = (h, a, b, pre = '') => `${pre}<span class="c-hyp">${h}²</span> = <span class="c-cote">${a}²</span> + <span class="c-cote">${b}²</span>`;
+  // l'écran d'une calculatrice (dessin neutre) : ce qu'on a tapé, le résultat, et un chiffre souligné pour l'arrondi
+  const ecran = (tape, res, hl) => {
+    const R = String(res || ''), d = hl === undefined ? -1 : hl;
+    const chiffres = [...R].map((c, i) => `<tspan${i === d ? ' fill="#C76A0E" font-weight="900" text-decoration="underline"' : ''}>${c}</tspan>`).join('');
+    return `<svg class="fig calc-ecran" viewBox="0 0 250 110" width="250" role="img" aria-label="Écran de la calculatrice : ${tape} donne ${R}"><rect x="2" y="2" width="246" height="106" rx="16" fill="#3A3F47"/><rect x="14" y="14" width="222" height="70" rx="8" fill="#DCE6D2"/>
+      <text x="24" y="38" font-family="monospace" font-size="17" fill="#232328">${tape}</text><text x="226" y="72" text-anchor="end" font-family="monospace" font-size="23" font-weight="700" fill="#232328">${chiffres}</text>
+      <text x="125" y="100" text-anchor="middle" font-size="10" fill="#C9CED6" letter-spacing="2">CALCULATRICE</text></svg>`;
+  };
+  const touchesC = (L, on) => `<p class="touches">${L.map((t, i) => `<kbd${on !== undefined && i <= on ? ' class="appui"' : ''}>${t}</kbd>`).join('')}</p>`;
+  const ARR = {
+    dixieme: 'Pour arrondir au dixième, je regarde le chiffre des centièmes : s’il est 5 ou plus, j’ajoute 1 au chiffre des dixièmes ; sinon, je coupe sans rien changer.',
+    centieme: 'Pour arrondir au centième, je regarde le chiffre des millièmes : s’il est 5 ou plus, j’ajoute 1 au chiffre des centièmes ; sinon, je coupe sans rien changer.' };
+  const ENV = 'On écrit « ≈ » (environ égal) et non « = », car ce n’est pas une valeur exacte.';
+  // les étapes de la rédaction attendue au brevet (pour savoir combien d’étapes écrire quand l’exercice n’est plus guidé)
+  const ETAPES = (cote) => `<div class="etapes-brevet"><p class="g-titre">La rédaction au brevet en ${cote ? 8 : 7} étapes</p><ol>
+    <li>Le triangle est <strong>rectangle</strong>.</li><li>On nomme son <strong>hypoténuse</strong>.</li><li>Les <strong>conditions sont réunies</strong>.</li>
+    <li><strong>D’après le théorème de Pythagore</strong> : l’égalité, en commençant par l’hypoténuse.</li><li>On <strong>remplace</strong> par les longueurs.</li><li>On <strong>calcule</strong> les carrés.</li>
+    ${cote ? '<li>On <strong>isole l’inconnue</strong> dans le membre de gauche : on soustrait.</li>' : ''}<li>On prend la <strong>racine carrée</strong>, puis la <strong>phrase réponse</strong>.</li></ol></div>`;
   const FIN = '<p class="g-fin">✓ La rédaction est complète : recopie-la dans ton cahier.</p>';
 
   CHAPITRES['3e-3'] = {
@@ -102,11 +124,19 @@
           v: 'Par exemple, un carré d’aire vingt-cinq centimètres carrés a un côté de racine carrée de vingt-cinq, donc cinq centimètres.' }] },
       { titre: 'Attention : √−5 ?', alerte: true, etapes: [
         { h: '<p class="question">√−5 serait le nombre dont le carré est −5.</p>', v: 'Attention ! Racine carrée de moins cinq, ce serait le nombre dont le carré est moins cinq.' },
-        { h: '<p>Un carré est toujours positif (règle des signes).</p>', v: 'Or un carré est toujours positif, à cause de la règle des signes.' },
+        { h: '<p>Un carré est toujours positif (règle des signes).</p><p class="calc">(−5)² = (−5) × (−5) = +25</p>', v: 'Or un carré est toujours positif, à cause de la règle des signes : moins cinq, fois moins cinq, égale plus vingt-cinq.' },
+        { h: '<p>Un nombre négatif multiplié par un nombre négatif donne un nombre positif.</p>', v: 'Un nombre négatif multiplié par un nombre négatif donne un nombre positif.' },
         { h: '<p class="cc">Donc la racine carrée d’un nombre négatif n’existe pas : √−5 n’existe pas.</p>', v: 'Donc la racine carrée d’un nombre négatif n’existe pas : racine carrée de moins cinq n’existe pas.' }] },
       { titre: 'Propriété 2', cadre: true, etapes: [
         { h: '<p>Pour tout nombre a positif :</p><p class="formule grand">√(a²) = a</p>', v: 'Propriété : pour tout nombre a positif, la racine carrée de a au carré, égale a.' },
-        { h: '<p class="calc">√(7²) = √49 = 7</p>', v: 'Par exemple, la racine carrée de sept au carré, c’est la racine carrée de quarante-neuf, donc sept.' }] },
+        { h: '<p class="calc">√(7²) = √49 = 7</p>', v: 'Par exemple, la racine carrée de sept au carré, c’est la racine carrée de quarante-neuf, donc sept.' },
+        { h: `<svg class="fig" viewBox="0 0 300 150" width="300" role="img" aria-label="Schéma : 7 donne 49 avec la fonction carré, et 49 redonne 7 avec la fonction racine carrée">
+  <defs><marker id="pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1F4FA0"/></marker><marker id="pf2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#C76A0E"/></marker></defs>
+  <circle cx="45" cy="75" r="30" fill="#EAF2FF" stroke="#1F4FA0" stroke-width="2"/><text x="45" y="83" text-anchor="middle" font-size="24" font-weight="800" fill="#232328">7</text>
+  <circle cx="255" cy="75" r="30" fill="#FFF3E6" stroke="#C76A0E" stroke-width="2"/><text x="255" y="83" text-anchor="middle" font-size="24" font-weight="800" fill="#232328">49</text>
+  <path d="M78 58 Q150 18 222 58" fill="none" stroke="#1F4FA0" stroke-width="2.5" marker-end="url(#pf)"/><text x="150" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#1F4FA0">fonction carré : 7² = 49</text>
+  <path d="M222 92 Q150 132 78 92" fill="none" stroke="#C76A0E" stroke-width="2.5" marker-end="url(#pf2)"/><text x="150" y="142" text-anchor="middle" font-size="14" font-weight="700" fill="#C76A0E">fonction racine carrée : √49 = 7</text></svg>` + '<p>La racine carrée est la <strong>fonction réciproque</strong> de la fonction carré : elle permet de <strong>revenir au nombre de départ</strong>.</p>',
+          v: 'On prend un nombre, sept. On applique la fonction carré : on obtient quarante-neuf. Puis on applique la fonction racine carrée : on revient à sept. La racine carrée est la fonction réciproque de la fonction carré : elle permet de revenir au nombre de départ.' }] },
     ] },
     B: { lettre: 'B', titre: 'Calculer avec les racines carrées', diapos: [
       { titre: 'Méthode 1 : encadrer √20 par deux entiers consécutifs', etapes: [
@@ -121,9 +151,11 @@
         { h: '<p class="cc">Donc x = 9.</p>', v: 'Donc x égale neuf.' },
         { h: '<p class="question">Et si y² = 100 ?</p>' + R('y = √100 = 10', 'car 10² = 100'), v: 'Autre exemple : y au carré égale cent. Alors y égale racine carrée de cent, donc dix, car dix au carré égale cent.' }] },
       { titre: 'Méthode 2 : avec la calculatrice', etapes: [
-        { h: '<p class="question">z² = 5,5225</p>' + R('z = √5,5225 = 2,35', 'on tape la touche √ de la calculatrice'), v: 'Si z au carré égale cinq virgule cinq mille deux cent vingt-cinq, on utilise la touche racine carrée de la calculatrice : z égale deux virgule trente-cinq.' },
-        { h: '<p class="question">t² = 14</p><p>Aucun nombre décimal n’a pour carré 14 : on donne une valeur approchée.</p>', v: 'Si t au carré égale quatorze : aucun nombre décimal n’a pour carré quatorze. On donne donc une valeur approchée.' },
-        { h: R('t = √14 ≈ 3,74', 'valeur exacte, puis arrondi au centième'), v: 't égale racine carrée de quatorze : c’est la valeur exacte. Arrondi au centième, t est environ égal à trois virgule soixante-quatorze.' }] },
+        { r: true, h: '<p class="question">z² = 5,5225</p>' + touchesC(['√', '5', ',', '5', '2', '2', '5', 'EXE']) + ecran('√5,5225', ''), v: 'Si z au carré égale cinq virgule cinq mille deux cent vingt-cinq, on tape la touche racine carrée, puis le nombre, puis EXE.' },
+        { r: true, h: '<p class="question">z² = 5,5225</p>' + touchesC(['√', '5', ',', '5', '2', '2', '5', 'EXE'], 7) + ecran('√5,5225', '2,35') + R('z = √5,5225 = 2,35', 'la calculatrice affiche 2,35 : c’est une valeur exacte'), v: 'La calculatrice affiche deux virgule trente-cinq : z égale deux virgule trente-cinq. C’est une valeur exacte.' },
+        { r: true, h: '<p class="question">t² = 14</p><p>Aucun nombre décimal n’a pour carré 14 : on donne une valeur approchée.</p>' + touchesC(['√', '1', '4', 'EXE'], 3) + ecran('√14', '3,741657387'), v: 'Si t au carré égale quatorze : aucun nombre décimal n’a pour carré quatorze. On tape racine carrée de quatorze : la calculatrice affiche trois virgule sept cent quarante et un, et la suite.' },
+        { r: true, h: '<p class="question">t² = 14</p>' + ecran('√14', '3,741657387', 4) + '<p class="petit-rappel rappel">' + ARR.centieme + '</p>', v: 'Pour arrondir au centième, je regarde le chiffre des millièmes. Ici, c’est un : il est plus petit que cinq, donc je coupe sans rien changer.' },
+        { r: true, h: '<p class="question">t² = 14</p>' + ecran('√14', '3,741657387', 4) + R('t = √14 ≈ 3,74', 'valeur exacte, puis arrondi au centième') + '<p>' + ENV + '</p>', v: 't égale racine carrée de quatorze : c’est la valeur exacte. Arrondi au centième, t est environ égal à trois virgule soixante-quatorze. On écrit le symbole environ égal, et non égal, car ce n’est pas une valeur exacte.' }] },
     ] },
     C: { lettre: 'C', titre: 'Le théorème de Pythagore', diapos: [
       { titre: 'Théorème de Pythagore', cadre: true, etapes: [
@@ -131,7 +163,7 @@
           v: 'Théorème de Pythagore : dans un triangle rectangle, la somme des carrés des longueurs des deux côtés de l’angle droit, est égale au carré de la longueur de l’hypoténuse.' }] },
       { titre: 'Autrement dit', etapes: [
         { h: fThm + '<p>Si le triangle ABC est rectangle en A,</p>', v: 'Autrement dit : si le triangle ABC est rectangle en A,' },
-        { h: '<p class="formule grand">alors BC² = AB² + AC²</p>', v: 'alors BC au carré, égale AB au carré, plusse AC au carré.' },
+        { h: '<p class="formule grand">' + EQ('BC', 'AB', 'AC', 'alors ') + '</p><p class="petit">L’hypoténuse est en orange, les côtés de l’angle droit en bleu.</p>', v: 'alors BC au carré, égale AB au carré, plusse AC au carré.' },
         { h: '<p>L’hypoténuse [BC] est le côté opposé à l’angle droit : c’est le plus grand côté.</p>', v: 'L’hypoténuse, le côté BC, est le côté opposé à l’angle droit : c’est le plus grand côté du triangle.' }] },
       { titre: 'Astuce', etapes: [
         { h: '<p>La lettre de l’angle droit, ici <strong>A</strong>, est dans les deux carrés de la somme : <strong>A</strong>B² et <strong>A</strong>C².</p>',
@@ -145,16 +177,24 @@
         { h: fABC + '<p>On commence par un schéma codé.</p>', v: 'On commence toujours par un schéma codé, avec l’angle droit et les longueurs.' }] },
       { titre: 'Méthode 3 : la rédaction attendue au brevet', etapes: [
         { h: R('Je sais que le triangle ABC est rectangle en A.', 'on vérifie que le triangle est rectangle'), v: 'Je sais que le triangle ABC est rectangle en A. On vérifie toujours que le triangle est rectangle, avant d’utiliser le théorème.' },
-        { h: R('Son hypoténuse est le côté [BC].', 'le côté opposé à l’angle droit'), v: 'Son hypoténuse est le côté BC : c’est le côté opposé à l’angle droit.' },
-        { h: COND, v: 'Le triangle est rectangle et on connaît son hypoténuse : les conditions sont réunies pour appliquer le théorème de Pythagore.' },
+        { h: R('Son hypoténuse est le côté [BC].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement'), v: 'Son hypoténuse est le côté BC : c’est le côté opposé à l’angle droit. On nomme l’hypoténuse, car elle permet d’écrire correctement l’égalité de Pythagore.' },
+        { h: COND, v: 'Le triangle est rectangle : cela suffit, les conditions sont réunies pour appliquer le théorème de Pythagore.' },
         { h: R('D’après le théorème de Pythagore, on a :', 'on applique le théorème'), v: 'D’après le théorème de Pythagore, on a :' },
-        { h: R('BC² = AB² + AC²', 'l’égalité avec les lettres de l’énoncé'), v: 'BC au carré, égale AB au carré, plusse AC au carré. On écrit l’égalité avec les lettres de l’énoncé.' },
+        { h: R(EQ('BC', 'AB', 'AC'), 'l’égalité avec les lettres de l’énoncé, en commençant par l’hypoténuse'), v: 'BC au carré, égale AB au carré, plusse AC au carré. On écrit l’égalité avec les lettres de l’énoncé.' },
         { h: R('BC² = 6² + 9²', 'on remplace par les longueurs'), v: 'On remplace par les longueurs : BC au carré, égale six au carré, plusse neuf au carré.' },
         { h: R('BC² = 36 + 81', 'on calcule les carrés'), v: 'On calcule les carrés : BC au carré, égale trente-six, plusse quatre-vingt-un.' },
         { h: R('BC² = 117', 'on cherche BC, et non BC²'), v: 'BC au carré égale cent dix-sept. Mais on cherche BC, et non BC au carré.' },
         { h: R('BC = √117 cm', 'le nombre positif dont le carré est 117 : valeur exacte'), v: 'BC est le nombre positif dont le carré est cent dix-sept : BC égale racine carrée de cent dix-sept centimètres. C’est la valeur exacte.' },
-        { h: R('BC ≈ 10,8 cm', 'valeur arrondie au dixième de cm'), v: 'Avec la calculatrice, BC est environ égal à dix virgule huit centimètres : c’est la valeur arrondie au dixième.' },
-        { h: '<p class="cc">Donc BC = √117 cm, soit environ 10,8 cm.</p>', v: 'Donc BC mesure racine carrée de cent dix-sept centimètres, soit environ dix virgule huit centimètres.' }] },
+      ] },
+      { titre: 'Avec la calculatrice : BC', etapes: [
+        { r: true, h: '<p>On tape :</p>' + touchesC(['√', '1', '1', '7', 'EXE'], 0) + ecran('√', ''), v: 'Avec la calculatrice, on tape d’abord la touche racine carrée.' },
+        { r: true, h: '<p>On tape :</p>' + touchesC(['√', '1', '1', '7', 'EXE'], 3) + ecran('√117', ''), v: 'Puis le nombre.' },
+        { r: true, h: '<p>On tape :</p>' + touchesC(['√', '1', '1', '7', 'EXE'], 4) + ecran('√117', '10,81665383'), v: 'La calculatrice affiche dix virgule huit cent seize, et la suite.' },
+        { r: true, h: ecran('√117', '10,81665383', 4) + '<p class="petit-rappel rappel">' + ARR.dixieme + '</p>', v: 'Pour arrondir au dixième, je regarde le chiffre des centièmes. Ici, c’est un : il est plus petit que cinq, donc je coupe sans rien changer. On obtient dix virgule huit.' },
+        { r: true, h: ecran('√117', '10,81665383', 4) + R('BC ≈ 10,8 cm', 'valeur arrondie au dixième de cm') + '<p>' + ENV + '</p>', v: 'Donc BC est environ égal à dix virgule huit centimètres. On écrit le symbole environ égal, et non égal, car ce n’est pas une valeur exacte.' }] },
+      { titre: 'Méthode 3 : la fin de la rédaction', etapes: [
+        { h: R('BC = √117 cm', 'valeur exacte') + R('BC ≈ 10,8 cm', 'valeur arrondie au dixième de cm : « ≈ » car ce n’est pas une valeur exacte'), v: 'On termine la rédaction : BC égale racine carrée de cent dix-sept centimètres, c’est la valeur exacte. Et BC est environ égal à dix virgule huit centimètres, c’est la valeur arrondie au dixième.' },
+        { h: '<p class="cc">Phrase réponse : la longueur BC mesure √117 cm, soit environ 10,8 cm.</p>', v: 'Phrase réponse : la longueur BC mesure racine carrée de cent dix-sept centimètres, soit environ dix virgule huit centimètres.' }] },
     ] },
     E: { lettre: 'E', titre: 'Calculer un côté de l’angle droit', diapos: [
       { titre: 'Méthode 4 : l’énoncé', etapes: [
@@ -163,17 +203,25 @@
         { h: fCDE + '<p>On commence par un schéma codé. Ici, on connaît l’hypoténuse [ED].</p>', v: 'On commence par un schéma codé. Attention : ici, on connaît déjà l’hypoténuse, le côté ED.' }] },
       { titre: 'Méthode 4 : la rédaction attendue au brevet', etapes: [
         { h: R('Je sais que le triangle CDE est rectangle en C.', 'on vérifie que le triangle est rectangle'), v: 'Je sais que le triangle CDE est rectangle en C. On vérifie que le triangle est rectangle.' },
-        { h: R('Son hypoténuse est le côté [ED].', 'le côté opposé à l’angle droit'), v: 'Son hypoténuse est le côté ED : c’est le côté opposé à l’angle droit.' },
-        { h: COND, v: 'Le triangle est rectangle et on connaît son hypoténuse : les conditions sont réunies pour appliquer le théorème de Pythagore.' },
+        { h: R('Son hypoténuse est le côté [ED].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement'), v: 'Son hypoténuse est le côté ED : c’est le côté opposé à l’angle droit. On nomme l’hypoténuse, car elle permet d’écrire correctement l’égalité de Pythagore.' },
+        { h: COND, v: 'Le triangle est rectangle : cela suffit, les conditions sont réunies pour appliquer le théorème de Pythagore.' },
         { h: R('D’après le théorème de Pythagore, on a :', 'on applique le théorème'), v: 'D’après le théorème de Pythagore, on a :' },
-        { h: R('ED² = CE² + CD²', 'l’égalité avec les lettres de l’énoncé'), v: 'ED au carré, égale CE au carré, plusse CD au carré.' },
+        { h: R(EQ('ED', 'CE', 'CD'), 'l’égalité avec les lettres de l’énoncé, en commençant par l’hypoténuse'), v: 'ED au carré, égale CE au carré, plusse CD au carré.' },
         { h: R('8² = 5² + CD²', 'on remplace par les longueurs'), v: 'On remplace par les longueurs : huit au carré, égale cinq au carré, plusse CD au carré.' },
         { h: R('64 = 25 + CD²', 'on calcule les carrés'), v: 'On calcule les carrés : soixante-quatre, égale vingt-cinq, plusse CD au carré.' },
-        { h: R('CD² = 64 − 25', 'on isole l’inconnue CD² : on soustrait'), v: 'On isole l’inconnue CD au carré : CD au carré, égale soixante-quatre moins vingt-cinq. Pour un côté de l’angle droit, on soustrait.' },
+        { h: R('CD² = 64 − 25', 'on cherche un côté de l’angle droit : on isole l’inconnue CD² dans le membre de gauche, on soustrait'), v: 'Attention : on cherche un côté de l’angle droit. On isole donc l’inconnue CD au carré dans le membre de gauche : CD au carré, égale soixante-quatre moins vingt-cinq. Pour un côté de l’angle droit, on soustrait.' },
         { h: R('CD² = 39', 'on cherche CD, et non CD²'), v: 'CD au carré égale trente-neuf. Mais on cherche CD, et non CD au carré.' },
         { h: R('CD = √39 cm', 'valeur exacte'), v: 'CD est le nombre positif dont le carré est trente-neuf : CD égale racine carrée de trente-neuf centimètres. C’est la valeur exacte.' },
-        { h: R('CD ≈ 6,2 cm', 'valeur arrondie au dixième de cm'), v: 'Avec la calculatrice, CD est environ égal à six virgule deux centimètres.' },
-        { h: '<p class="cc">Donc CD = √39 cm, soit environ 6,2 cm.</p>', v: 'Donc CD mesure racine carrée de trente-neuf centimètres, soit environ six virgule deux centimètres.' }] },
+      ] },
+      { titre: 'Avec la calculatrice : CD', etapes: [
+        { r: true, h: '<p>On tape :</p>' + touchesC(['√', '3', '9', 'EXE'], 0) + ecran('√', ''), v: 'Avec la calculatrice, on tape d’abord la touche racine carrée.' },
+        { r: true, h: '<p>On tape :</p>' + touchesC(['√', '3', '9', 'EXE'], 2) + ecran('√39', ''), v: 'Puis le nombre.' },
+        { r: true, h: '<p>On tape :</p>' + touchesC(['√', '3', '9', 'EXE'], 3) + ecran('√39', '6,244997998'), v: 'La calculatrice affiche six virgule deux cent quarante-quatre, et la suite.' },
+        { r: true, h: ecran('√39', '6,244997998', 3) + '<p class="petit-rappel rappel">' + ARR.dixieme + '</p>', v: 'Pour arrondir au dixième, je regarde le chiffre des centièmes. Ici, c’est quatre : il est plus petit que cinq, donc je coupe sans rien changer. On obtient six virgule deux.' },
+        { r: true, h: ecran('√39', '6,244997998', 3) + R('CD ≈ 6,2 cm', 'valeur arrondie au dixième de cm') + '<p>' + ENV + '</p>', v: 'Donc CD est environ égal à six virgule deux centimètres. On écrit le symbole environ égal, et non égal, car ce n’est pas une valeur exacte.' }] },
+      { titre: 'Méthode 4 : la fin de la rédaction', etapes: [
+        { h: R('CD = √39 cm', 'valeur exacte') + R('CD ≈ 6,2 cm', 'valeur arrondie au dixième de cm : « ≈ » car ce n’est pas une valeur exacte'), v: 'On termine la rédaction : CD égale racine carrée de trente-neuf centimètres, c’est la valeur exacte. Et CD est environ égal à six virgule deux centimètres, c’est la valeur arrondie au dixième.' },
+        { h: '<p class="cc">Phrase réponse : la longueur CD mesure √39 cm, soit environ 6,2 cm.</p>', v: 'Phrase réponse : la longueur CD mesure racine carrée de trente-neuf centimètres, soit environ six virgule deux centimètres.' }] },
     ] },
     F: { lettre: 'F', titre: 'Démontrer qu’un triangle est rectangle', diapos: [
       { titre: 'La réciproque du théorème de Pythagore', cadre: true, etapes: [
@@ -279,19 +327,18 @@
         { h: R('5 &lt; √30 &lt; 6', '√25 = 5 et √36 = 6'), v: 'Donc cinq, plus petit que racine carrée de trente, plus petit que six.' }],
       cc: 'Donc √30 est compris entre 5 et 6.' },
     { type: 'exo', rub: 'calc', titre: 'La touche √',
-      enonce: '<p>Avec ta calculatrice, trouve le nombre <strong>positif</strong> :</p><p><span class="q">a)</span> z² = 7,29 &nbsp;&nbsp; <span class="q">b)</span> t² = 20 (arrondi au centième)</p>',
+      enonce: '<p>Avec ta calculatrice, trouve le nombre <strong>positif</strong>. Voici les touches à taper et ce qu’affiche l’écran.</p><div class="duo-calc"><div><p><span class="q">a)</span> z² = 7,29</p>' + touchesC(['√', '7', ',', '2', '9', 'EXE']) + ecran('√7,29', '2,7') + '</div><div><p><span class="q">b)</span> t² = 20 (arrondi au centième)</p>' + touchesC(['√', '2', '0', 'EXE']) + ecran('√20', '4,472135955') + '</div></div>',
       v: 'Avec ta calculatrice, trouve le nombre positif. Question a : z au carré égale sept virgule vingt-neuf. Question b : t au carré égale vingt. Donne l’arrondi au centième.',
       champs: [{ q: 'a', lab: 'z =', rep: ['2,7'], court: true }, { q: 'b', lab: 't ≈', rep: ['4,47'], court: true }],
       indices: ['Tape la touche √, puis le nombre, puis EXE.', '√20 = 4,472… : regarde le chiffre des millièmes pour arrondir.'],
-      aide: calcAide(['√', '7', ',', '2', '9', 'EXE'], 'Pour z : on tape la touche racine carrée, puis le nombre, puis EXE.'),
       correction: [
         { q: 'a', h: R('z = √7,29 = 2,7', 'la calculatrice affiche 2,7'), v: 'Correction. z égale racine carrée de sept virgule vingt-neuf. La calculatrice affiche deux virgule sept.' },
-        { q: 'b', h: R('t = √20 ≈ 4,47', 'la calculatrice affiche 4,472… ; le chiffre des millièmes est 2'), v: 't égale racine carrée de vingt. La calculatrice affiche quatre virgule quatre cent soixante-douze, et la suite. Le chiffre des millièmes est deux, donc on arrondit à quatre virgule quarante-sept.' }],
+        { q: 'b', h: ecran('√20', '4,472135955', 4) + '<p class="petit-rappel rappel">' + ARR.centieme + '</p>' + R('t = √20 ≈ 4,47', 'le chiffre des millièmes est 2 : on coupe sans rien changer') + '<p>' + ENV + '</p>', v: 't égale racine carrée de vingt. La calculatrice affiche quatre virgule quatre cent soixante-douze, et la suite. Le chiffre des millièmes est deux, donc on arrondit à quatre virgule quarante-sept.' }],
       cc: 'a) z = 2,7. b) t = √20 ≈ 4,47.' },
   ] };
 
   // figure guidée : triangle MNP rectangle en P
-  const mnp = (k) => tri('PNM', [4, 3, 5], { droit: k >= 1 ? 'P' : null, hyp: k >= 2 ? ['MN'] : [], lab: { MP: '3', NP: '4', MN: k >= 6 ? '5' : (k >= 2 ? '?' : '') }, alt: 'Triangle MNP, MP = 3 cm, NP = 4 cm' });
+  const mnp = (k) => tri('PNM', [4, 3, 5], { droit: k >= 1 ? 'P' : null, hyp: k >= 2 ? ['MN'] : [], lab: { MP: '3', NP: '4', MN: k >= 7 ? '5' : (k >= 2 ? '?' : '') }, alt: 'Triangle MNP, MP = 3 cm, NP = 4 cm' });
   X[2] = { titre: 'L’égalité de Pythagore', items: [
     { type: 'lecon', rub: 'lecon', parties: ['C'] },
     { type: 'methode', rub: 'methode', titre: 'Écrire l’égalité de Pythagore',
@@ -306,17 +353,18 @@
       { q: 'EFG est rectangle en F, donc EF² = FG² + EG².', rep: false, expl: 'L’angle droit est en F, donc l’hypoténuse est [EG] : EG² = EF² + FG².', v: 'EFG est rectangle en F, donc EF au carré, égale FG au carré plusse EG au carré. Vrai, ou faux ?' },
       { q: 'L’hypoténuse est le côté opposé à l’angle droit.', rep: true, expl: 'C’est la définition de l’hypoténuse.' },
       { q: 'On peut utiliser le théorème de Pythagore dans n’importe quel triangle.', rep: false, expl: 'Le théorème de Pythagore ne s’utilise que dans un triangle rectangle.' }] },
-    { type: 'guide', rub: 'guide', titre: 'Le triangle MNP', enonce: '<p>Le triangle MNP est rectangle en P, avec MP = 3 cm et NP = 4 cm.</p>',
+    { type: 'guide', rub: 'guide', titre: 'Le triangle MNP', enonce: '<p>Le triangle MNP est rectangle en P, avec MP = 3 cm et NP = 4 cm.</p>' + ETAPES(false),
       v: 'Exercice guidé. Le triangle MNP est rectangle en P, avec MP égale trois centimètres, et NP égale quatre centimètres.',
-      vis: pasVis(mnp, [['Je sais que le triangle MNP est rectangle en P.', 'on vérifie que le triangle est rectangle'], ['Son hypoténuse est le côté [MN].', 'le côté opposé à l’angle droit'], CONDL,
-        ['D’après le théorème de Pythagore, on a : MN² = MP² + NP²', 'on applique le théorème'], ['MN² = 3² + 4² = 9 + 16 = 25', 'on remplace et on calcule'], ['MN = √25 = 5 cm', 'le nombre positif dont le carré est 25']], [0, 1, 2, 3, 4, 5, 6]),
+      vis: pasVis(mnp, [['Je sais que le triangle MNP est rectangle en P.', 'on vérifie que le triangle est rectangle'], ['Son hypoténuse est le côté [MN].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement'], CONDL,
+        ['D’après le théorème de Pythagore, on a : ' + EQ('MN', 'MP', 'NP'), 'on applique le théorème'], ['MN² = 3² + 4²', 'on remplace par les longueurs'], ['MN² = 9 + 16 = 25', 'on calcule les carrés'], ['MN = √25 = 5 cm', 'le nombre positif dont le carré est 25']], [0, 1, 2, 3, 4, 5, 6, 7]),
       etapes: [
         { q: 'Le triangle MNP est rectangle en quel point ?', rep: ['P'], k: 1, texte: true, aide: 'On lit « rectangle en P ».' },
         { q: 'Quelle est son hypoténuse ?', rep: seg('MN'), k: 2, texte: true, aide: 'C’est le seul côté sans la lettre P.' },
         Object.assign({ k: 3 }, CHOIX),
         { q: 'Écris l’égalité de Pythagore.', rep: eg('MN', 'MP', 'NP'), k: 4, touches: T2, place: 'MN² = …', aide: 'MN² = MP² + NP².' },
-        { q: 'Calcule MN² = 3² + 4².', rep: ['25'], k: 5, aide: '9 + 16.' },
-        { q: 'MN = ? (en cm)', rep: ['5', '√25', '5cm'], k: 6, touches: ['√'], aide: 'Le nombre positif dont le carré est 25.' }],
+        { q: 'Remplace par les longueurs : MN² = …', rep: ['MN²=3²+4²'], k: 5, touches: T2, place: 'MN² = …² + …²', aide: 'MP = 3 et NP = 4 : MN² = 3² + 4².' },
+        { q: 'Calcule les carrés : MN² = 9 + 16 = ?', rep: ['25'], k: 6, aide: '9 + 16.' },
+        { q: 'MN = ? (en cm)', rep: ['5', '√25', '5cm'], k: 7, touches: ['√'], aide: 'Le nombre positif dont le carré est 25.' }],
       fin: FIN,
       cc: 'Donc l’hypoténuse MN mesure 5 cm.' },
     { type: 'exo', rub: 'exo', titre: 'Exercice 1', ceinture: 'blanche',
@@ -344,9 +392,9 @@
   ] };
 
   // figure guidée : RST rectangle en S, RS = 9, ST = 12
-  const rst = (k) => tri('STR', [12, 9, 15], { droit: k >= 1 ? 'S' : null, hyp: k >= 2 ? ['RT'] : [], lab: { RS: '9 cm', ST: '12 cm', RT: k >= 2 ? (k >= 6 ? '15 cm' : '?') : '' }, alt: 'Triangle RST, RS = 9 cm, ST = 12 cm' });
-  const lignesRST = [['Je sais que le triangle RST est rectangle en S.', 'on vérifie que le triangle est rectangle'], ['Son hypoténuse est le côté [RT].', 'le côté opposé à l’angle droit'], CONDL,
-    ['D’après le théorème de Pythagore, on a : RT² = RS² + ST²', 'on applique le théorème'], ['RT² = 9² + 12² = 81 + 144 = 225', 'on remplace et on calcule'], ['RT = √225 = 15 cm', 'le nombre positif dont le carré est 225']];
+  const rst = (k) => tri('STR', [12, 9, 15], { droit: k >= 1 ? 'S' : null, hyp: k >= 2 ? ['RT'] : [], lab: { RS: '9 cm', ST: '12 cm', RT: k >= 2 ? (k >= 7 ? '15 cm' : '?') : '' }, alt: 'Triangle RST, RS = 9 cm, ST = 12 cm' });
+  const lignesRST = [['Je sais que le triangle RST est rectangle en S.', 'on vérifie que le triangle est rectangle'], ['Son hypoténuse est le côté [RT].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement'], CONDL,
+    ['D’après le théorème de Pythagore, on a : ' + EQ('RT', 'RS', 'ST'), 'on applique le théorème'], ['RT² = 9² + 12²', 'on remplace par les longueurs'], ['RT² = 81 + 144 = 225', 'on calcule les carrés'], ['RT = √225 = 15 cm', 'le nombre positif dont le carré est 225']];
   X[3] = { titre: 'Calculer la longueur de l’hypoténuse', items: [
     { type: 'lecon', rub: 'lecon', parties: ['D'] },
     { type: 'flash', rub: 'flash', titre: 'Questions flash', consigne: 'Vrai ou faux ? Tu as 10 secondes par question.', duree: 10, questions: [
@@ -354,16 +402,17 @@
       { q: 'Si BC² = 49, alors BC = 24,5.', rep: false, expl: 'On ne divise pas par 2 ! BC = √49 = 7.', v: 'Si BC au carré égale quarante-neuf, alors BC égale vingt-quatre virgule cinq. Vrai, ou faux ?' },
       { q: '5² = 10', rep: false, expl: '5² = 5 × 5 = 25. Le double de 5, c’est 10.', v: 'Cinq au carré égale dix. Vrai, ou faux ?' },
       { q: 'L’hypoténuse est plus longue que chaque côté de l’angle droit.', rep: true, expl: 'L’hypoténuse est le plus grand côté du triangle rectangle.' }] },
-    { type: 'guide', rub: 'guide', titre: 'Le triangle RST', enonce: '<p>Le triangle RST est rectangle en S, avec RS = 9 cm et ST = 12 cm. Calcule RT.</p>',
+    { type: 'guide', rub: 'guide', titre: 'Le triangle RST', enonce: '<p>Le triangle RST est rectangle en S, avec RS = 9 cm et ST = 12 cm. Calcule RT.</p>' + ETAPES(false),
       v: 'Exercice guidé. Le triangle RST est rectangle en S, avec RS égale neuf centimètres, et ST égale douze centimètres. Calcule RT.',
-      vis: pasVis(rst, lignesRST, [0, 1, 2, 3, 4, 5, 6]),
+      vis: pasVis(rst, lignesRST, [0, 1, 2, 3, 4, 5, 6, 7]),
       etapes: [
         { q: 'Le triangle RST est rectangle en quel point ?', rep: ['S'], k: 1, texte: true, aide: 'On lit « rectangle en S ».' },
         { q: 'Quelle est son hypoténuse ?', rep: seg('RT'), k: 2, texte: true, aide: 'Le côté opposé à l’angle droit : celui sans la lettre S.' },
         Object.assign({ k: 3 }, CHOIX),
         { q: 'Écris l’égalité de Pythagore.', rep: eg('RT', 'RS', 'ST'), k: 4, touches: T2, place: 'RT² = …', aide: 'RT² = RS² + ST².' },
-        { q: 'Remplace et calcule : RT² = 9² + 12² = ?', rep: ['225'], k: 5, aide: '81 + 144.' },
-        { q: 'RT = ? (en cm)', rep: ['15', '√225', '15cm'], k: 6, touches: ['√'], aide: 'Le nombre positif dont le carré est 225 : 15 × 15 = 225.' }],
+        { q: 'Remplace par les longueurs : RT² = …', rep: ['RT²=9²+12²'], k: 5, touches: T2, place: 'RT² = …² + …²', aide: 'RS = 9 et ST = 12 : RT² = 9² + 12².' },
+        { q: 'Calcule les carrés : RT² = 81 + 144 = ?', rep: ['225'], k: 6, aide: '81 + 144.' },
+        { q: 'RT = ? (en cm)', rep: ['15', '√225', '15cm'], k: 7, touches: ['√'], aide: 'Le nombre positif dont le carré est 225 : 15 × 15 = 225.' }],
       fin: FIN, cc: 'Donc RT mesure 15 cm.' },
     { type: 'exo', rub: 'exo', titre: 'Exercice 1', ceinture: 'jaune',
       enonce: tri('KLM', [3.6, 4.8, 6], { droit: 'K', hyp: ['LM'], lab: { KL: '3,6 cm', KM: '4,8 cm', LM: '?' }, alt: 'Triangle KLM rectangle en K' }) + '<p>KLM est un triangle rectangle en K tel que KL = 3,6 cm et KM = 4,8 cm. Calcule LM.</p>',
@@ -375,7 +424,7 @@
         { q: 'd', lab: 'LM = (en cm)', rep: ['6', '√36'], court: true }],
       indices: ['L’angle droit est en K : l’hypoténuse est le côté sans la lettre K.', '3,6² = 3,6 × 3,6 = 12,96 et 4,8² = 23,04.', '12,96 + 23,04 = 36.'],
       correction: [
-        { q: 'a', h: R('Je sais que le triangle KLM est rectangle en K.', 'on vérifie que le triangle est rectangle') + R('Son hypoténuse est le côté [LM].', 'le côté opposé à l’angle droit'), v: 'Correction. Je sais que le triangle KLM est rectangle en K. Son hypoténuse est le côté LM, opposé à l’angle droit.' },
+        { q: 'a', h: R('Je sais que le triangle KLM est rectangle en K.', 'on vérifie que le triangle est rectangle') + R('Son hypoténuse est le côté [LM].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement'), v: 'Correction. Je sais que le triangle KLM est rectangle en K. Son hypoténuse est le côté LM, opposé à l’angle droit.' },
         { q: 'b', h: COND + R('D’après le théorème de Pythagore : LM² = KL² + KM²', 'l’égalité avec les lettres de l’énoncé'), v: 'Les conditions sont réunies pour appliquer le théorème de Pythagore. D’après le théorème de Pythagore : LM au carré, égale KL au carré, plusse KM au carré.' },
         { q: 'c', h: R('LM² = 3,6² + 4,8²', 'on remplace') + R('LM² = 12,96 + 23,04 = 36', 'on calcule les carrés'), v: 'On remplace : LM au carré, égale trois virgule six au carré, plusse quatre virgule huit au carré, égale douze virgule quatre-vingt-seize, plusse vingt-trois virgule zéro quatre, égale trente-six.' },
         { q: 'd', h: R('LM = √36 = 6 cm', 'le nombre positif dont le carré est 36'), v: 'Donc LM égale racine carrée de trente-six, égale six centimètres.' }],
@@ -389,20 +438,19 @@
         { q: 'c', lab: 'Arrondi au dixième : AC ≈', rep: ['10,3', '10,3cm'], court: true }],
       indices: ['L’angle droit est en B : l’hypoténuse est [AC].', 'AC² = 5² + 9² = 25 + 81.', '√106 = 10,29… : arrondis au dixième.'],
       correction: [
-        { q: 'a', h: R('Je sais que le triangle ABC est rectangle en B.', 'on vérifie que le triangle est rectangle') + R('Son hypoténuse est le côté [AC].', 'le côté opposé à l’angle droit') + COND + R('D’après le théorème de Pythagore : AC² = AB² + BC²', 'l’égalité'), v: 'Correction. Je sais que le triangle ABC est rectangle en B. Son hypoténuse est le côté AC. Les conditions sont réunies pour appliquer le théorème de Pythagore. D’après le théorème de Pythagore, AC au carré, égale AB au carré, plusse BC au carré.' },
+        { q: 'a', h: R('Je sais que le triangle ABC est rectangle en B.', 'on vérifie que le triangle est rectangle') + R('Son hypoténuse est le côté [AC].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement') + COND + R('D’après le théorème de Pythagore : AC² = AB² + BC²', 'l’égalité'), v: 'Correction. Je sais que le triangle ABC est rectangle en B. Son hypoténuse est le côté AC. Les conditions sont réunies pour appliquer le théorème de Pythagore. D’après le théorème de Pythagore, AC au carré, égale AB au carré, plusse BC au carré.' },
         { q: 'a', h: R('AC² = 5² + 9² = 25 + 81 = 106', 'on remplace et on calcule'), v: 'AC au carré, égale cinq au carré, plusse neuf au carré, égale vingt-cinq plusse quatre-vingt-un, égale cent six.' },
         { q: 'b', h: R('AC = √106 cm', 'valeur exacte'), v: 'AC égale racine carrée de cent six centimètres : c’est la valeur exacte.' },
-        { q: 'c', h: R('AC ≈ 10,3 cm', 'la calculatrice affiche 10,29… ; le chiffre des centièmes est 9'), v: 'La calculatrice affiche dix virgule vingt-neuf, et la suite. Le chiffre des centièmes est neuf, donc on arrondit à dix virgule trois centimètres.' }],
+        { q: 'c', h: ecran('√106', '10,29563014', 4) + '<p class="petit-rappel rappel">' + ARR.dixieme + '</p>' + R('AC ≈ 10,3 cm', 'le chiffre des centièmes est 9 : on ajoute 1 au chiffre des dixièmes') + '<p>' + ENV + '</p>', v: 'La calculatrice affiche dix virgule vingt-neuf, et la suite. Le chiffre des centièmes est neuf, donc on arrondit à dix virgule trois centimètres.' }],
       cc: 'Donc AC = √106 cm, soit environ 10,3 cm.' },
     { type: 'exo', rub: 'calc', titre: 'Arrondir une racine carrée',
-      enonce: '<p>Avec ta calculatrice, donne l’arrondi <strong>au dixième</strong>.</p><p><span class="q">a)</span> √58 &nbsp;&nbsp; <span class="q">b)</span> √200</p>',
+      enonce: '<p>Avec ta calculatrice, donne l’arrondi <strong>au dixième</strong>. Voici les touches à taper et ce qu’affiche l’écran.</p><div class="duo-calc"><div><p><span class="q">a)</span> √58</p>' + touchesC(['√', '5', '8', 'EXE']) + ecran('√58', '7,615773106') + '</div><div><p><span class="q">b)</span> √200</p>' + touchesC(['√', '2', '0', '0', 'EXE']) + ecran('√200', '14,14213562') + '</div></div>',
       v: 'Avec ta calculatrice, donne l’arrondi au dixième. Question a : racine carrée de cinquante-huit. Question b : racine carrée de deux cents.',
       champs: [{ q: 'a', lab: '√58 ≈', rep: ['7,6'], court: true }, { q: 'b', lab: '√200 ≈', rep: ['14,1'], court: true }],
       indices: ['Tape la touche √, puis le nombre, puis EXE.', 'Pour arrondir au dixième, regarde le chiffre des centièmes.'],
-      aide: calcAide(['√', '5', '8', 'EXE'], 'On tape la touche racine carrée, puis le nombre, puis EXE.'),
       correction: [
-        { q: 'a', h: R('√58 ≈ 7,6', 'la calculatrice affiche 7,615… ; le chiffre des centièmes est 1'), v: 'Correction. La calculatrice affiche sept virgule six cent quinze, et la suite. Le chiffre des centièmes est un, donc on garde sept virgule six.' },
-        { q: 'b', h: R('√200 ≈ 14,1', 'la calculatrice affiche 14,142… ; le chiffre des centièmes est 4'), v: 'La calculatrice affiche quatorze virgule cent quarante-deux, et la suite. Le chiffre des centièmes est quatre, donc on garde quatorze virgule un.' }],
+        { q: 'a', h: ecran('√58', '7,615773106', 3) + '<p class="petit-rappel rappel">' + ARR.dixieme + '</p>' + R('√58 ≈ 7,6', 'le chiffre des centièmes est 1 : on coupe sans rien changer'), v: 'Correction. La calculatrice affiche sept virgule six cent quinze, et la suite. Le chiffre des centièmes est un, donc on garde sept virgule six.' },
+        { q: 'b', h: ecran('√200', '14,14213562', 4) + R('√200 ≈ 14,1', 'le chiffre des centièmes est 4 : on coupe sans rien changer') + '<p>' + ENV + '</p>', v: 'La calculatrice affiche quatorze virgule cent quarante-deux, et la suite. Le chiffre des centièmes est quatre, donc on garde quatorze virgule un.' }],
       cc: 'a) √58 ≈ 7,6. b) √200 ≈ 14,1.' },
     { type: 'exo', rub: 'scratch', titre: 'Le programme de l’hypoténuse',
       enonce: `<pre class="blocks">quand @greenFlag est cliqué
@@ -423,19 +471,24 @@ dire (h)</pre>
     { type: 'exo', rub: 'tableur', titre: 'La formule RACINE',
       enonce: `<div class="tableur"><div class="fx"><span>fx</span>=RACINE(A2^2+B2^2)</div>
         <table><tr><th></th><th>A</th><th>B</th><th>C</th></tr><tr><th>1</th><td>côté 1</td><td>côté 2</td><td>hypoténuse</td></tr><tr><th>2</th><td>5</td><td>12</td><td class="sel">=RACINE(A2^2+B2^2)</td></tr><tr><th>3</th><td>8</td><td>15</td><td></td></tr></table></div>
-        <p>On tape la formule dans la case C2, puis on la recopie vers le bas en C3.</p><p><span class="q">a)</span> Qu’affiche la case C2 ?</p><p><span class="q">b)</span> Qu’affiche la case C3 ?</p>`,
-      v: 'Tableur. Dans la case C2, on tape : égale RACINE de A2 au carré plusse B2 au carré. Puis on recopie la formule vers le bas, en C3. Question a : qu’affiche la case C2 ? Question b : qu’affiche la case C3 ?',
-      champs: [{ q: 'a', lab: 'La case C2 affiche :', rep: ['13'], court: true }, { q: 'b', lab: 'La case C3 affiche :', rep: ['17'], court: true }],
-      indices: ['A2^2 veut dire A2 au carré.', 'Pour C2 : 5² + 12² = 25 + 144.', 'En C3, la formule devient =RACINE(A3^2+B3^2).'],
+        <div class="rappel petit-rappel"><strong>Les règles du tableur.</strong> Une formule commence toujours par <strong>=</strong>. Une case se nomme par sa colonne puis sa ligne : <strong>A2</strong>. <strong>^</strong> veut dire « puissance » : A2^2, c’est A2 au carré. <strong>RACINE( )</strong> calcule la racine carrée. On écrit la formule <strong>dans la case où l’on veut le résultat</strong>.</div>
+        <p>On tape la formule dans la case C2, puis on la recopie vers le bas en C3.</p><p><span class="q">a)</span> Qu’affiche la case C2 ?</p><p><span class="q">b)</span> Qu’affiche la case C3 ?</p><p><span class="q">c)</span> On ajoute en ligne 4 un triangle de côtés 9 et 12. Dans quelle case écrit-on la formule de son hypoténuse ?</p><p><span class="q">d)</span> Écris la formule à taper dans cette case.</p>`,
+      v: 'Tableur. Rappel des règles : une formule commence toujours par égale. Une case se nomme par sa colonne, puis sa ligne. Le chapeau veut dire puissance. Et on écrit la formule dans la case où l’on veut le résultat. Dans la case C2, on tape : égale RACINE de A2 au carré plusse B2 au carré. Puis on recopie la formule vers le bas, en C3. Question a : qu’affiche la case C2 ? Question b : qu’affiche la case C3 ? Question c : on ajoute en ligne quatre un triangle de côtés neuf et douze. Dans quelle case écrit-on la formule de son hypoténuse ? Question d : écris la formule à taper dans cette case.',
+      champs: [{ q: 'a', lab: 'La case C2 affiche :', rep: ['13'], court: true }, { q: 'b', lab: 'La case C3 affiche :', rep: ['17'], court: true },
+        { q: 'c', lab: 'La formule s’écrit dans la case :', choix: ['A4', 'B4', 'C4', 'C3'], rep: 'C4' },
+        { q: 'd', lab: 'La formule à taper en C4 :', rep: ['=RACINE(A4^2+B4^2)', '=RACINE(B4^2+A4^2)', '=RACINE(A4*A4+B4*B4)', '=RACINE(B4*B4+A4*A4)'], touches: ['=', '(', ')', '^', '+', '*'], place: '= …' }],
+      indices: ['A2^2 veut dire A2 au carré.', 'Pour C2 : 5² + 12² = 25 + 144.', 'En C3, la formule devient =RACINE(A3^2+B3^2).', 'Le résultat de la ligne 4 se met dans la colonne C, ligne 4.'],
       correction: [
         { q: 'a', h: R('5² + 12² = 25 + 144 = 169', 'la formule calcule A2² + B2²') + R('√169 = 13', 'puis RACINE donne la racine carrée'), v: 'Correction. La formule calcule cinq au carré plusse douze au carré, égale vingt-cinq plusse cent quarante-quatre, égale cent soixante-neuf. Puis RACINE donne la racine carrée : treize. La case C2 affiche treize.' },
-        { q: 'b', h: R('=RACINE(A3^2+B3^2)', 'en recopiant, le 2 devient 3') + R('8² + 15² = 64 + 225 = 289 et √289 = 17', 'même calcul'), v: 'En recopiant vers le bas, la formule devient : égale RACINE de A3 au carré plusse B3 au carré. On calcule huit au carré, plusse quinze au carré. Cela donne soixante-quatre plusse deux cent vingt-cinq, égale deux cent quatre-vingt-neuf. La racine carrée de deux cent quatre-vingt-neuf est dix-sept, donc la case C3 affiche dix-sept.' }],
-      cc: 'a) La case C2 affiche 13. b) La case C3 affiche 17.' },
+        { q: 'b', h: R('=RACINE(A3^2+B3^2)', 'en recopiant, le 2 devient 3') + R('8² + 15² = 64 + 225 = 289 et √289 = 17', 'même calcul'), v: 'En recopiant vers le bas, la formule devient : égale RACINE de A3 au carré plusse B3 au carré. On calcule huit au carré, plusse quinze au carré. Cela donne soixante-quatre plusse deux cent vingt-cinq, égale deux cent quatre-vingt-neuf. La racine carrée de deux cent quatre-vingt-neuf est dix-sept, donc la case C3 affiche dix-sept.' },
+        { q: 'c', h: R('C4', 'on écrit la formule dans la case où l’on veut le résultat : colonne C (hypoténuse), ligne 4'), v: 'On écrit la formule dans la case où l’on veut le résultat : la colonne C, celle de l’hypoténuse, et la ligne quatre. C’est la case C4.' },
+        { q: 'd', h: R('=RACINE(A4^2+B4^2)', 'on commence par =, puis A4 et B4 au carré, avec ^2') + R('√(9² + 12²) = √225 = 15', 'la case C4 affichera 15'), v: 'La formule commence par égale : égale RACINE de A4 au carré plusse B4 au carré. La case C4 affichera quinze.' }],
+      cc: 'a) La case C2 affiche 13. b) La case C3 affiche 17. c) La formule s’écrit en C4. d) =RACINE(A4^2+B4^2).' },
   ] };
 
   // figure guidée : EFG rectangle en G, EF = 13, FG = 5
-  const efg = (k) => tri('GFE', [5, 12, 13], { droit: k >= 1 ? 'G' : null, hyp: k >= 2 ? ['EF'] : [], lab: { EF: '13 cm', FG: '5 cm', EG: k >= 6 ? '12 cm' : '?' }, alt: 'Triangle EFG, EF = 13 cm, FG = 5 cm' });
-  const lignesEFG = [['Je sais que le triangle EFG est rectangle en G.', 'on vérifie que le triangle est rectangle'], ['Son hypoténuse est le côté [EF].', 'le côté opposé à l’angle droit'], CONDL, ['D’après le théorème de Pythagore, on a : EF² = EG² + FG²', 'l’égalité avec les lettres'], ['13² = EG² + 5², soit 169 = EG² + 25', 'on remplace et on calcule les carrés'], ['EG² = 169 − 25 = 144', 'on isole EG² : on soustrait'], ['EG = √144 = 12 cm', 'le nombre positif dont le carré est 144']];
+  const efg = (k) => tri('GFE', [5, 12, 13], { droit: k >= 1 ? 'G' : null, hyp: k >= 2 ? ['EF'] : [], lab: { EF: '13 cm', FG: '5 cm', EG: k >= 8 ? '12 cm' : '?' }, alt: 'Triangle EFG, EF = 13 cm, FG = 5 cm' });
+  const lignesEFG = [['Je sais que le triangle EFG est rectangle en G.', 'on vérifie que le triangle est rectangle'], ['Son hypoténuse est le côté [EF].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement'], CONDL, ['D’après le théorème de Pythagore, on a : ' + EQ('EF', 'EG', 'FG'), 'l’égalité, en commençant par l’hypoténuse'], ['13² = EG² + 5²', 'on remplace par les longueurs'], ['169 = EG² + 25', 'on calcule les carrés'], ['EG² = 169 − 25 = 144', 'on cherche un côté de l’angle droit : on isole EG² dans le membre de gauche, on soustrait'], ['EG = √144 = 12 cm', 'le nombre positif dont le carré est 144']];
   X[4] = { titre: 'Calculer un côté de l’angle droit', items: [
     { type: 'lecon', rub: 'lecon', parties: ['E'] },
     { type: 'flash', rub: 'flash', titre: 'Questions flash', consigne: 'Vrai ou faux ? Tu as 10 secondes par question.', duree: 10, questions: [
@@ -443,16 +496,18 @@ dire (h)</pre>
       { q: 'Si 100 = AB² + 36, alors AB² = 64.', rep: true, expl: 'AB² = 100 − 36 = 64.', v: 'Si cent égale AB au carré plusse trente-six, alors AB au carré égale soixante-quatre. Vrai, ou faux ?' },
       { q: 'Un côté de l’angle droit peut être plus long que l’hypoténuse.', rep: false, expl: 'L’hypoténuse est toujours le plus grand côté : si on trouve plus long, on s’est trompé.' },
       { q: 'Si EG² = 144, alors EG = 12.', rep: true, expl: '12² = 144, donc EG = √144 = 12.', v: 'Si EG au carré égale cent quarante-quatre, alors EG égale douze. Vrai, ou faux ?' }] },
-    { type: 'guide', rub: 'guide', titre: 'Le triangle EFG', enonce: '<p>Le triangle EFG est rectangle en G, avec EF = 13 cm et FG = 5 cm. Calcule EG.</p>',
+    { type: 'guide', rub: 'guide', titre: 'Le triangle EFG', enonce: '<p>Le triangle EFG est rectangle en G, avec EF = 13 cm et FG = 5 cm. Calcule EG.</p>' + ETAPES(true),
       v: 'Exercice guidé. Le triangle EFG est rectangle en G, avec EF égale treize centimètres, et FG égale cinq centimètres. Calcule EG.',
-      vis: pasVis(efg, lignesEFG, [0, 1, 2, 3, 4, 6, 7]),
+      vis: pasVis(efg, lignesEFG, [0, 1, 2, 3, 4, 5, 6, 7, 8]),
       etapes: [
         { q: 'Le triangle EFG est rectangle en quel point ?', rep: ['G'], k: 1, texte: true, aide: 'On lit « rectangle en G ».' },
         { q: 'Quelle est son hypoténuse ?', rep: seg('EF'), k: 2, texte: true, aide: 'Le côté sans la lettre G : ici on connaît sa longueur, 13 cm.' },
         Object.assign({ k: 3 }, CHOIX),
         { q: 'Écris l’égalité de Pythagore.', rep: eg('EF', 'EG', 'FG'), k: 4, touches: T2, place: 'EF² = …', aide: 'EF² = EG² + FG².' },
-        { q: 'On isole EG² : EG² = 13² − 5² = ?', rep: ['144'], k: 5, aide: '169 − 25.' },
-        { q: 'EG = ? (en cm)', rep: ['12', '√144', '12cm'], k: 6, touches: ['√'], aide: '12 × 12 = 144.' }],
+        { q: 'Remplace par les longueurs : 13² = …', rep: ['13²=EG²+5²'], k: 5, touches: T2, place: '13² = …', aide: 'EF = 13 et FG = 5 : 13² = EG² + 5².' },
+        { q: 'Calcule les carrés : 169 = EG² + ?', rep: ['25'], k: 6, aide: '5² = 5 × 5.' },
+        { q: 'On isole EG² dans le membre de gauche : EG² = 169 − 25 = ?', rep: ['144'], k: 7, aide: '169 − 25.' },
+        { q: 'EG = ? (en cm)', rep: ['12', '√144', '12cm'], k: 8, touches: ['√'], aide: '12 × 12 = 144.' }],
       fin: FIN,
       cc: 'Donc EG mesure 12 cm.' },
     { type: 'exo', rub: 'exo', titre: 'Exercice 1', ceinture: 'jaune',
@@ -465,10 +520,10 @@ dire (h)</pre>
         { q: 'd', lab: 'Arrondi au dixième : UW ≈', rep: ['7,5', '7,5cm'], court: true }],
       indices: ['L’angle droit est en U : l’hypoténuse est [VW], et on connaît sa longueur.', '9² = UV² + UW², donc UW² = 81 − 25.', '√56 = 7,48… : arrondis au dixième.'],
       correction: [
-        { q: 'a', h: R('Je sais que le triangle UVW est rectangle en U.', 'on vérifie que le triangle est rectangle') + R('Son hypoténuse est le côté [VW].', 'le côté opposé à l’angle droit') + COND + R('D’après le théorème de Pythagore : VW² = UV² + UW²', 'l’égalité'), v: 'Correction. Je sais que le triangle UVW est rectangle en U. Son hypoténuse est le côté VW. Les conditions sont réunies pour appliquer le théorème de Pythagore. D’après le théorème de Pythagore, VW au carré, égale UV au carré, plusse UW au carré.' },
+        { q: 'a', h: R('Je sais que le triangle UVW est rectangle en U.', 'on vérifie que le triangle est rectangle') + R('Son hypoténuse est le côté [VW].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement') + COND + R('D’après le théorème de Pythagore : VW² = UV² + UW²', 'l’égalité'), v: 'Correction. Je sais que le triangle UVW est rectangle en U. Son hypoténuse est le côté VW. Les conditions sont réunies pour appliquer le théorème de Pythagore. D’après le théorème de Pythagore, VW au carré, égale UV au carré, plusse UW au carré.' },
         { q: 'b', h: R('9² = 5² + UW², soit 81 = 25 + UW²', 'on remplace') + R('UW² = 81 − 25 = 56', 'on isole UW² : on soustrait'), v: 'On remplace : quatre-vingt-un, égale vingt-cinq plusse UW au carré. On isole UW au carré : UW au carré, égale quatre-vingt-un moins vingt-cinq, égale cinquante-six.' },
         { q: 'c', h: R('UW = √56 cm', 'valeur exacte'), v: 'UW égale racine carrée de cinquante-six centimètres : c’est la valeur exacte.' },
-        { q: 'd', h: R('UW ≈ 7,5 cm', 'la calculatrice affiche 7,48… ; le chiffre des centièmes est 8'), v: 'La calculatrice affiche sept virgule quarante-huit, et la suite. Le chiffre des centièmes est huit, donc on arrondit à sept virgule cinq centimètres.' }],
+        { q: 'd', h: ecran('√56', '7,483314774', 3) + '<p class="petit-rappel rappel">' + ARR.dixieme + '</p>' + R('UW ≈ 7,5 cm', 'le chiffre des centièmes est 8 : on ajoute 1 au chiffre des dixièmes') + '<p>' + ENV + '</p>', v: 'La calculatrice affiche sept virgule quarante-huit, et la suite. Le chiffre des centièmes est huit, donc on arrondit à sept virgule cinq centimètres.' }],
       cc: 'Donc UW = √56 cm, soit environ 7,5 cm.' },
     { type: 'exo', rub: 'exo', titre: 'Exercice 2', ceinture: 'orange',
       enonce: '<p>ABC est rectangle en B, avec AB = 6,4 cm et AC = 8 cm. Sami écrit : <strong>« BC² = 6,4² + 8² = 104,96 donc BC ≈ 10,2 cm »</strong>.</p><p><span class="q">a)</span> Pourquoi Sami aurait-il dû se méfier de son résultat ?</p><p><span class="q">b)</span> Calcule la bonne longueur BC.</p>',
@@ -531,29 +586,28 @@ dire (h)</pre>
         { q: 'c', h: R('On en déduit que AC² ≠ AB² + BC².', 'les deux résultats sont différents') + R('L’égalité de Pythagore n’est pas vérifiée, donc d’après la contraposée du théorème de Pythagore, le triangle ABC n’est pas rectangle.', 'on conclut avec la contraposée'), v: 'On en déduit que AC au carré n’est pas égal à AB au carré plusse BC au carré. Donc d’après la contraposée du théorème de Pythagore, le triangle ABC n’est pas rectangle.' }],
       cc: 'Donc le triangle ABC n’est pas rectangle.' },
     { type: 'exo', rub: 'calc', titre: 'Vérifier avec la calculatrice',
-      enonce: '<p>DEF est un triangle tel que DE = 2,8 cm, EF = 4,5 cm et DF = 5,3 cm. Avec ta calculatrice :</p><p><span class="q">a)</span> calcule DF² ;</p><p><span class="q">b)</span> calcule DE² + EF² ;</p><p><span class="q">c)</span> conclus.</p>',
+      enonce: '<p>DEF est un triangle tel que DE = 2,8 cm, EF = 4,5 cm et DF = 5,3 cm. Avec ta calculatrice (touche x²) :</p><div class="duo-calc"><div>' + touchesC(['5', ',', '3', 'x²', 'EXE']) + ecran('5,3²', '') + '</div><div>' + touchesC(['2', ',', '8', 'x²', '+', '4', ',', '5', 'x²', 'EXE']) + ecran('2,8²+4,5²', '') + '</div></div><p><p><span class="q">a)</span> calcule DF² ;</p><p><span class="q">b)</span> calcule DE² + EF² ;</p><p><span class="q">c)</span> conclus.</p>',
       v: 'Avec ta calculatrice. DEF est un triangle tel que DE égale deux virgule huit centimètres, EF égale quatre virgule cinq centimètres, et DF égale cinq virgule trois centimètres. Question a : calcule DF au carré. Question b : calcule DE au carré plusse EF au carré. Question c : conclus.',
       champs: [
         { q: 'a', lab: 'DF² =', rep: ['28,09'], court: true },
         { q: 'b', lab: 'DE² + EF² =', rep: ['28,09'], court: true },
         { q: 'c', lab: 'Le triangle DEF est :', choix: ['rectangle en D', 'rectangle en E', 'rectangle en F', 'pas rectangle'], rep: 'rectangle en E' }],
       indices: ['Tape 5,3 puis la touche x², puis EXE.', 'L’angle droit est en face du plus grand côté [DF].'],
-      aide: { bouton: 'Voir les touches', html: '<p>Pour DE² + EF² : on tape 2,8, la touche x², puis +, puis 4,5, la touche x², puis EXE.</p><p class="touches"><kbd>2</kbd><kbd>,</kbd><kbd>8</kbd><kbd>x²</kbd><kbd>+</kbd><kbd>4</kbd><kbd>,</kbd><kbd>5</kbd><kbd>x²</kbd><kbd>EXE</kbd></p>' },
       correction: [
-        { q: 'a', h: R('D’une part : DF² = 5,3² = 28,09', 'le carré du plus grand côté, seul'), v: 'Correction. Le plus grand côté est DF. D’une part, DF au carré, égale cinq virgule trois au carré, égale vingt-huit virgule zéro neuf.' },
-        { q: 'b', h: R('D’autre part : DE² + EF² = 2,8² + 4,5² = 7,84 + 20,25 = 28,09', 'la somme des deux autres carrés'), v: 'D’autre part, DE au carré plusse EF au carré, égale sept virgule quatre-vingt-quatre, plusse vingt virgule vingt-cinq, égale vingt-huit virgule zéro neuf.' },
+        { q: 'a', h: ecran('5,3²', '28,09') + R('D’une part : DF² = 5,3² = 28,09', 'le carré du plus grand côté, seul'), v: 'Correction. Le plus grand côté est DF. D’une part, DF au carré, égale cinq virgule trois au carré, égale vingt-huit virgule zéro neuf.' },
+        { q: 'b', h: ecran('2,8²+4,5²', '28,09') + R('D’autre part : DE² + EF² = 2,8² + 4,5² = 7,84 + 20,25 = 28,09', 'la somme des deux autres carrés'), v: 'D’autre part, DE au carré plusse EF au carré, égale sept virgule quatre-vingt-quatre, plusse vingt virgule vingt-cinq, égale vingt-huit virgule zéro neuf.' },
         { q: 'c', h: R('On en déduit que DF² = DE² + EF².', 'les deux résultats sont égaux') + R('D’après la réciproque du théorème de Pythagore, le triangle DEF est rectangle en E.', 'E est en face de [DF]'), v: 'On en déduit que DF au carré égale DE au carré plusse EF au carré. D’après la réciproque du théorème de Pythagore, le triangle DEF est rectangle en E, le sommet en face du plus grand côté.' }],
       cc: 'Donc le triangle DEF est rectangle en E.' },
   ] };
 
   // échelle contre un mur : H pied du mur, S haut de l'échelle, P pied de l'échelle
-  const echelle = (k) => fig({ P: { H: [0, 0], S: [0, 4], P: [0.9, 0] }, seg: ['HS', 'HP', 'PS'], droit: k >= 1 ? [['H', 'S', 'P']] : [], hyp: k >= 2 ? ['PS'] : [],
-    lab: { PS: '4,1 m', HS: '4 m', HP: k >= 6 ? '0,9 m' : '?' }, w: 120, h: 170, alt: 'Échelle [PS] de 4,1 m contre un mur [HS] de 4 m',
+  const echelle = (k) => fig({ P: { H: [0, 0], S: [0, 4], P: [0.9, 0] }, seg: ['HS', 'HP', 'PS'], droit: k >= 1 ? [['H', 'S', 'P']] : [], hyp: k >= 2 ? ['PS'] : [], cotes: k >= 2 ? ['HS', 'HP'] : [],
+    lab: { PS: '4,1 m', HS: '4 m', HP: k >= 8 ? '0,9 m' : '?' }, w: 120, h: 170, alt: 'Échelle [PS] de 4,1 m contre un mur [HS] de 4 m',
     extra: (T) => { const a = T('H'), b = T('S'); return `<rect x="${a[0] - 14}" y="${b[1] - 6}" width="14" height="${a[1] - b[1] + 6}" fill="#E8DCCB"/><line x1="${a[0] - 30}" y1="${a[1]}" x2="${a[0] + 90}" y2="${a[1]}" stroke="#8B5A2B" stroke-width="3"/>`; } });
-  const lignesEch = [['Le mur est perpendiculaire au sol, donc le triangle PHS est rectangle en H.', 'on justifie l’angle droit'], ['Son hypoténuse est [PS], l’échelle.', 'le côté opposé à l’angle droit'], CONDL,
-    ['D’après le théorème de Pythagore : PS² = PH² + HS²', 'l’égalité'], ['4,1² = PH² + 4², soit 16,81 = PH² + 16', 'on remplace'], ['PH² = 16,81 − 16 = 0,81', 'on isole PH²'], ['PH = √0,81 = 0,9 m', 'le nombre positif dont le carré est 0,81']];
+  const lignesEch = [['Le mur est perpendiculaire au sol, donc le triangle PHS est rectangle en H.', 'on justifie l’angle droit'], ['Son hypoténuse est [PS], l’échelle.', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement'], CONDL,
+    ['D’après le théorème de Pythagore : ' + EQ('PS', 'PH', 'HS'), 'l’égalité, en commençant par l’hypoténuse'], ['4,1² = PH² + 4²', 'on remplace par les longueurs'], ['16,81 = PH² + 16', 'on calcule les carrés'], ['PH² = 16,81 − 16 = 0,81', 'on isole PH² dans le membre de gauche, on soustrait'], ['PH = √0,81 = 0,9 m', 'le nombre positif dont le carré est 0,81']];
   // parcours en triangle rectangle
-  const parcours = fig({ P: { D: [0, 0], E: [160, 0], F: [0, 120] }, seg: ['DE', 'EF', 'FD'], droit: [['D', 'E', 'F']], hyp: ['EF'], lab: { DE: '160 m', DF: '120 m', EF: '?' }, alt: 'Parcours DEF rectangle en D, DE = 160 m, DF = 120 m' });
+  const parcours = fig({ P: { D: [0, 0], E: [160, 0], F: [0, 120] }, seg: ['DE', 'EF', 'FD'], droit: [['D', 'E', 'F']], hyp: ['EF'], cotes: ['DE', 'DF'], lab: { DE: '160 m', DF: '120 m', EF: '?' }, alt: 'Parcours DEF rectangle en D, DE = 160 m, DF = 120 m' });
   // figure MICA : triangle MIC rectangle en I, et triangle MAC
   const mica = fig({ P: { M: [0, 0], C: [15, 0], I: [9.6, -7.2], A: [0, 20] }, seg: ['MC', 'CI', 'IM', 'MA', 'AC'], droit: [['I', 'M', 'C']], lab: { MI: '12', IC: '9', MA: '20', AC: '25' }, h: 160, alt: 'Triangle MIC rectangle en I, MI = 12, IC = 9 ; triangle MAC, MA = 20, AC = 25' });
   X[6] = { titre: 'Problèmes avec Pythagore', items: [
@@ -563,16 +617,18 @@ dire (h)</pre>
       { q: 'On peut arrondir une longueur avant de la réutiliser dans un calcul.', rep: false, expl: 'On garde la valeur exacte jusqu’au bout, sinon le résultat final devient faux.' },
       { q: 'La diagonale d’un rectangle de 6 cm sur 8 cm mesure 10 cm.', rep: true, expl: 'Le rectangle a des angles droits : d² = 6² + 8² = 100, donc d = 10 cm.', v: 'La diagonale d’un rectangle de six centimètres sur huit centimètres mesure dix centimètres. Vrai, ou faux ?' },
       { q: '« BC² = 23,04 donc BC = 23,04 cm »', rep: false, expl: 'On a oublié la racine carrée : BC = √23,04 = 4,8 cm.', v: 'BC au carré égale vingt-trois virgule zéro quatre, donc BC égale vingt-trois virgule zéro quatre centimètres. Vrai, ou faux ?' }] },
-    { type: 'guide', rub: 'guide', titre: 'L’échelle', enonce: '<p>Une échelle de <strong>4,1 m</strong> est posée contre un mur vertical. Son sommet S touche le mur à <strong>4 m</strong> du sol. À quelle distance du mur est le pied P de l’échelle ?</p>',
+    { type: 'guide', rub: 'guide', titre: 'L’échelle', enonce: '<p>Une échelle de <strong>4,1 m</strong> est posée contre un mur vertical. Son sommet S touche le mur à <strong>4 m</strong> du sol. À quelle distance du mur est le pied P de l’échelle ?</p>' + ETAPES(true),
       v: 'Exercice guidé. Une échelle de quatre virgule un mètres est posée contre un mur vertical. Son sommet touche le mur à quatre mètres du sol. À quelle distance du mur est le pied de l’échelle ?',
-      vis: pasVis(echelle, lignesEch, [0, 1, 2, 3, 4, 6, 7]),
+      vis: pasVis(echelle, lignesEch, [0, 1, 2, 3, 4, 5, 6, 7, 8]),
       etapes: [
         { q: 'Le triangle PHS est rectangle en quel point ?', rep: ['H'], k: 1, texte: true, aide: 'H est le pied du mur : le mur est perpendiculaire au sol.' },
         { q: 'Quelle est son hypoténuse ?', rep: seg('PS'), k: 2, texte: true, aide: 'C’est l’échelle : le côté sans la lettre H.' },
         Object.assign({ k: 3 }, CHOIX),
         { q: 'Écris l’égalité de Pythagore.', rep: eg('PS', 'PH', 'HS'), k: 4, touches: T2, place: 'PS² = …', aide: 'PS² = PH² + HS².' },
-        { q: 'On isole PH² : PH² = 4,1² − 4² = ?', rep: ['0,81'], k: 5, aide: '16,81 − 16.' },
-        { q: 'PH = ? (en m)', rep: ['0,9', '√0,81', '0,9m'], k: 6, touches: ['√'], aide: '0,9 × 0,9 = 0,81.' }],
+        { q: 'Remplace par les longueurs : 4,1² = …', rep: ['4,1²=PH²+4²'], k: 5, touches: T2, place: '4,1² = …', aide: 'PS = 4,1 et HS = 4 : 4,1² = PH² + 4².' },
+        { q: 'Calcule les carrés : 16,81 = PH² + ?', rep: ['16'], k: 6, aide: '4² = 4 × 4.' },
+        { q: 'On isole PH² dans le membre de gauche : PH² = 16,81 − 16 = ?', rep: ['0,81'], k: 7, aide: '16,81 − 16.' },
+        { q: 'PH = ? (en m)', rep: ['0,9', '√0,81', '0,9m'], k: 8, touches: ['√'], aide: '0,9 × 0,9 = 0,81.' }],
       fin: FIN, cc: 'Donc le pied de l’échelle est à 0,9 m du mur.' },
     { type: 'exo', rub: 'exo', titre: 'Exercice 1', ceinture: 'jaune',
       enonce: parcours + '<p>Pour la course du collège, le parcours DEF est un triangle rectangle en D, avec DE = 160 m et DF = 120 m.</p><p><span class="q">a)</span> Calcule la longueur EF.</p><p><span class="q">b)</span> Quelle est la longueur d’un tour de parcours ?</p>',
@@ -580,7 +636,7 @@ dire (h)</pre>
       champs: [{ q: 'a', lab: 'EF = (en m)', rep: ['200', '200m'], court: true }, { q: 'b', lab: 'Un tour = (en m)', rep: ['480', '480m'], court: true }],
       indices: ['Le triangle est rectangle en D : l’hypoténuse est [EF].', 'EF² = 160² + 120² = 25 600 + 14 400.', 'Un tour : DE + EF + FD.'],
       correction: [
-        { q: 'a', h: R('Je sais que le triangle DEF est rectangle en D.', 'on vérifie que le triangle est rectangle') + R('Son hypoténuse est le côté [EF].', 'le côté opposé à l’angle droit') + COND + R('D’après le théorème de Pythagore : EF² = DE² + DF²', 'l’égalité'), v: 'Correction. Je sais que le triangle DEF est rectangle en D. Son hypoténuse est EF. Les conditions sont réunies pour appliquer le théorème de Pythagore. D’après le théorème de Pythagore, EF au carré égale DE au carré plusse DF au carré.' },
+        { q: 'a', h: R('Je sais que le triangle DEF est rectangle en D.', 'on vérifie que le triangle est rectangle') + R('Son hypoténuse est le côté [EF].', 'le côté opposé à l’angle droit ; il permet d’écrire l’égalité correctement') + COND + R('D’après le théorème de Pythagore : EF² = DE² + DF²', 'l’égalité'), v: 'Correction. Je sais que le triangle DEF est rectangle en D. Son hypoténuse est EF. Les conditions sont réunies pour appliquer le théorème de Pythagore. D’après le théorème de Pythagore, EF au carré égale DE au carré plusse DF au carré.' },
         { q: 'a', h: R('EF² = 160² + 120² = 25 600 + 14 400 = 40 000', 'on remplace et on calcule') + R('EF = √40 000 = 200 m', 'car 200² = 40 000'), v: 'EF au carré, égale vingt-cinq mille six cents plusse quatorze mille quatre cents, égale quarante mille. Donc EF égale racine carrée de quarante mille, égale deux cents mètres.' },
         { q: 'b', h: R('DE + EF + FD = 160 + 200 + 120 = 480 m', 'le périmètre du triangle'), v: 'Un tour, c’est le périmètre du triangle : cent soixante plusse deux cents plusse cent vingt, égale quatre cent quatre-vingts mètres.' }],
       cc: 'a) EF mesure 200 m. b) Un tour de parcours mesure 480 m.' },
@@ -687,6 +743,7 @@ dire (h)</pre>
     ['On en déduit que ', Li('AC²=MA²+MC²', 11), '.'],
     ['Donc, d’après ', RECI('la réciproque'), ' du théorème de Pythagore, le triangle MAC ', EST('est rectangle'), ' en ', Tr('M', { w: 2.5 }), '.'],
     ['Phrase réponse : MC mesure ', Tr('15'), ' cm et le triangle MAC est rectangle en ', Tr('M', { w: 2.5 }), '.']] });
+  X[6].items.find(i => i.titre === 'Exercice 3 · comme au brevet').enonce += ETAPES(false);
   enCahier(6, 'Exercice 3 · comme au brevet', { liste: [
     'écrit que le triangle est rectangle (le sol est perpendiculaire au mur) ;', 'nommé l’hypoténuse : la rampe ;', 'écrit que les conditions sont réunies pour appliquer le théorème de Pythagore ;',
     'cité le théorème et écrit l’égalité en commençant par l’hypoténuse ;', 'remplacé, calculé, puis pris la racine carrée ;', 'écrit l’unité (m) ;', 'fini par une phrase réponse pour a) et pour b).'] });
@@ -725,4 +782,21 @@ dire (h)</pre>
             { q: 'b', calc: '<p>90 ÷ 2,54 ≈ 35,4</p>', rep: '<p>environ 35 pouces</p>', phrase: 'La diagonale de l’écran mesure environ 35 pouces.' }] }],
     },
   };
+  // ---------- le signe √ couvre tout le nombre (barre de la racine) ----------
+  const RAC = /√(\([^()]*(?:\([^()]*\)[^()]*)*\)|−?\d+(?:[ ,]\d+)*|[a-z](?![a-zà-ÿ]))/g;
+  const racine = (t) => typeof t !== 'string' ? t : t.split(/(<svg[\s\S]*?<\/svg>)/).map((m, i) => i % 2 ? m : m.replace(RAC, '<span class="rac">√<span class="rad">$1</span></span>')).join('');
+  const CLES = ['h', 'enonce', 'fin', 'resume', 'cc', 'lab', 'e', 'calc', 'expl'];
+  const passer = (o) => {
+    if (Array.isArray(o)) { o.forEach(passer); return; }
+    if (!o || typeof o !== 'object') return;
+    for (const k of Object.keys(o)) {
+      const v = o[k];
+      if ((CLES.includes(k) || (k === 'q' && v.length > 2)) && typeof v === 'string') o[k] = racine(v);
+      else if (k === 'h' && v && typeof v === 'object' && v.apres) v.apres = racine(v.apres);
+      else if ((k === 'vis' || k === 'o') && Array.isArray(v)) o[k] = v.map(racine);
+      else if (k === 'rep' && typeof v === 'string' && o.calc !== undefined) o[k] = racine(v);
+      else if (typeof v === 'object' && !['rep', 'choix', 'v'].includes(k)) passer(v);
+    }
+  };
+  passer(typeof LECONS !== 'undefined' ? LECONS['3e-3'] : null); passer(X); passer(typeof BILANS !== 'undefined' ? BILANS['3e-3'] : null);
 })();
