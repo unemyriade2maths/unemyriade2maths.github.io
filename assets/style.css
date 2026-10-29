@@ -482,3 +482,7 @@ details.notion summary::-webkit-details-marker { display: none; }
 /* les étapes de la rédaction au brevet */
 .etapes-brevet { margin: 10px 0 0; padding: 8px 14px; border-radius: 12px; background: var(--bleu-clair); }
 .etapes-brevet ol { margin: 4px 0 0; padding-left: 22px; } .etapes-brevet li { margin: 2px 0; font-size: 15px; }
+/* visuels animés */
+.fig.visuel { max-width: 100%; }
+.anim-entree { animation: entree .6s ease both; }
+.fig .part { opacity: .3; }

@@ -81,6 +81,44 @@
     <li>Le triangle est <strong>rectangle</strong>.</li><li>On nomme son <strong>hypoténuse</strong>.</li><li>Les <strong>conditions sont réunies</strong>.</li>
     <li><strong>D’après le théorème de Pythagore</strong> : l’égalité, en commençant par l’hypoténuse.</li><li>On <strong>remplace</strong> par les longueurs.</li><li>On <strong>calcule</strong> les carrés.</li>
     ${cote ? '<li>On <strong>isole l’inconnue</strong> dans le membre de gauche : on soustrait.</li>' : ''}<li>On prend la <strong>racine carrée</strong>, puis la <strong>phrase réponse</strong>.</li></ol></div>`;
+
+  // ---------- visuels animés (clic par clic, avec une petite animation) ----------
+  // Encadrer √20 : les carrés d'aire 16, 20 et 25 posés dans le même coin
+  const encadre = (k) => {
+    const u = 30, x0 = 30, y0 = 195, f = (n) => Math.round(n * 10) / 10;
+    const grille = (n, coul) => { let g = ''; for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) g += `<rect x="${x0 + i * u}" y="${y0 - (j + 1) * u}" width="${u}" height="${u}" fill="${coul}" stroke="#FFF" stroke-width="1.5"/>`; return g; };
+    const c20 = Math.sqrt(20) * u;
+    let g = '';
+    if (k >= 1) g += `<g class="anim-entree">${grille(4, '#BCD6F7')}<text x="${x0 + 2 * u}" y="${y0 - 2 * u + 6}" text-anchor="middle" font-size="16" font-weight="800" fill="#1F4FA0">aire 16</text><text x="${x0 + 2 * u}" y="${y0 + 20}" text-anchor="middle" font-size="14" font-weight="700" fill="#1F4FA0">côté 4</text></g>`;
+    if (k >= 2) g += `<g class="anim-entree"><rect x="${x0}" y="${y0 - 5 * u}" width="${5 * u}" height="${5 * u}" fill="none" stroke="#C76A0E" stroke-width="3" stroke-dasharray="7 5"/><text x="${x0}" y="${y0 - 5 * u - 9}" font-size="14" font-weight="700" fill="#C76A0E">aire 25 · côté 5</text></g>`;
+    if (k >= 3) g += `<g class="anim-entree"><rect x="${x0}" y="${f(y0 - c20)}" width="${f(c20)}" height="${f(c20)}" fill="#1F6F3D" fill-opacity=".18" stroke="#1F6F3D" stroke-width="3"><animate attributeName="width" from="${4 * u}" to="${f(c20)}" dur="1.2s" fill="freeze"/><animate attributeName="height" from="${4 * u}" to="${f(c20)}" dur="1.2s" fill="freeze"/><animate attributeName="y" from="${y0 - 4 * u}" to="${f(y0 - c20)}" dur="1.2s" fill="freeze"/></rect><text x="${x0 + 5 * u + 8}" y="${f(y0 - c20 / 2)}" font-size="14" font-weight="800" fill="#1F6F3D">aire 20</text><text x="${x0 + 5 * u + 8}" y="${f(y0 - c20 / 2 + 18)}" font-size="14" font-weight="800" fill="#1F6F3D">côté √20</text></g>`;
+    let L = '';
+    if (k >= 4) { const a = 30, b = 290, X = (v) => f(a + (v - 3.5) * (b - a) / 2);
+      L = `<g class="anim-entree" transform="translate(0,235)"><line x1="${a}" y1="20" x2="${b}" y2="20" stroke="#232328" stroke-width="2"/>${[4, 4.5, 5].map(v => `<line x1="${X(v)}" y1="13" x2="${X(v)}" y2="27" stroke="#232328" stroke-width="2"/><text x="${X(v)}" y="46" text-anchor="middle" font-size="14" font-weight="700">${String(v).replace('.', ',')}</text>`).join('')}
+        <circle cx="${X(Math.sqrt(20))}" cy="20" r="6" fill="#1F6F3D"><animate attributeName="cx" from="${X(4)}" to="${X(Math.sqrt(20))}" dur="1.2s" fill="freeze"/></circle><text x="${X(Math.sqrt(20))}" y="5" text-anchor="middle" font-size="14" font-weight="800" fill="#1F6F3D">√20 ≈ 4,47</text></g>`; }
+    return `<svg class="fig visuel" viewBox="0 0 330 ${k >= 4 ? 290 : 225}" width="330" role="img" aria-label="Encadrer √20 avec les carrés d’aire 16, 20 et 25">${g}${L}</svg>`;
+  };
+  // Le théorème de Pythagore en image : les carrés construits sur les côtés du triangle 3 - 4 - 5
+  const preuve = (k) => {
+    const u = 17, ox = 3 * u + 25, oy = 7 * u + 20, P = (x, y) => `${Math.round((ox + x * u) * 10) / 10},${Math.round((oy - y * u) * 10) / 10}`;
+    const carreau = (x, y, dx, dy, nx, ny, coul, extra = '') => `<polygon points="${P(x, y)} ${P(x + dx, y + dy)} ${P(x + dx + nx, y + dy + ny)} ${P(x + nx, y + ny)}" fill="${coul}" stroke="#FFF" stroke-width="1.2"${extra}/>`;
+    let g = `<polygon points="${P(0, 0)} ${P(4, 0)} ${P(0, 3)}" fill="#FFF" stroke="#232328" stroke-width="2.4"/><path d="M${P(0, 0.7)} L${P(0.7, 0.7)} L${P(0.7, 0)}" fill="none" stroke="#1F6F3D" stroke-width="2"/>`;
+    const rose = '#F28AC0', vert = '#8BD45A', bleu = '#7FC4F0';
+    if (k >= 2) { let c = ''; for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) c += carreau(-3 + i, j, 1, 0, 0, 1, rose); g += `<g class="${k >= 5 ? 'part' : 'anim-entree'}">${c}<text x="${ox - 1.5 * u}" y="${oy - 1.5 * u + 5}" text-anchor="middle" font-size="15" font-weight="900" fill="#232328">9</text></g>`; }
+    if (k >= 3) { let c = ''; for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) c += carreau(i, -4 + j, 1, 0, 0, 1, vert); g += `<g class="${k >= 5 ? 'part' : 'anim-entree'}">${c}<text x="${ox + 2 * u}" y="${oy + 2 * u + 5}" text-anchor="middle" font-size="15" font-weight="900" fill="#232328">16</text></g>`; }
+    if (k >= 4) {   // le carré sur l'hypoténuse : 25 carreaux
+      const d = [4 / 5, -3 / 5], n = [3 / 5, 4 / 5]; let c = '', m = 0;
+      for (let j = 0; j < 5; j++) for (let i = 0; i < 5; i++) {
+        const x = i * d[0] + j * n[0], y = 3 + i * d[1] + j * n[1];
+        const coul = k >= 5 ? (m < 9 ? rose : vert) : bleu;
+        c += carreau(x, y, d[0], d[1], n[0], n[1], coul, k >= 5 ? ` opacity="0"><animate attributeName="opacity" from="0" to="1" begin="${(0.3 + m * 0.12).toFixed(2)}s" dur="0.25s" fill="freeze"/></polygon` : '');
+        m++;
+      }
+      c = c.replace(/"\/><animate/g, '"><animate').replace(/<\/polygon\/>/g, '</polygon>');
+      g += `<g class="anim-entree">${c}<text x="${ox + 3.5 * u}" y="${oy - 5.5 * u}" text-anchor="middle" font-size="15" font-weight="900" fill="#232328">25</text></g>`;
+    }
+    return `<svg class="fig visuel" viewBox="0 0 ${11 * u + 40} ${11 * u + 40}" width="${11 * u + 40}" role="img" aria-label="Triangle rectangle de côtés 3, 4 et 5 avec un carré construit sur chaque côté : 9 + 16 = 25">${g}</svg>`;
+  };
   const FIN = '<p class="g-fin">✓ La rédaction est complète : recopie-la dans ton cahier.</p>';
 
   CHAPITRES['3e-3'] = {
@@ -145,6 +183,11 @@
         { h: R('√16 &lt; √20 &lt; √25', 'on prend la racine carrée de chaque nombre'), v: 'On prend la racine carrée de chaque nombre : racine carrée de seize, plus petit que racine carrée de vingt, plus petit que racine carrée de vingt-cinq.' },
         { h: R('4 &lt; √20 &lt; 5', '√16 = 4 et √25 = 5'), v: 'Racine carrée de seize égale quatre, et racine carrée de vingt-cinq égale cinq. Donc racine carrée de vingt est comprise entre quatre et cinq.' },
         { h: '<p class="cc">√20 est compris entre 4 et 5.</p>' }] },
+      { titre: 'En image : encadrer √20', etapes: [
+        { r: true, h: encadre(1), v: 'Voyons-le en image. Un carré d’aire seize a un côté de quatre.' },
+        { r: true, h: encadre(2), v: 'Un carré d’aire vingt-cinq a un côté de cinq.' },
+        { r: true, h: encadre(3), v: 'Le carré d’aire vingt est plus grand que le carré d’aire seize, et plus petit que le carré d’aire vingt-cinq. Son côté, racine carrée de vingt, est donc entre quatre et cinq.' },
+        { r: true, h: encadre(4) + '<p class="cc">16 &lt; 20 &lt; 25, donc 4 &lt; √20 &lt; 5.</p>', v: 'Sur la droite graduée, racine carrée de vingt se place entre quatre et cinq : environ quatre virgule quarante-sept.' }] },
       { titre: 'Méthode 2 : trouver un nombre positif x', etapes: [
         { h: '<p class="question">Trouve le nombre positif x tel que x² = 81.</p>', v: 'Méthode : trouver le nombre positif x, tel que x au carré égale quatre-vingt-un.' },
         { h: R('x = √81 = 9', 'le nombre positif dont le carré est 81'), v: 'On cherche le nombre positif dont le carré est quatre-vingt-un : c’est racine carrée de quatre-vingt-un, donc neuf.' },
@@ -165,6 +208,12 @@
         { h: fThm + '<p>Si le triangle ABC est rectangle en A,</p>', v: 'Autrement dit : si le triangle ABC est rectangle en A,' },
         { h: '<p class="formule grand">' + EQ('BC', 'AB', 'AC', 'alors ') + '</p><p class="petit">L’hypoténuse est en orange, les côtés de l’angle droit en bleu.</p>', v: 'alors BC au carré, égale AB au carré, plusse AC au carré.' },
         { h: '<p>L’hypoténuse [BC] est le côté opposé à l’angle droit : c’est le plus grand côté.</p>', v: 'L’hypoténuse, le côté BC, est le côté opposé à l’angle droit : c’est le plus grand côté du triangle.' }] },
+      { titre: 'En image : pourquoi ça marche ?', etapes: [
+        { r: true, h: preuve(1) + '<p>Un triangle rectangle de côtés 3, 4 et 5.</p>', v: 'Pourquoi le théorème marche-t-il ? Prenons un triangle rectangle de côtés trois, quatre et cinq.' },
+        { r: true, h: preuve(2) + '<p>Sur le côté 3, un carré de 3 × 3 = 9 carreaux.</p>', v: 'Sur le côté de longueur trois, on construit un carré : trois fois trois, neuf carreaux.' },
+        { r: true, h: preuve(3) + '<p>Sur le côté 4, un carré de 4 × 4 = 16 carreaux.</p>', v: 'Sur le côté de longueur quatre, un carré de quatre fois quatre, seize carreaux.' },
+        { r: true, h: preuve(4) + '<p>Sur l’hypoténuse 5, un carré de 5 × 5 = 25 carreaux.</p>', v: 'Sur l’hypoténuse, de longueur cinq, un carré de cinq fois cinq, vingt-cinq carreaux.' },
+        { r: true, h: preuve(5) + '<p class="cc">Les 9 carreaux roses et les 16 carreaux verts remplissent exactement le grand carré : 3² + 4² = 5², soit 9 + 16 = 25.</p>', v: 'Regarde : les neuf carreaux roses et les seize carreaux verts remplissent exactement le grand carré. Trois au carré plusse quatre au carré, égale cinq au carré : neuf plusse seize, égale vingt-cinq.' }] },
       { titre: 'Astuce', etapes: [
         { h: '<p>La lettre de l’angle droit, ici <strong>A</strong>, est dans les deux carrés de la somme : <strong>A</strong>B² et <strong>A</strong>C².</p>',
           v: 'Astuce : la lettre de l’angle droit, ici A, se trouve dans les deux carrés de la somme : AB au carré, et AC au carré.' },
