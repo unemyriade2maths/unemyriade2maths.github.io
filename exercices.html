@@ -26,6 +26,7 @@
 <script src="assets/exercices.js"></script>
 <script src="assets/exercices2.js"></script>
 <script src="assets/pythagore.js"></script>
+<script src="assets/fractions6.js"></script>
 <script src="assets/voix.js"></script>
 <script src="assets/audio.js"></script>
 <script src="assets/scratch/scratchblocks.min.js"></script>
@@ -93,6 +94,7 @@ const labelSuiv = (b, et, pi) => {
   if (c && c.classList.contains('pas-cpt')) c.textContent = fin ? `Correction complète ✓ (${et.length} étapes)` : `Étape ${pi + 1} / ${et.length} · encore ${reste} clic${reste > 1 ? 's' : ''} pour la correction complète`;
 };
 const carte = (it, n) => {
+  if (window.TYPES_EXO && TYPES_EXO[it.type]) return TYPES_EXO[it.type].carte(it, n);
   if (it.type === 'lecon') return `<div class="item" id="ex${n}">
       ${it.parties.length > 1 ? `<div class="choix-lecon">${it.parties.map((l, j) => `<button class="opt${j ? '' : ' choisi'}" data-l="${l}"><span class="lettre">${LECONS[cid][l].lettre || l}</span> ${LECONS[cid][l].titre}</button>`).join('')}</div>` : ''}
       <div class="lecteur-lecon"></div>
@@ -421,6 +423,8 @@ E.items.forEach((it, n) => {
       : `<p class="sous" style="text-align:left;margin:8px 4px">Cette vidéo arrive bientôt sur la chaîne.</p>`;
   });
 });
+// --- types d'exercices ajoutés par un chapitre (ex. figures à colorier en 6e)
+E.items.forEach((it, n) => { if (window.TYPES_EXO && TYPES_EXO[it.type]) TYPES_EXO[it.type].init($('ex' + n), it, n); });
 // --- vrais blocs Scratch
 if (window.scratchblocks) scratchblocks.renderMatching('pre.blocks', { style: 'scratch3', languages: ['fr', 'en'], scale: window.innerWidth < 500 ? 0.68 : 0.85 });
 // --- un exercice à la fois dans une rubrique, avec les flèches
