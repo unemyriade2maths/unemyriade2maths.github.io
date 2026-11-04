@@ -21,6 +21,8 @@
       .f-msg { margin: 6px 0 0; font-weight: 700; } .question.faux .f-msg { color: #B3261E; } .question.juste .f-msg { color: #1F6F3D; }
       .f-pal { display: flex; gap: 8px; margin: 6px 0; flex-wrap: wrap; } .f-pal .opt { border-width: 3px; }
       .f-pal .opt.choisi { outline: 3px solid #232328; background: #FFF; }
+      .f-ligne { display: flex; align-items: center; gap: 10px; margin: 8px 0; } .f-ligne p { margin: 0; } .f-ligne svg { flex-shrink: 0; height: auto; }
+      .f-lab { font-size: 1.1em; } .nw { white-space: nowrap; }
       .f-fig { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 6px 0; }
       .f-lig { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
       .formule .frac, .cc .frac, .etape .frac { font-size: 1.05em; }
@@ -65,7 +67,9 @@
     }
     return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${NOM[u.f]}">${s}</svg>`;
   };
-  const fig = (...us) => `<div class="f-fig">${us.map(u => svg(norm(u))).join('')}</div>`;
+  const fig = (...us) => `<div class="f-fig">${us.map(u => u.lab ? `<div class="f-u">${svg(norm(u))}<span class="f-lab">${u.lab}</span></div>` : svg(norm(u))).join('')}</div>`;
+  // une ligne : la figure en petit, et l'écriture à côté
+  const lig = (u, txt, ecr) => `<div class="f-ligne">${svg(norm(u), { w: 100, r: 34 })}<p>${txt}${ecr ? `${txt ? '<br>' : ''}<span class="nw">${ecr}</span>` : ''}</p></div>`;
 
   // ---------- type d'exercice « figure » ----------
   // parts : { l: 'a', unites: [...], mode: 'lire' | 'cocher' | 'colorier' | 'nombre', rep, ... }
@@ -223,9 +227,9 @@
         { h: fig(B(6, 1)) + `<p>Une part, c’est <strong>un sixième</strong> de l’unité : ${F(1, 6)}</p>`, r: 1, v: 'Une part, c’est un sixième de l’unité.' },
         { h: `<p class="formule grand">6 × ${F(1, 6)} = 1</p>`, v: 'Six sixièmes, c’est l’unité entière : six fois un sixième égale un.' }] },
       { titre: 'Des tiers', etapes: [
-        { h: fig(D(3, 0), D(3, 0)) + '<p>Ces disques sont partagés en <strong>3 parts égales</strong>.</p>', r: 1, v: 'Ces disques sont partagés en trois parts égales.' },
-        { h: fig(D(3, 1), D(3, 0)) + `<p>Une part sur trois : ${F(1, 3)} <strong>un tiers</strong>.</p>`, r: 1, v: 'Une part sur trois : un tiers.' },
-        { h: fig(D(3, 1), D(3, 2)) + `<p>Deux parts sur trois : ${F(2, 3)} <strong>deux tiers</strong>.</p>`, r: 1, v: 'Deux parts sur trois : deux tiers.' }] },
+        { h: lig(D(3, 0), 'Un disque partagé en <strong>3 parts égales</strong>.'), v: 'Ce disque est partagé en trois parts égales.' },
+        { h: lig(D(3, 1), 'Une part sur trois :', `${F(1, 3)} <strong>un tiers</strong>`), v: 'Une part sur trois : un tiers.' },
+        { h: lig(D(3, 2), 'Deux parts sur trois :', `${F(2, 3)} <strong>deux tiers</strong>`), v: 'Deux parts sur trois : deux tiers.' }] },
       { titre: 'Attention : des parts égales', alerte: true, etapes: [
         { h: fig(D(4, [null, VERT], { ineg: [0, 60, 150, 260, 360] })) + '<p>Ce disque est partagé en 4 parts.</p>', v: 'Ce disque est partagé en quatre parts.' },
         { h: `<p class="barre">La part colorée représente ${F(1, 4)}</p><p>Faux : les parts ne sont pas égales.</p>`, v: 'Mais les parts ne sont pas égales : la part colorée n’est pas un quart.' },
@@ -236,14 +240,16 @@
         { h: '<p class="puce"><span style="color:#0070C0;font-weight:800">3</span> : le <strong>numérateur</strong>, le nombre de parts prises ;</p>', v: 'Le nombre du haut s’appelle le numérateur : c’est le nombre de parts que l’on prend.' },
         { h: '<p class="puce"><span style="color:#C00000;font-weight:800">5</span> : le <strong>dénominateur</strong>, le nombre de parts égales dans l’unité.</p>', v: 'Le nombre du bas s’appelle le dénominateur : c’est en combien de parts égales on a partagé l’unité.' },
         { h: '<p>Le mot <strong>fraction</strong> vient du latin <em>fractio</em> : « casser en morceaux ».</p>', v: 'Le mot fraction vient du latin : il veut dire casser en morceaux.' }] },
-      { titre: 'Lire une fraction', etapes: [
-        { h: `<p>${F(1, 2)} un demi &nbsp; · &nbsp; ${F(1, 3)} un tiers &nbsp; · &nbsp; ${F(1, 4)} un quart</p>`, v: 'On dit un demi, un tiers, un quart.' },
-        { h: '<p>Pour les autres dénominateurs, on ajoute <strong>« -ième »</strong>.</p>', v: 'Pour les autres dénominateurs, on ajoute ième.' },
-        { h: `<p>${F(3, 5)} trois cinquièmes &nbsp; · &nbsp; ${F(5, 8)} cinq huitièmes &nbsp; · &nbsp; ${F(7, 10)} sept dixièmes</p>`, v: 'Trois cinquièmes. Cinq huitièmes. Sept dixièmes.' }] },
-      { titre: 'Je lis sur une figure', etapes: [
-        { h: fig(B(5, 3)) + `<p>${F(3, 5)} trois cinquièmes</p>`, v: 'Trois parts coloriées sur cinq : trois cinquièmes.' },
-        { h: fig(D(8, 5)) + `<p>${F(5, 8)} cinq huitièmes</p>`, v: 'Cinq parts coloriées sur huit : cinq huitièmes.' },
-        { h: fig(B(10, 7)) + `<p>${F(7, 10)} sept dixièmes</p>`, v: 'Sept parts coloriées sur dix : sept dixièmes.' }] }] },
+      { titre: 'Lire une fraction : le cas général', cadre: true, etapes: [
+        { h: '<p>On dit le <strong>numérateur</strong>, puis le <strong>dénominateur</strong> suivi de <strong class="nw">« -ième »</strong>.</p>', v: 'Pour lire une fraction, on dit le numérateur, puis le dénominateur, suivi de ième.' },
+        { h: lig(B(5, 3), '', `${F(3, 5)} trois cinquièmes`), v: 'Trois parts coloriées sur cinq : trois cinquièmes.' },
+        { h: lig(D(8, 5), '', `${F(5, 8)} cinq huitièmes`), v: 'Cinq parts coloriées sur huit : cinq huitièmes.' },
+        { h: lig(B(10, 7), '', `${F(7, 10)} sept dixièmes`), v: 'Sept parts coloriées sur dix : sept dixièmes.' }] },
+      { titre: 'Les exceptions : 2, 3 et 4', alerte: true, etapes: [
+        { h: '<p>Quand le dénominateur est <strong>2</strong>, <strong>3</strong> ou <strong>4</strong>, on ne dit pas « -ième ».</p>', v: 'Attention, il y a trois exceptions : quand le dénominateur est deux, trois ou quatre, on ne dit pas ième.' },
+        { h: lig(D(2, 1), '', `${F(1, 2)} un demi`), v: 'Une part sur deux : un demi.' },
+        { h: lig(D(3, 1), '', `${F(1, 3)} un tiers`), v: 'Une part sur trois : un tiers.' },
+        { h: lig(D(4, 1), '', `${F(1, 4)} un quart`), v: 'Une part sur quatre : un quart.' }] }] },
   };
 
   // ---------- exercices de la partie 1 ----------
@@ -386,8 +392,8 @@
         indices: ['Combien de quarts y a-t-il dans un disque entier ?', 'Combien de disques entiers peux-tu remplir avec 11 quarts ?', '8 quarts remplissent 2 disques : où vont les 3 quarts qui restent ?'],
         correction: [
           { r: 1, h: fig(D(4, 4)) + `<p>Un disque = <span class="formule">${F(4, 4)} = 1</span></p>`, v: 'Correction. Un disque contient quatre quarts.' },
-          { h: fig(D(4, 4), D(4, 4)) + '<p>2 disques = 8 quarts. 11 − 8 = 3 quarts</p>', r: 1, v: 'Deux disques entiers donnent huit quarts ; il en reste trois.' },
-          { h: fig(D(4, 4), D(4, 4), D(4, 3)) + '<p>Troisième disque : 3 quarts coloriés.</p>', r: 1, v: 'Il faut un troisième disque pour les trois quarts qui restent.' }],
+          { h: fig(D(4, 4, { lab: F(4, 4) }), D(4, 4, { lab: F(4, 4) })) + '<p>2 disques pleins = 8 quarts. 11 − 8 = 3 quarts</p>', r: 1, v: 'Deux disques pleins donnent huit quarts ; il en reste trois.' },
+          { h: fig(D(4, 4, { lab: F(4, 4) }), D(4, 4, { lab: F(4, 4) }), D(4, 3, { lab: F(3, 4) })) + `<p>2 disques pleins et 3 quarts du troisième disque :</p><p class="formule">${F(4, 4)} + ${F(4, 4)} + ${F(3, 4)} = ${F(11, 4)}</p>`, r: 1, v: 'Deux disques pleins, quatre quarts plus quatre quarts, et trois quarts du troisième disque : en tout, onze quarts. Il faut trois disques.' }],
         cc: 'Il faut 3 disques à Sami pour représenter onze quarts.' },
     ],
   };
