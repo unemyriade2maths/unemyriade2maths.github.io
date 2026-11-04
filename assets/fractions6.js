@@ -49,7 +49,7 @@
       for (let i = 0; i < xs.length - 1; i++) s += `<rect class="p" data-p="${i}" x="${r1(4 + xs[i] * (W - 8))}" y="4" width="${r1((xs[i + 1] - xs[i]) * (W - 8))}" height="${H - 8}" fill="${fill(i)}" stroke="${TR}" stroke-width="${sw}"/>`;
       if (u.grp) for (let i = 0; i < u.n; i += u.grp) s += `<rect x="${r1(4 + xs[i] * (W - 8))}" y="3" width="${r1((xs[Math.min(i + u.grp, u.n)] - xs[i]) * (W - 8))}" height="${H - 6}" fill="none" stroke="${BORD}" stroke-width="6"/>`;
     } else if (u.f === 'grille') {
-      const cw = 52, ch = 42; W = u.cols * cw + 8; H = u.rows * ch + 8;
+      const cw = opt.cell || 52, ch = Math.round(cw * 0.8); W = u.cols * cw + 8; H = u.rows * ch + 8;
       for (let r = 0; r < u.rows; r++) for (let c = 0; c < u.cols; c++) { const k = r * u.cols + c; s += `<rect class="p" data-p="${k}" x="${4 + c * cw}" y="${4 + r * ch}" width="${cw}" height="${ch}" fill="${fill(k)}" stroke="${TR}" stroke-width="${sw}"/>`; }
       if (u.grp === 'col') for (let c = 0; c < u.cols; c++) s += `<rect x="${4 + c * cw}" y="3" width="${cw}" height="${u.rows * ch + 2}" fill="none" stroke="${BORD}" stroke-width="6"/>`;
     } else {
@@ -69,7 +69,7 @@
   };
   const fig = (...us) => `<div class="f-fig">${us.map(u => u.lab ? `<div class="f-u">${svg(norm(u))}<span class="f-lab">${u.lab}</span></div>` : svg(norm(u))).join('')}</div>`;
   // une ligne : la figure en petit, et l'écriture à côté
-  const lig = (u, txt, ecr) => `<div class="f-ligne">${svg(norm(u), { w: 100, r: 34 })}<p>${txt}${ecr ? `${txt ? '<br>' : ''}<span class="nw">${ecr}</span>` : ''}</p></div>`;
+  const lig = (u, txt, ecr) => `<div class="f-ligne">${svg(norm(u), { w: 100, r: 34, cell: 22 })}<p>${txt}${ecr ? `${txt ? '<br>' : ''}<span class="nw">${ecr}</span>` : ''}</p></div>`;
 
   // ---------- type d'exercice « figure » ----------
   // parts : { l: 'a', unites: [...], mode: 'lire' | 'cocher' | 'colorier' | 'nombre', rep, ... }
@@ -244,12 +244,12 @@
         { h: '<p>On dit le <strong>numérateur</strong>, puis le <strong>dénominateur</strong> suivi de <strong class="nw">« -ième »</strong>.</p>', v: 'Pour lire une fraction, on dit le numérateur, puis le dénominateur, suivi de ième.' },
         { h: lig(B(5, 3), '', `${F(3, 5)} trois cinquièmes`), v: 'Trois parts coloriées sur cinq : trois cinquièmes.' },
         { h: lig(D(8, 5), '', `${F(5, 8)} cinq huitièmes`), v: 'Cinq parts coloriées sur huit : cinq huitièmes.' },
-        { h: lig(B(10, 7), '', `${F(7, 10)} sept dixièmes`), v: 'Sept parts coloriées sur dix : sept dixièmes.' }] },
+        { h: lig({ f: 'grille', rows: 2, cols: 5, c: 7 }, '', `${F(7, 10)} sept dixièmes`), v: 'Sept parts coloriées sur dix : sept dixièmes.' }] },
       { titre: 'Les exceptions : 2, 3 et 4', alerte: true, etapes: [
         { h: '<p>Quand le dénominateur est <strong>2</strong>, <strong>3</strong> ou <strong>4</strong>, on ne dit pas « -ième ».</p>', v: 'Attention, il y a trois exceptions : quand le dénominateur est deux, trois ou quatre, on ne dit pas ième.' },
-        { h: lig(D(2, 1), '', `${F(1, 2)} un demi`), v: 'Une part sur deux : un demi.' },
-        { h: lig(D(3, 1), '', `${F(1, 3)} un tiers`), v: 'Une part sur trois : un tiers.' },
-        { h: lig(D(4, 1), '', `${F(1, 4)} un quart`), v: 'Une part sur quatre : un quart.' }] }] },
+        { h: lig(B(2, 1), '', `${F(1, 2)} un demi`), v: 'Une part sur deux : un demi.' },
+        { h: lig(D(3, 2), '', `${F(2, 3)} deux tiers`), v: 'Deux parts sur trois : deux tiers.' },
+        { h: lig({ f: 'grille', rows: 2, cols: 2, c: 3 }, '', `${F(3, 4)} trois quarts`), v: 'Trois parts sur quatre : trois quarts.' }] }] },
   };
 
   // ---------- exercices de la partie 1 ----------
