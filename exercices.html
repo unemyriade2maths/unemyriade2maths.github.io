@@ -28,6 +28,7 @@
 <script src="assets/pythagore.js"></script>
 <script src="assets/fractions6.js"></script>
 <script src="assets/fractions6-p2.js"></script>
+<script src="assets/fractions6-p3.js"></script>
 <script src="assets/voix.js"></script>
 <script src="assets/audio.js"></script>
 <script src="assets/scratch/scratchblocks.min.js"></script>
@@ -396,7 +397,7 @@ E.items.forEach((it, n) => {
       }
       zp.innerHTML = visuel(e.k);
       zp.classList.remove('anime'); void zp.offsetWidth; zp.classList.add('anime');
-      zf.insertAdjacentHTML('beforeend', `<p class="g-fait"><span class="g-num">${i + 1}</span> ${e.q} <strong>${val.trim()}</strong> ✓</p>`);
+      zf.insertAdjacentHTML('beforeend', `<p class="g-fait"><span class="g-num">${i + 1}</span> ${e.q} <strong>${val.trim().replace(/&/g, '&amp;').replace(/</g, '&lt;')}</strong> ✓</p>`);
       zf.hidden = false;
       if (i < it.etapes.length - 1) { etape(i + 1); const x = za.querySelector('input'); if (x) x.focus({ preventScroll: true }); }
       else { za.innerHTML = it.fin; S.querySelector('.cc').hidden = false; }
