@@ -7,6 +7,8 @@
 <title>Une myriade de maths</title>
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2E8B57">
 </head>
 <body>
 <svg class="feuille g" aria-hidden="true" viewBox="0 0 150 150"><path d="M75 140 C20 120 0 60 30 10 C60 40 110 60 75 140 Z" fill="#2E8B57"/><path d="M75 140 C40 100 30 60 30 10" stroke="#1F6F3D" stroke-width="3" fill="none"/></svg>
@@ -47,6 +49,10 @@
     <a class="petit" href="enseignants.html"><span class="ico i4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-4 9 4-9 4z"/><path d="M7 11v4c0 1.5 2.5 3 5 3s5-1.5 5-3v-4"/></svg></span><span class="txt"><strong>Ressources enseignants</strong><span>Une base de travail offerte</span></span><span class="chev" aria-hidden="true">›</span></a>
     <a class="petit" href="a-propos.html"><span class="ico i5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg></span><span class="txt"><strong>À propos</strong><span>Qui suis-je ? Mes engagements</span></span><span class="chev" aria-hidden="true">›</span></a>
   </section>
+  <section class="hors-ligne" id="hors-ligne">
+    <p><strong>Sans connexion</strong> · <span class="etat">Une fois ouvert, le site reste disponible sans réseau. Les voix se gardent quand tu les écoutes, ou toutes d'un coup (environ 31 Mo, de préférence en wifi).</span></p>
+    <button type="button">Télécharger toutes les voix</button>
+  </section>
   <footer>
     <a href="https://www.youtube.com/@une.myriademaths">La chaîne YouTube</a>
   </footer>
@@ -61,5 +67,6 @@ for (const e of ['college', 'lycee']) {
 }
 </script>
 <footer class="droits">© 2026 Une myriade de maths – tous droits réservés. Toute reproduction des contenus, et toute utilisation pour entraîner une intelligence artificielle, sont interdites sans mon accord.</footer>
+<script src="assets/hors-ligne.js"></script>
 </body>
 </html>

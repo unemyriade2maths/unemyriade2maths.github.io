@@ -486,3 +486,7 @@ details.notion summary::-webkit-details-marker { display: none; }
 .fig.visuel { max-width: 100%; }
 .anim-entree { animation: entree .6s ease both; }
 .fig .part { opacity: .3; }
+.hors-ligne { margin-top: 20px; padding: 12px 14px; border: 1px dashed #2E8B57; border-radius: 10px; font-size: 14px; }
+.hors-ligne p { margin: 0 0 8px; }
+.hors-ligne button { font: inherit; padding: 6px 12px; border-radius: 8px; border: 0; background: #2E8B57; color: #fff; cursor: pointer; }
+.hors-ligne button:disabled { opacity: .6; cursor: default; }

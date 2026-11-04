@@ -1,0 +1,11 @@
+{
+  "name": "Une myriade de maths",
+  "short_name": "Myriade maths",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "lang": "fr",
+  "background_color": "#ffffff",
+  "theme_color": "#2E8B57",
+  "icons": [{ "src": "assets/logo.png", "sizes": "any", "type": "image/png", "purpose": "any" }]
+}
