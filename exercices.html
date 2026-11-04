@@ -141,7 +141,7 @@ const carte = (it, n) => {
       <div class="cocher"><p class="g-titre">Sur ma copie, j’ai bien…</p>${it.liste.map((x, i) => `<label class="coche"><input type="checkbox" data-i="${i}"> ${x}</label>`).join('')}<p class="coche-score"></p></div></div></div>`;
   if (it.type === 'lien') return `<div class="item"><h3 class="exo-titre">${it.titre}</h3><a class="ligne" href="${it.page}"><span>${it.texte}</span><span class="fl">→</span></a></div>`;
   if (it.type === 'methode') return `<div class="item" id="ex${n}"><h3 class="exo-titre">${it.titre}</h3><div class="methode">${it.resume}
-      <div class="pas"></div><p class="pas-cpt"></p><div class="pas-barre"><button class="btn verif pas-suiv">Suite ▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
+      <div class="pas"></div><p class="pas-cpt"></p><div class="pas-barre"><button class="btn rond pas-prec" aria-label="Étape précédente">◀</button><button class="btn verif pas-suiv">Suite ▶</button><button class="btn son pas-son">🔊 Écouter</button></div>
       <p class="cc" hidden>${it.cc}</p></div></div>`;
   if (it.type === 'flash') return `<div class="item flash" id="ex${n}"><p class="consigne">${it.consigne}</p>
       <div class="flash-carte"><div class="flash-num"></div><p class="flash-q"></p><div class="chrono"><span></span></div>
@@ -361,8 +361,10 @@ E.items.forEach((it, n) => {
 E.items.forEach((it, n) => {
   if (it.type !== 'methode') return;
   const S = $('ex' + n), pas = S.querySelector('.pas'), ps = S.querySelector('.pas-suiv'); let pi = 0;
-  const montrer = () => { pas.innerHTML = pasHtml(it.etapes, pi); labelSuiv(ps, it.etapes, pi); S.querySelector('.cc').hidden = pi < it.etapes.length - 1; };
+  const pp = S.querySelector('.pas-prec');
+  const montrer = () => { pas.innerHTML = pasHtml(it.etapes, pi); labelSuiv(ps, it.etapes, pi); pp.disabled = pi === 0; S.querySelector('.cc').hidden = pi < it.etapes.length - 1; };
   ps.onclick = () => { if (pi < it.etapes.length - 1) { pi++; montrer(); jouer(voixDe(it.etapes[pi])); } };
+  pp.onclick = () => { if (pi > 0) { pi--; son.pause(); montrer(); } };
   S.querySelector('.pas-son').onclick = () => jouer(voixDe(it.etapes[pi]));
   montrer();
 });

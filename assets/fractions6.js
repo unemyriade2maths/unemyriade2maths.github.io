@@ -241,12 +241,12 @@
         { h: '<p class="puce"><span style="color:#C00000;font-weight:800">5</span> : le <strong>dénominateur</strong>, le nombre de parts égales dans l’unité.</p>', v: 'Le nombre du bas s’appelle le dénominateur : c’est en combien de parts égales on a partagé l’unité.' },
         { h: '<p>Le mot <strong>fraction</strong> vient du latin <em>fractio</em> : « casser en morceaux ».</p>', v: 'Le mot fraction vient du latin : il veut dire casser en morceaux.' }] },
       { titre: 'Lire une fraction : le cas général', cadre: true, etapes: [
-        { h: '<p>On dit le <strong>numérateur</strong>, puis le <strong>dénominateur</strong> suivi de <strong class="nw">« -ième »</strong>.</p>', v: 'Pour lire une fraction, on dit le numérateur, puis le dénominateur, suivi de ième.' },
+        { h: '<p>On dit le <strong>numérateur</strong>, puis le <strong>dénominateur</strong> suivi de <strong class="nw">« -ième »</strong>.</p>', v: 'Pour lire une fraction, on dit le numérateur, puis le dénominateur, suivi de « ième ».' },
         { h: lig(B(5, 3), '', `${F(3, 5)} trois cinquièmes`), v: 'Trois parts coloriées sur cinq : trois cinquièmes.' },
         { h: lig(D(8, 5), '', `${F(5, 8)} cinq huitièmes`), v: 'Cinq parts coloriées sur huit : cinq huitièmes.' },
         { h: lig({ f: 'grille', rows: 2, cols: 5, c: 7 }, '', `${F(7, 10)} sept dixièmes`), v: 'Sept parts coloriées sur dix : sept dixièmes.' }] },
       { titre: 'Les exceptions : 2, 3 et 4', alerte: true, etapes: [
-        { h: '<p>Quand le dénominateur est <strong>2</strong>, <strong>3</strong> ou <strong>4</strong>, on ne dit pas « -ième ».</p>', v: 'Attention, il y a trois exceptions : quand le dénominateur est deux, trois ou quatre, on ne dit pas ième.' },
+        { h: '<p>Quand le dénominateur est <strong>2</strong>, <strong>3</strong> ou <strong>4</strong>, on ne dit pas « -ième ».</p>', v: 'Attention, il y a trois exceptions : quand le dénominateur est deux, trois ou quatre, on ne dit pas « ième ».' },
         { h: lig(B(2, 1), '', `${F(1, 2)} un demi`), v: 'Une part sur deux : un demi.' },
         { h: lig(D(3, 2), '', `${F(2, 3)} deux tiers`), v: 'Deux parts sur trois : deux tiers.' },
         { h: lig({ f: 'grille', rows: 2, cols: 2, c: 3 }, '', `${F(3, 4)} trois quarts`), v: 'Trois parts sur quatre : trois quarts.' }] }] },
@@ -293,10 +293,10 @@
         parts: [lire('a', [B(8, 3)], [3, 8]), lire('b', [D(6, 5)], [5, 6]), lire('c', [Object.assign({}, H, { c: 2 })], [[2, 6], [1, 3]]), lire('d', [B(4, 4), B(4, 2)], [[6, 4], [3, 2]])],
         indices: ['Compte d’abord en combien de parts égales l’unité est partagée.', 'Ce nombre va en bas : c’est le dénominateur.', 'Compte maintenant les parts coloriées et écris ce nombre en haut.'],
         correction: [
-          { h: fig(B(8, 3)) + `<p>a. 8 parts égales, 3 coloriées : ${F(3, 8)}</p>`, v: 'Correction. a : huit parts égales, trois coloriées : trois huitièmes.' },
-          { h: fig(D(6, 5)) + `<p>b. 6 parts égales, 5 coloriées : ${F(5, 6)}</p>`, v: 'b : six parts égales, cinq coloriées : cinq sixièmes.' },
-          { h: fig(Object.assign({}, H, { c: 2 })) + `<p>c. 6 parts égales, 2 coloriées : ${F(2, 6)}</p>`, v: 'c : six parts égales, deux coloriées : deux sixièmes.' },
-          { h: fig(B(4, 4), B(4, 2)) + `<p>d. Une bande = 4 parts. 4 + 2 = 6 parts coloriées : ${F(6, 4)}</p>`, v: 'd : une bande est partagée en quatre. On colorie quatre plus deux, six parts : six quarts. C’est plus d’une unité.' }],
+          { h: fig(B(8, 3)) + `<p><span class="q">a.</span> 8 parts égales, 3 coloriées : ${F(3, 8)}</p>`, v: 'Correction. a : huit parts égales, trois coloriées : trois huitièmes.' },
+          { h: fig(D(6, 5)) + `<p><span class="q">b.</span> 6 parts égales, 5 coloriées : ${F(5, 6)}</p>`, v: 'b : six parts égales, cinq coloriées : cinq sixièmes.' },
+          { h: fig(Object.assign({}, H, { c: 2 })) + `<p><span class="q">c.</span> 6 parts égales, 2 coloriées : ${F(2, 6)}</p>`, v: 'c : six parts égales, deux coloriées : deux sixièmes.' },
+          { h: fig(B(4, 4), B(4, 2)) + `<p><span class="q">d.</span> Une bande = 4 parts. 4 + 2 = 6 parts coloriées : ${F(6, 4)}</p>`, v: 'd : une bande est partagée en quatre. On colorie quatre plusse deux, six parts : six quarts. C’est plus d’une unité.' }],
         cc: 'La fraction coloriée est a. trois huitièmes, b. cinq sixièmes, c. deux sixièmes, d. six quarts.' },
 
       { type: 'figure', rub: 'exo', titre: 'Exercice 2', ceinture: 'jaune',
@@ -309,10 +309,10 @@
           { l: 'd', unites: [Object.assign({}, H, { c: 3 })], mode: 'cocher', rep: false, msg: 'L’hexagone est partagé en 6 parts égales. 3 parts sur 6, est-ce 2 parts sur 3 ?' }],
         indices: ['Regarde d’abord si les parts sont égales.', 'Compte les parts en tout et les parts coloriées.', 'Pour la figure c, essaie de regrouper les cases par colonnes de 2.'],
         correction: [
-          { h: fig(B(3, 2)) + `<p>a. 3 parts égales, 2 coloriées : ${F(2, 3)} ✔</p>`, v: 'Correction. a : trois parts égales, deux coloriées : deux tiers. Oui.' },
-          { h: fig(D(3, 2, { ineg: [0, 90, 160, 360] })) + '<p>b. Les parts n’ont pas la même taille ✘</p>', v: 'b : les parts ne sont pas égales : ce n’est pas deux tiers. Non.' },
-          { h: fig(G(2, 3, [0, 1, 3, 4], { grp: 'col' })) + `<p>c. 3 colonnes égales, 2 coloriées : <span class="formule">${F(4, 6)} = ${F(2, 3)}</span> ✔</p>`, v: 'c : en regroupant les cases par colonnes, on obtient trois parts égales, dont deux coloriées. Quatre sixièmes égale deux tiers. Oui.' },
-          { h: fig(Object.assign({}, H, { c: 3 })) + `<p>d. 6 parts égales, 3 coloriées : ${F(3, 6)}, c’est la moitié ✘</p>`, v: 'd : trois sixièmes, c’est la moitié, pas deux tiers. Non.' }],
+          { h: fig(B(3, 2)) + `<p><span class="q">a.</span> 3 parts égales, 2 coloriées : ${F(2, 3)} ✔</p>`, v: 'Correction. a : trois parts égales, deux coloriées : deux tiers. Oui.' },
+          { h: fig(D(3, 2, { ineg: [0, 90, 160, 360] })) + '<p><span class="q">b.</span> Les parts n’ont pas la même taille ✘</p>', v: 'b : les parts ne sont pas égales : ce n’est pas deux tiers. Non.' },
+          { h: fig(G(2, 3, [0, 1, 3, 4], { grp: 'col' })) + `<p><span class="q">c.</span> 3 colonnes égales, 2 coloriées : <span class="formule">${F(4, 6)} = ${F(2, 3)}</span> ✔</p>`, v: 'c : en regroupant les cases par colonnes, on obtient trois parts égales, dont deux coloriées. Quatre sixièmes égale deux tiers. Oui.' },
+          { h: fig(Object.assign({}, H, { c: 3 })) + `<p><span class="q">d.</span> 6 parts égales, 3 coloriées : ${F(3, 6)}, c’est la moitié ✘</p>`, v: 'd : trois sixièmes, c’est la moitié, pas deux tiers. Non.' }],
         cc: 'On a colorié deux tiers dans les figures a et c.' },
 
       { type: 'figure', rub: 'exo', titre: 'Exercice 3', ceinture: 'orange',
@@ -324,9 +324,9 @@
           lire('c', [D(3, 3), D(3, 1)], [4, 3], { lecture: { choix: ['quatre troisièmes', 'quatre tiers', 'trois quarts'], rep: 'quatre tiers', msg: { 'quatre troisièmes': 'Pour 3, on ne dit pas « troisièmes » : on dit « tiers ».' } } })],
         indices: ['Compte les parts égales d’une unité : c’est le dénominateur.', 'Compte les parts coloriées : c’est le numérateur.', 'Pour lire, on dit le numérateur, puis le dénominateur avec « -ième », sauf demi, tiers et quart.'],
         correction: [
-          { h: fig(B(10, 4)) + `<p>a. 10 parts égales, 4 coloriées : ${F(4, 10)} quatre dixièmes</p>`, v: 'Correction. a : dix parts égales, quatre coloriées : quatre dixièmes.' },
-          { h: fig(D(8, 6)) + `<p>b. 8 parts égales, 6 coloriées : ${F(6, 8)} six huitièmes</p>`, v: 'b : huit parts égales, six coloriées : six huitièmes.' },
-          { h: fig(D(3, 3), D(3, 1)) + `<p>c. Un disque = 3 parts. 3 + 1 = 4 parts coloriées : ${F(4, 3)} quatre tiers</p>`, v: 'c : un disque est partagé en trois. On colorie trois plus une, quatre parts : quatre tiers. Un disque entier et encore un tiers.' }],
+          { h: fig(B(10, 4)) + `<p><span class="q">a.</span> 10 parts égales, 4 coloriées : ${F(4, 10)} quatre dixièmes</p>`, v: 'Correction. a : dix parts égales, quatre coloriées : quatre dixièmes.' },
+          { h: fig(D(8, 6)) + `<p><span class="q">b.</span> 8 parts égales, 6 coloriées : ${F(6, 8)} six huitièmes</p>`, v: 'b : huit parts égales, six coloriées : six huitièmes.' },
+          { h: fig(D(3, 3), D(3, 1)) + `<p><span class="q">c.</span> Un disque = 3 parts. 3 + 1 = 4 parts coloriées : ${F(4, 3)} quatre tiers</p>`, v: 'c : un disque est partagé en trois. On colorie trois plusse une, quatre parts : quatre tiers. Un disque entier et encore un tiers.' }],
         cc: 'La figure a représente quatre dixièmes, la figure b six huitièmes et la figure c quatre tiers.' },
 
       { type: 'figure', rub: 'exo', titre: 'Exercice 4', ceinture: 'verte',
@@ -341,10 +341,10 @@
             { total: 2, msg: 'La moitié de 6 parts, ce n’est pas 2 parts. Essaie de couper la bande en deux morceaux égaux.' }] })],
         indices: ['Le numérateur te dit combien de parts colorier.', 'Pour la figure c, une bande, c’est 3 tiers : combien de tiers te manque-t-il ?', 'Pour la figure d, la bande a 6 parts : la moitié de 6 parts, c’est combien de parts ?'],
         correction: [
-          { h: fig(B(5, 3)) + `<p>a. 3 parts sur 5 : ${F(3, 5)}</p>`, v: 'Correction. a : trois parts sur cinq : trois cinquièmes.' },
-          { h: fig(G(2, 4, 7)) + `<p>b. 7 cases sur 8 : ${F(7, 8)}</p>`, v: 'b : sept cases sur huit : sept huitièmes.' },
-          { h: fig(B(3, 3), B(3, 2)) + `<p>c. Une bande entière (3 tiers) et encore 2 tiers : ${F(5, 3)}</p>`, v: 'c : une bande entière, c’est trois tiers. Il faut encore deux tiers.' },
-          { h: fig(B(6, 3, { grp: 3 })) + `<p>d. 3 parts sur 6, regroupées en bordeaux : <span class="formule">${F(3, 6)} = ${F(1, 2)}</span></p>`, v: 'd : trois sixièmes, c’est la moitié de la bande : un demi.' }],
+          { h: fig(B(5, 3)) + `<p><span class="q">a.</span> 3 parts sur 5 : ${F(3, 5)}</p>`, v: 'Correction. a : trois parts sur cinq : trois cinquièmes.' },
+          { h: fig(G(2, 4, 7)) + `<p><span class="q">b.</span> 7 cases sur 8 : ${F(7, 8)}</p>`, v: 'b : sept cases sur huit : sept huitièmes.' },
+          { h: fig(B(3, 3), B(3, 2)) + `<p><span class="q">c.</span> Une bande entière (3 tiers) et encore 2 tiers : ${F(5, 3)}</p>`, v: 'c : une bande entière, c’est trois tiers. Il faut encore deux tiers.' },
+          { h: fig(B(6, 3, { grp: 3 })) + `<p><span class="q">d.</span> 3 parts sur 6, regroupées en bordeaux : <span class="formule">${F(3, 6)} = ${F(1, 2)}</span></p>`, v: 'd : trois sixièmes, c’est la moitié de la bande : un demi.' }],
         cc: 'J’ai colorié trois cinquièmes, sept huitièmes, cinq tiers et un demi.' },
 
       { type: 'figure', rub: 'exo', titre: 'Exercice 5', ceinture: 'bleue',
@@ -357,10 +357,10 @@
           col('d', [D(1, 0), D(1, 0)], [7, 4], { edit: true, q: `Colorie ${F(7, 4)}. L’unité est un disque.` })],
         indices: ['En combien de parts égales dois-tu partager chaque unité ?', 'C’est le dénominateur : utilise ＋ section jusqu’à ce nombre.', 'Colorie autant de parts que le numérateur ; si une unité est pleine, continue sur la suivante.'],
         correction: [
-          { h: fig(B(4, 1)) + `<p>a. Bande en 4 parts, 1 coloriée : ${F(1, 4)}</p>`, v: 'Correction. a : un quart, une part sur quatre.' },
-          { h: fig(D(5, 3)) + `<p>b. Disque en 5 parts, 3 coloriées : ${F(3, 5)}</p>`, v: 'b : trois cinquièmes.' },
-          { h: fig(D(3, 3), D(3, 2)) + `<p>c. 2 disques en 3 parts : 3 + 2 = 5 tiers, ${F(5, 3)}</p>`, v: 'c : un disque entier, c’est trois tiers, plus deux tiers.' },
-          { h: fig(D(4, 4), D(4, 3)) + `<p>d. 2 disques en 4 parts : 4 + 3 = 7 quarts, ${F(7, 4)}</p>`, v: 'd : un disque entier, c’est quatre quarts, plus trois quarts.' }],
+          { h: fig(B(4, 1)) + `<p><span class="q">a.</span> Bande en 4 parts, 1 coloriée : ${F(1, 4)}</p>`, v: 'Correction. a : un quart, une part sur quatre.' },
+          { h: fig(D(5, 3)) + `<p><span class="q">b.</span> Disque en 5 parts, 3 coloriées : ${F(3, 5)}</p>`, v: 'b : trois cinquièmes.' },
+          { h: fig(D(3, 3), D(3, 2)) + `<p><span class="q">c.</span> 2 disques en 3 parts : 3 + 2 = 5 tiers, ${F(5, 3)}</p>`, v: 'c : un disque entier, c’est trois tiers, plusse deux tiers.' },
+          { h: fig(D(4, 4), D(4, 3)) + `<p><span class="q">d.</span> 2 disques en 4 parts : 4 + 3 = 7 quarts, ${F(7, 4)}</p>`, v: 'd : un disque entier, c’est quatre quarts, plusse trois quarts.' }],
         cc: 'J’ai partagé chaque unité en parts égales selon le dénominateur et colorié autant de parts que le numérateur.' },
 
       { type: 'figure', rub: 'exo', titre: 'Exercice 6', ceinture: 'marron',
@@ -393,7 +393,7 @@
         correction: [
           { r: 1, h: fig(D(4, 4)) + `<p>Un disque = <span class="formule">${F(4, 4)} = 1</span></p>`, v: 'Correction. Un disque contient quatre quarts.' },
           { h: fig(D(4, 4, { lab: F(4, 4) }), D(4, 4, { lab: F(4, 4) })) + '<p>2 disques pleins = 8 quarts. 11 − 8 = 3 quarts</p>', r: 1, v: 'Deux disques pleins donnent huit quarts ; il en reste trois.' },
-          { h: fig(D(4, 4, { lab: F(4, 4) }), D(4, 4, { lab: F(4, 4) }), D(4, 3, { lab: F(3, 4) })) + `<p>2 disques pleins et 3 quarts du troisième disque :</p><p class="formule">${F(4, 4)} + ${F(4, 4)} + ${F(3, 4)} = ${F(11, 4)}</p>`, r: 1, v: 'Deux disques pleins, quatre quarts plus quatre quarts, et trois quarts du troisième disque : en tout, onze quarts. Il faut trois disques.' }],
+          { h: fig(D(4, 4, { lab: F(4, 4) }), D(4, 4, { lab: F(4, 4) }), D(4, 3, { lab: F(3, 4) })) + `<p>2 disques pleins et 3 quarts du troisième disque :</p><p class="formule">${F(4, 4)} + ${F(4, 4)} + ${F(3, 4)} = ${F(11, 4)}</p>`, r: 1, v: 'Deux disques pleins, quatre quarts plusse quatre quarts, et trois quarts du troisième disque : en tout, onze quarts. Il faut trois disques.' }],
         cc: 'Il faut 3 disques à Sami pour représenter onze quarts.' },
     ],
   };

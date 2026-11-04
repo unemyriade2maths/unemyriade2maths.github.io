@@ -252,10 +252,10 @@
         { l: 'd', d: D(2, 2, 5, { fleche: 2, show: [2, 3] }), mode: 'lire', t: 2, rep: [12, 5] }],
       indices: ['Trouve d’abord deux entiers qui se suivent.', 'Compte les intervalles dans une unité : c’est le dénominateur.', `Pour d., écris 2 en cinquièmes : 2 = ${F(10, 5)}.`],
       correction: [
-        { h: dr(D(0, 2, 4, { fleche: 3, eg: [0, 1, 2], lab: { 3: [3, 4] } })) + `<p>a. 4 intervalles par unité ; 3 graduations après 0 : ${F(3, 4)}</p>`, v: 'Correction. a : trois quarts.' },
-        { h: dr(D(0, 2, 6, { fleche: 5, eg: [0, 1, 2], lab: { 1: [1, 6], 5: [5, 6] } })) + `<p>b. La 1<sup>re</sup> graduation vaut ${F(1, 6)} ; la flèche est à la 5<sup>e</sup> : ${F(5, 6)}</p>`, v: 'b : cinq sixièmes.' },
-        { h: dr(D(0, 2, 4, { fleche: 6, eg: [0, 1, 2], lab: { 6: [6, 4] } })) + `<p>c. <span class="formule">1 = ${F(4, 4)}</span> ; 2 graduations après : ${F(6, 4)}</p>`, v: 'c : un égale quatre quarts ; deux graduations après, c’est six quarts.' },
-        { h: dr(D(2, 2, 5, { fleche: 2, eg: [2, 3, 4], lab: { 2: [12, 5] } })) + `<p>d. <span class="formule">2 = ${F(10, 5)}</span> ; 2 graduations après : ${F(12, 5)}</p>`, v: 'd : deux égale dix cinquièmes ; deux graduations après, c’est douze cinquièmes.' }],
+        { h: dr(D(0, 2, 4, { fleche: 3, eg: [0, 1, 2], lab: { 3: [3, 4] } })) + `<p><span class="q">a.</span> 4 intervalles par unité ; 3 graduations après 0 : ${F(3, 4)}</p>`, v: 'Correction. a : trois quarts.' },
+        { h: dr(D(0, 2, 6, { fleche: 5, eg: [0, 1, 2], lab: { 1: [1, 6], 5: [5, 6] } })) + `<p><span class="q">b.</span> La 1<sup>re</sup> graduation vaut ${F(1, 6)} ; la flèche est à la 5<sup>e</sup> : ${F(5, 6)}</p>`, v: 'b : cinq sixièmes.' },
+        { h: dr(D(0, 2, 4, { fleche: 6, eg: [0, 1, 2], lab: { 6: [6, 4] } })) + `<p><span class="q">c.</span> <span class="formule">1 = ${F(4, 4)}</span> ; 2 graduations après : ${F(6, 4)}</p>`, v: 'c : un égale quatre quarts ; deux graduations après, c’est six quarts.' },
+        { h: dr(D(2, 2, 5, { fleche: 2, eg: [2, 3, 4], lab: { 2: [12, 5] } })) + `<p><span class="q">d.</span> <span class="formule">2 = ${F(10, 5)}</span> ; 2 graduations après : ${F(12, 5)}</p>`, v: 'd : deux égale dix cinquièmes ; deux graduations après, c’est douze cinquièmes.' }],
       cc: 'Les flèches montrent trois quarts, cinq sixièmes, six quarts et douze cinquièmes.' },
 
     { type: 'droite', rub: 'exo', titre: 'Exercice 3', ceinture: 'orange',
@@ -303,8 +303,8 @@
       cc: 'Les abscisses sont G vingt-huit cinquièmes, H trente-trois cinquièmes et I trente-sept cinquièmes.' },
 
     { type: 'droite', rub: 'exo', titre: 'Défi · Trois bonds de quatre tiers', ceinture: 'noire',
-      enonce: `<p>a. Place A(${F(4, 3)}), B(${F(8, 3)}) et C(${F(12, 3)}).</p><p>b. Complète.</p>`,
-      v: 'Défi. a : place A quatre tiers, B huit tiers et C douze tiers. b : complète. Quatre tiers plus quatre tiers plus quatre tiers égale combien ? Trois fois quatre tiers égale combien ? Douze tiers égale quel nombre entier ?',
+      enonce: `<p><span class="q">a.</span> Place A(${F(4, 3)}), B(${F(8, 3)}) et C(${F(12, 3)}).</p><p><span class="q">b.</span> Complète.</p>`,
+      v: 'Défi. a : place A quatre tiers, B huit tiers et C douze tiers. b : complète. Quatre tiers plusse quatre tiers plusse quatre tiers égale combien ? Trois fois quatre tiers égale combien ? Douze tiers égale quel nombre entier ?',
       d: D(0, 4, 3, { show: [0, 1] }),
       parts: [{ l: 'a', mode: 'placer', pts: { A: 4, B: 8, C: 12 } },
         { l: 'b', q: `<span class="formule">${F(4, 3)} + ${F(4, 3)} + ${F(4, 3)} =</span>`, mode: 'lire', t: 12, rep: [12, 3], err: [{ si: [12, 9], msg: 'On compte des tiers : 4 tiers + 4 tiers + 4 tiers = 12 tiers. Le dénominateur reste 3.' }] },
