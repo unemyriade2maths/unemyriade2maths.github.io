@@ -26,7 +26,7 @@
 
   // ---------- bandes (même longueur = la même unité), une ligne par fraction ----------
   const bd = (fracs, o = {}) => {
-    const h = 34, gap = 16, k = Math.max(...fracs.map(([n, d]) => Math.ceil(n / d))), L = k === 1 ? 300 : 200;
+    const h = 34, gap = 16, k = Math.max(1, ...fracs.map(([n, d]) => Math.ceil(n / d))), L = k === 1 ? 300 : 200;
     const W = 10 + k * (L + 10) + 70, H = fracs.length * (h + gap) + 10; let s = '';
     fracs.forEach(([n, d], r) => {
       const y = 6 + r * (h + gap);
@@ -35,7 +35,7 @@
         s += `<rect x="${x0.toFixed(1)}" y="${y}" width="${(L / d).toFixed(1)}" height="${h}" fill="${u * d + i < n ? VERT : '#FFF'}" stroke="${TR}" stroke-width="2.4"/>`;
       }
       const x = 6 + k * (L + 10) + 30;
-      s += `<text x="${x}" y="${y + 14}" font-size="17" font-weight="800" fill="${BL}" text-anchor="middle">${n}</text><line x1="${x - 13}" y1="${y + 19}" x2="${x + 13}" y2="${y + 19}" stroke="${TR}" stroke-width="2"/><text x="${x}" y="${y + 36}" font-size="17" font-weight="800" fill="${RG}" text-anchor="middle">${d}</text>`;
+      if (!o.sansNom) s += `<text x="${x}" y="${y + 14}" font-size="17" font-weight="800" fill="${BL}" text-anchor="middle">${n}</text><line x1="${x - 13}" y1="${y + 19}" x2="${x + 13}" y2="${y + 19}" stroke="${TR}" stroke-width="2"/><text x="${x}" y="${y + 36}" font-size="17" font-weight="800" fill="${RG}" text-anchor="middle">${d}</text>`;
     });
     const tir = (x) => { for (let y = 2; y < H - 2; y += 10) s += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y + 5}" stroke="${ROUGE}" stroke-width="3"/>`; };
     if (o.moitie) tir(6 + L / 2); if (k > 1) tir(6 + L + 5);
@@ -177,7 +177,7 @@
       { q: M(`${F(3, 8)} &gt; ${F(1, 2)}`), rep: false, expl: 'la moitié de 8 est 4, et 3 &lt; 4.', v: 'Trois huitièmes est plus grand qu’un demi. Vrai, ou faux ?' }] },
     { type: 'guide', rub: 'guide', titre: 'Comparer quatre neuvièmes et sept neuvièmes',
       enonce: `<p>Compare ${F(4, 9)} et ${F(7, 9)}. On suit la méthode étape par étape.</p>`, v: 'Exercice guidé. Compare quatre neuvièmes et sept neuvièmes. On suit la méthode étape par étape.',
-      vis: [bd([[0, 9], [0, 9]]), bd([[4, 9], [7, 9]])],
+      vis: [bd([[0, 9], [0, 9]], { sansNom: true }), bd([[4, 9], [7, 9]])],
       etapes: [
         { q: 'Étape 1 : les deux fractions ont-elles le même dénominateur ou le même numérateur ?', choix: ['le même dénominateur', 'le même numérateur'], rep: ['le même dénominateur'], k: 0, aide: 'Le dénominateur est le nombre du bas : 9 et 9.' },
         { q: 'Étape 2 : compare les numérateurs. 4 … 7', choix: ['<', '>'], rep: ['<'], k: 1, aide: '4 est-il plus petit ou plus grand que 7 ?' },
