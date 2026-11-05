@@ -42,7 +42,7 @@
     <li><span>Je vérifie les droits d’auteur et je réécris les exercices si nécessaire.</span></li>
     <li><span>Je réalise les diapos et je vous les envoie pour validation.</span></li>
   </ol>
-  <a class="contact" href="mailto:prof.varrin@gmail.com?subject=Cr%C3%A9ation%20de%20contenu">Contact enseignants</a>
+  <a class="contact" href="#" data-sujet="Création de contenu">Contact enseignants</a>
 </div>
 <script src="assets/data.js"></script>
 <script src="assets/catalogue.js"></script>
@@ -67,7 +67,7 @@ const voir = () => {
           <ol class="seance">${SEANCE.map(x => `<li>${x}</li>`).join('')}</ol>
           <h4 class="pack-h">Aperçu du cours${p.seances ? ` (${p.seances} séances)` : ''}</h4>
           <p class="apercu">${p.parties.map((t, j) => `<span><b>${'ABCDEFGHIJ'[j]}</b> ${t}</span>`).join('')}</p>
-          <a class="contact" href="mailto:prof.varrin@gmail.com?subject=${encodeURIComponent('Pack ' + niv + ' – ' + x.titre)}">Demander ce pack</a></details>`
+          <a class="contact" href="#" data-sujet="${('Pack ' + niv + ' – ' + x.titre).replace(/"/g, '&quot;')}">Demander ce pack</a></details>`
       : `<div class="notion"><span>${x.titre}</span><span class="badge todo">Bientôt</span></div>`;
   }).join('') : '<p class="bientot">Les packs de ce niveau arrivent bientôt.</p>';
 };
@@ -75,6 +75,6 @@ document.querySelectorAll('.espace-choix [role=tab]').forEach(b => b.onclick = (
 voir();
 </script>
 <footer class="droits">© 2026 Une myriade de maths – tous droits réservés. Toute reproduction des contenus, et toute utilisation pour entraîner une intelligence artificielle, sont interdites sans mon accord.</footer>
-<script src="assets/hors-ligne.js"></script>
+<script src="assets/contact.js"></script><script src="assets/hors-ligne.js"></script>
 </body>
 </html>

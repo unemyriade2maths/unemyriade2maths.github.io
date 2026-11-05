@@ -1,6 +1,6 @@
 // Mode hors ligne du site : garde les pages et fichiers dans le téléphone.
 // Liste et version mises à jour par outils/maj-hors-ligne.sh
-const VERSION = "202611041452";
+const VERSION = "202611051713";
 const SITE = "site-" + VERSION;
 const VOIX = "voix-v1"; // les voix (audio/) sont gardées d'une version à l'autre
 const FICHIERS = [
@@ -13,6 +13,7 @@ const FICHIERS = [
   "assets/bilans.js",
   "assets/catalogue.js",
   "assets/clavier.js",
+  "assets/contact.js",
   "assets/data.js",
   "assets/diapos.js",
   "assets/exercices.js",
