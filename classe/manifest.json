@@ -1,0 +1,14 @@
+{
+  "name": "Myriade en classe",
+  "short_name": "Myriade classe",
+  "start_url": "./?app=1",
+  "scope": "./",
+  "display": "standalone",
+  "lang": "fr",
+  "background_color": "#ffffff",
+  "theme_color": "#1F6F3D",
+  "icons": [
+    {"src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}

@@ -47,4 +47,5 @@ User-agent: Timpibot
 Disallow: /
 
 User-agent: *
+Disallow: /classe/
 Allow: /
