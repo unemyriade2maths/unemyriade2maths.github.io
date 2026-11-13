@@ -77,6 +77,9 @@ label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size
 .e-sel[hidden]{display:none}
 .e-top .sp{flex:1}
 #eHeure{font:800 22px/1 var(--titre);font-variant-numeric:tabular-nums}
+#eMinPetit{font:800 22px/1 var(--titre);font-variant-numeric:tabular-nums;color:#fff;background:var(--vert);border-radius:12px;padding:6px 10px;white-space:nowrap}
+#eMinPetit.bas{background:var(--orange-texte)}#eMinPetit.fini{background:var(--rouge)}
+#ecran:not(.sans-panneau) #eMinPetit{display:none}
 .e-top .btn{min-height:38px;border-color:var(--vert-texte);background:transparent;color:#fff;font-size:14px}
 .e-main{flex:1;display:flex;gap:14px;min-height:0;padding:14px}
 #stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:var(--vert-clair);border-radius:18px;overflow:hidden;min-width:0;cursor:pointer}
@@ -318,7 +321,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
   <header class="e-top">
     <p class="logo">Une myriade de <span>maths</span></p>
     <span id="eClasse" hidden></span><select id="eDeck" class="e-sel" aria-label="Séance"></select><select id="eExo" class="e-sel" aria-label="Aller à"></select><span id="eSeance"></span>
-    <span id="eHeure"></span>
+    <span id="eHeure"></span><span id="eMinPetit" hidden></span>
     <button class="btn mini" id="ePanneau" type="button">Panneau</button>
     <button class="btn mini" id="eFs" type="button">Plein écran</button>
     <button class="btn mini" id="eChanger" type="button" title="Changer d’appareil">⇄</button>
@@ -3501,7 +3504,7 @@ async function micro(actif){
       CALME.ctx.createMediaStreamSource(CALME.stream).connect(CALME.an); CALME.buf = new Float32Array(1024);
       Object.assign(CALME, {on:true, t:performance.now(), calme:0, reveil:performance.now(), nb:0});
       requestAnimationFrame(boucleCalme);
-    } catch (e) { toast(window.__reseau ? 'Micro refusé : autorise le micro pour cette fenêtre.' : 'Micro indisponible ici : utilise Myriade.exe sur l’ordinateur.'); }
+    } catch (e) { toast(window.__reseau ? 'Micro refusé : autorise le micro pour cette fenêtre.' : 'Micro indisponible : clique sur le cadenas à gauche de l’adresse et autorise le micro.'); }
     CALME.attente = false;
   } else if (!actif && CALME.on) { CALME.on = false; CALME.stream.getTracks().forEach(t => t.stop()); CALME.ctx.close(); }
 }
@@ -3549,8 +3552,9 @@ function construireOutilsEcran(){
 }
 function rendreOutilsEcran(){
   const o = D.live.outils || {};
-  micro(!!(o.foret || o.mascotte));
-  $('#eForet').hidden = !o.foret; $('#eMascotte').hidden = !o.mascotte;
+  const masc = o.mascotte !== false;
+  micro(!!(o.foret || masc));
+  $('#eForet').hidden = !o.foret; $('#eMascotte').hidden = !masc;
   // score
   const sc = D.live.score;
   $('#eScore').hidden = !sc?.on;
@@ -3559,7 +3563,7 @@ function rendreOutilsEcran(){
 function rendreOutilsTel(){
   const o = D.live.outils || {}, sc = D.live.score || {on:false, eq:[]};
   $('#oCalme').innerHTML = `
-    <div class="duo"><button class="btn${o.foret ? ' plein' : ''}" data-ou="foret" type="button">🌳 Forêt de Guyane${o.foret ? ' · affichée' : ''}</button><button class="btn${o.mascotte ? ' plein' : ''}" data-ou="mascotte" type="button">🦥 Paresseux${o.mascotte ? ' · affiché' : ''}</button></div>
+    <div class="duo"><button class="btn${o.foret ? ' plein' : ''}" data-ou="foret" type="button">🌳 Forêt de Guyane${o.foret ? ' · affichée' : ''}</button><button class="btn${o.mascotte !== false ? ' plein' : ''}" data-ou="mascotte" type="button">🦥 Paresseux${o.mascotte !== false ? ' · affiché' : ''}</button></div>
     <label class="champ">Seuil de bruit : <b id="oSeuilV">${o.seuil || 60}</b><input type="range" id="oSeuil" min="20" max="95" value="${o.seuil || 60}"></label>
     <label class="champ">Un animal de plus toutes les<select id="oPas">${[0.5, 1, 2, 3, 5].map(m => `<option value="${m}"${(o.pas || 1) == m ? ' selected' : ''}>${m === 0.5 ? '30 secondes' : m + ' minute' + (m > 1 ? 's' : '')} de calme</option>`).join('')}</select></label>
     <p class="aide">Le micro de l’ordinateur mesure le bruit (rien n’est enregistré). Trop de bruit : le paresseux se réveille, le compteur repart à zéro et 2 animaux se cachent.</p>`;
@@ -3766,6 +3770,7 @@ const fmt = s => { s = Math.ceil(s); return pad(Math.floor(s / 60)) + ':' + pad(
 function peindreMinuteur(){
   const r = resteAct(), cl = T.etat === 'fini' ? 'fini' : (T.etat === 'run' && r <= 30 ? 'bas' : '');
   for (const el of [$('#eTimer'), $('#tTimer')]) { el.textContent = fmt(r); el.className = cl; }
+  const mp = $('#eMinPetit'); mp.hidden = T.etat === 'arret'; mp.textContent = '⏱ ' + fmt(r); mp.className = cl;
   $('#tPlay').textContent = T.etat === 'run' ? 'Pause' : (T.etat === 'pause' ? 'Reprendre' : 'Lancer');
   $('#eFin').hidden = !(T.etat === 'fini' && Date.now() - T.sonne < 6000);
 }
@@ -3850,7 +3855,7 @@ function rendreEcran(){
   const ds = c ? decksActifs(c) : [];
   $('#eDeck').hidden = !ds.length; remplir($('#eDeck'), ds.map(x => `<option value="${x.id}"${x.id === D.live.deck ? ' selected' : ''}>${esc(x.name)}</option>`).join(''));
   $('#eExo').hidden = !(d?.index || []).length; remplir($('#eExo'), optionsIndex(d, D.live.page || 1));
-  $('#ecran').classList.toggle('sans-panneau', !!D.live.hideSide);
+  $('#ecran').classList.toggle('sans-panneau', D.live.hideSide !== false);
   let vide;
   if (!classes().length) vide = 'Bienvenue !<small>Crée tes classes depuis la télécommande, onglet Réglages.</small>';
   else if (!c) vide = 'Choisis une classe<small>sur ton téléphone, ou elle s’ouvrira toute seule à l’heure du cours.</small>';
@@ -4485,7 +4490,7 @@ $('#stage').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect(); aller(e.clientX - r.left < r.width / 3 ? -1 : 1);
 });
 $('#eFs').onclick = () => { try { actx ??= new AudioContext(); actx.resume(); } catch (e) {} if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.().catch(() => toast('Plein écran indisponible ici')); };
-$('#ePanneau').onclick = $('#tPanneau').onclick = () => { D.live.hideSide = !D.live.hideSide; save('app/live', D.live); rendre(); };
+$('#ePanneau').onclick = $('#tPanneau').onclick = () => { D.live.hideSide = D.live.hideSide === false; save('app/live', D.live); rendre(); };
 document.addEventListener('fullscreenchange', () => { $('#eCv').dataset.cle = ''; rendre(); });
 let rsT; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { $$('canvas').forEach(c => c.dataset.cle = ''); rendre(); }, 150); });
 document.addEventListener('keydown', e => {
@@ -4512,7 +4517,7 @@ $('.onglets').addEventListener('click', e => { const b = e.target.closest('[data
   rendre(); });
 $('#tel').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.ou) majOutils(o => { o[b.dataset.ou] = !o[b.dataset.ou]; });
+  if (b.dataset.ou) majOutils(o => { const k = b.dataset.ou; o[k] = k === 'mascotte' ? o[k] === false : !o[k]; });
   else if (b.id === 'oScoreOn') majScore(s => { s.on = !s.on; });
   else if (b.id === 'oScoreZero') deuxFois(b, 'Confirmer', () => majScore(s => { s.eq.forEach(e => e.s = 0); }));
   else if (b.dataset.eq !== undefined) majScore(s => { const e = s.eq[+b.dataset.eq]; e.s = Math.max(0, e.s + +b.dataset.d); s.on = true; });
