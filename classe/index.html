@@ -78,6 +78,8 @@ label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size
 .e-top .sp{flex:1}
 #eHeure{font:800 22px/1 var(--titre);font-variant-numeric:tabular-nums}
 #eMinPetit{font:800 22px/1 var(--titre);font-variant-numeric:tabular-nums;color:#fff;background:var(--vert);border-radius:12px;padding:6px 10px;white-space:nowrap}
+/* minuteur de l'application retiré : les diapos ont déjà leurs minuteurs */
+.bloc:has(> #tTimer),.e-card:has(> #eTimer),#eMinPetit,#eFin{display:none!important}
 #eMinPetit.bas{background:var(--orange-texte)}#eMinPetit.fini{background:var(--rouge)}
 #ecran:not(.sans-panneau) #eMinPetit{display:none}
 .e-top .btn{min-height:38px;border-color:var(--vert-texte);background:transparent;color:#fff;font-size:14px}
@@ -4640,7 +4642,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1794587598',t0=Date.now(),vue=false;
+<script>(function(){var V='1794587716',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
