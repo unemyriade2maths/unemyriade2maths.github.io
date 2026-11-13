@@ -47,6 +47,7 @@ textarea{padding:10px 12px;min-height:150px;resize:vertical;font-weight:600}
 label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size:14px;color:var(--gris)}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);background:var(--encre);color:#fff;font-weight:700;padding:12px 18px;border-radius:14px;max-width:min(92vw,520px);text-align:center;transition:transform .25s;z-index:60}
 #toast.on{transform:translate(-50%,0)}
+#toast{display:none!important} /* bulle de messages supprimée */
 #toast:not(.on){visibility:hidden;transition:transform .3s,visibility 0s .3s}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
@@ -4708,7 +4709,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1794594614',t0=Date.now(),vue=false;
+<script>(function(){var V='1794595071',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
