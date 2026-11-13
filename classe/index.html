@@ -82,9 +82,8 @@ label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size
 .t-grille{display:flex;flex-direction:column;gap:14px;margin-top:12px}
 .t-ctx{display:flex;flex-direction:column;gap:10px}
 .t-titre{margin:0;display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.07em;color:var(--vert);text-transform:uppercase}
-.t-apban{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FFF1E2;border:2px solid var(--orange);border-radius:12px;padding:6px 10px;font-weight:800;color:#8a4300;font-size:14px}
+.t-apban{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:800;color:var(--gris);font-size:14px}
 .t-apban span{flex:1;min-width:180px}
-.t-apercu-on #tApercuBox{outline:3px dashed var(--orange);outline-offset:2px}
 .t-parc{display:flex;align-items:center;justify-content:space-between;gap:8px}.t-parc b{color:var(--vert);font-size:14px}
 .t-ensuite{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .t-mini{width:150px;flex:0 0 150px;border-radius:8px}
@@ -114,7 +113,7 @@ label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size
 .sec-l{display:flex;flex-direction:column;gap:2px;max-height:70vh;overflow:auto}
 .sec-sous{display:flex;flex-direction:column;gap:1px;margin:2px 0 6px 12px;border-left:2px solid #F2B97A;padding-left:8px}
 .sec-s{border:0;background:none;text-align:left;font:700 14px inherit;font-family:inherit;color:#555;padding:5px 8px;border-radius:7px;cursor:pointer}
-.sec-s:hover{background:#f3f6f4}.sec-s.on{background:var(--orange);color:#fff}.sec-s.vu{outline:2px dashed var(--orange)}
+.sec-s:hover{background:#f3f6f4}.sec-s.on{background:var(--orange);color:#fff}.sec-s.vu{background:#eef3ef;color:var(--vert)}
 .sec-it{border:0;background:none;border-radius:9px;padding:7px 10px;font:800 14px var(--texte,inherit);color:var(--encre);text-align:left;cursor:pointer;display:flex;justify-content:space-between;gap:6px}
 .sec-it small{color:var(--gris);font-weight:700;white-space:nowrap}
 .sec-it:hover{background:#f3f6f4}.sec-it.on{background:#FFF1E2;color:#9a4a00}.sec-it.fait{color:#9a9a9a}.sec-it.fait small{color:var(--vert-moyen)}
@@ -432,9 +431,8 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
       <div id="tApBan" class="t-apban" hidden><span>👁 Aperçu · <b id="tApNom"></b> · pas encore affiché en classe</span><button class="btn mini orange" id="tAfficher" type="button">Afficher en classe</button><button class="btn mini" id="tDirect" type="button">Revenir au direct</button></div>
       <div class="apercu" id="tApercuBox"><canvas id="tCv" hidden></canvas><div id="tSl" class="slhost" hidden></div><p id="tMsg">Aucune diapo</p></div>
       <div class="t-parc"><button class="btn mini" id="tApPrec" type="button" title="Voir la diapo précédente sans l’afficher">◀ Voir</button><b id="tPage"></b><button class="btn mini" id="tApSuiv" type="button" title="Voir la diapo suivante sans l’afficher">Voir ▶</button></div>
-      <div class="nav"><button class="btn" id="tPrec" type="button">◀</button><button class="btn plein" id="tSuiv" type="button">Suivante ▶</button></div>
-      <div class="t-ensuite"><div class="apercu t-mini" id="tMiniBox"><div id="tMini" class="slhost"></div></div><div class="t-ens-txt" id="tEnsuite"></div>
-        <span class="sp"></span><button class="btn mini contour-o" id="tModif" type="button" hidden>✎ Modifier</button><button class="btn mini" id="tPronote" type="button">📝 Pronote</button></div>
+      <div class="t-ensuite"><span class="sp"></span><button class="btn mini contour-o" id="tModif" type="button" hidden>✎ Modifier</button><button class="btn mini" id="tPronote" type="button">📝 Pronote</button></div>
+      <span hidden><button id="tPrec" type="button"></button><button id="tSuiv" type="button"></button><span id="tMiniBox"><span id="tMini"></span></span><span id="tEnsuite"></span></span>
       <span hidden><input type="number" id="tAller"><button id="tAllerBtn" type="button"></button><button id="tPanneau" type="button"></button></span>
     </div>
     <div class="t-d carte">
@@ -3684,7 +3682,13 @@ function dansGroupe(c, nom){ const m = modeDe(); if (m === 'cours') return true;
 
 /* ---------------- Emploi du temps ---------------- */
 function lundiDe(x){ const t = new Date(x); t.setHours(12, 0, 0, 0); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return t; }
+/* Semaines A/B et vacances 2026-2027, d'après l'emploi du temps Pronote (groupe 1 = semaine A) */
+const SEMAINES = {"2026-08-31": "A", "2026-09-07": "B", "2026-09-14": "A", "2026-09-21": "B", "2026-09-28": "A", "2026-10-05": "B", "2026-10-12": "A", "2026-11-02": "B", "2026-11-09": "A", "2026-11-16": "B", "2026-11-23": "A", "2026-11-30": "B", "2026-12-07": "A", "2026-12-14": "B", "2027-01-04": "A", "2027-01-11": "B", "2027-01-18": "A", "2027-01-25": "B", "2027-02-01": "A", "2027-02-15": "B", "2027-02-22": "A", "2027-03-01": "B", "2027-03-08": "A", "2027-03-15": "B", "2027-03-22": "A", "2027-04-12": "B", "2027-04-19": "A", "2027-04-26": "B", "2027-05-10": "A", "2027-05-17": "B", "2027-05-24": "A", "2027-05-31": "B", "2027-06-07": "A", "2027-06-14": "B", "2027-06-21": "A", "2027-06-28": "B"};
+const CONGES = [["2026-10-18", "2026-11-02", "Vacances"], ["2026-11-11", "2026-11-11", "Férié"], ["2026-12-20", "2027-01-03", "Vacances"], ["2027-02-07", "2027-02-17", "Vacances"], ["2027-03-26", "2027-04-11", "Vacances"], ["2027-05-01", "2027-05-09", "Vacances"], ["2027-05-16", "2027-05-17", "Vacances"], ["2027-06-10", "2027-06-10", "Férié"]];
+const isoJ = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+function conge(d = new Date()){ const j = isoJ(d); return CONGES.find(([a, b]) => j >= a && j <= b)?.[2] || null; }
 function semaine(d = new Date()){
+  const w = SEMAINES[isoJ(lundiDe(d))]; if (w) return w;
   const c = D.cfg; if (!c?.ref || !c.week) return null;
   const n = Math.abs(Math.round((lundiDe(d) - lundiDe(new Date(c.ref + 'T12:00:00'))) / (7 * 864e5)));
   return (n % 2 === 0) === (c.week === 'A') ? 'A' : 'B';
@@ -4281,7 +4285,9 @@ function rendreTel(){
   $('#tRappels').hidden = !urgents.length;
   if (onglet === 'classe') {
     const w = semaine();
-    $('#tSem').innerHTML = `<b style="color:${w ? 'var(--vert)' : 'var(--rouge)'}">${w ? 'Semaine ' + w : 'Quelle semaine sommes-nous ?'}</b>`
+    const cg = conge(), auto = SEMAINES[isoJ(lundiDe(new Date()))];
+    $('#tSem').innerHTML = cg ? `<b style="color:var(--orange-texte)">🌴 ${cg}</b>` : auto ? `<b style="color:var(--vert)">Semaine ${auto}</b>`
+      : `<b style="color:${w ? 'var(--vert)' : 'var(--rouge)'}">${w ? 'Semaine ' + w : 'Quelle semaine sommes-nous ?'}</b>`
       + ['A', 'B'].map(x => `<button class="puce" data-sem="${x}" aria-pressed="${w === x}" type="button">Semaine ${x}</button>`).join('');
     pucesClasses('#tClasses', D.live.cls); pucesModes('#tModes'); rendreVue();
     const decks = c ? decksActifs(c) : [], d = deckCourant();
@@ -4303,8 +4309,6 @@ function rendreTel(){
     // ensuite
     const nx = d ? (d.index || []).find(e => e.p > live) : null;
     $('#tEnsuite').innerHTML = nx ? `Ensuite :<br><b>${esc(nomEntree(d, nx.p))}</b><br><small>diapo ${diapoDe(d, nx.p) + 1}</small>` : (d ? 'Dernière partie de la séance' : '');
-    $('#tMiniBox').hidden = !(nx && d?.kind === 'pptx');
-    if (nx && d?.kind === 'pptx') afficherPptx($('#tMini'), $('#tMiniBox'), d, finDiapo(d, nx.p), {}).catch(() => {});
   }
   if (onglet === 'plan') { pucesClasses('#tClasses2', D.live.cls); pucesModes('#tModes2'); }
   if (onglet === 'plan' || onglet === 'classe') rendrePlan();
@@ -4760,7 +4764,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1794595826',t0=Date.now(),vue=false;
+<script>(function(){var V='1794596356',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
