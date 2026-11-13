@@ -4627,6 +4627,11 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-
+<script>(function(){var V='1794586610',t0=Date.now(),vue=false;
+function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
+function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
+var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
+var deja;try{deja=sessionStorage.getItem('majV')===o.v;sessionStorage.setItem('majV',o.v);}catch(x){deja=false;}if(!deja&&(Date.now()-t0<20000||!enCours))location.reload();else bandeau();}).catch(function(){});}
+setTimeout(verif,1500);setInterval(verif,5*60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)verif();});})();</script>
 </body>
 </html>
