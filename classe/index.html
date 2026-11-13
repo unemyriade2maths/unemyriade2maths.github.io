@@ -77,16 +77,48 @@ label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size
 .e-sel{background:transparent;color:#fff;border:2px solid var(--vert-texte);border-radius:10px;min-height:36px;max-width:150px;font-weight:800;padding:0 8px}
 .e-sel option{color:var(--encre);background:#fff}
 .e-sel optgroup{color:var(--vert);background:#fff;font-weight:900}
-/* sections dans la télécommande */
+/* télécommande : 3 colonnes sur ordinateur */
+.carte{background:#fff;border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.07);padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.t-grille{display:flex;flex-direction:column;gap:14px;margin-top:12px}
+.t-ctx{display:flex;flex-direction:column;gap:10px}
+.t-titre{margin:0;display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.07em;color:var(--vert);text-transform:uppercase}
+.t-apban{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FFF1E2;border:2px solid var(--orange);border-radius:12px;padding:6px 10px;font-weight:800;color:#8a4300;font-size:14px}
+.t-apban span{flex:1;min-width:180px}
+.t-apercu-on #tApercuBox{outline:3px dashed var(--orange);outline-offset:2px}
+.t-parc{display:flex;align-items:center;justify-content:space-between;gap:8px}.t-parc b{color:var(--vert);font-size:14px}
+.t-ensuite{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.t-mini{width:150px;flex:0 0 150px;border-radius:8px}
+.t-ens-txt{font-weight:800;color:var(--gris);font-size:13px;line-height:1.3}.t-ens-txt b{color:var(--encre);font-size:15px}
+.t-tir{display:flex;flex-direction:column;gap:8px}
+@media (min-width:1100px){
+  body #tel{max-width:none;padding:0 22px 22px}
+  body .onglets{gap:2px;border-bottom:1px solid var(--ligne);padding:0;margin-bottom:6px}
+  body .onglets button{border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;color:var(--gris);min-height:44px}
+  body .onglets button[aria-selected=true]{background:transparent;color:var(--vert);border-bottom-color:var(--vert)}
+  .t-ctx{flex-direction:row;align-items:center;flex-wrap:wrap;gap:14px}
+  .t-ctx .puces{flex-wrap:nowrap}
+  .t-grp:not(:empty){background:#eef3ef;border-radius:999px;padding:3px;gap:2px}
+  .t-grp .puce{border:0;min-height:32px;background:transparent;color:var(--gris)}
+  .t-grp .puce[aria-pressed=true]{background:#fff;color:var(--orange-texte);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+  .t-sem{margin-left:auto}
+  .t-mode .btn{white-space:nowrap;font-size:15px;padding:0 8px}
+  #tel[data-onglet=classe] .t-grille{display:grid;grid-template-columns:240px minmax(0,1fr) 440px;align-items:start;gap:18px}
+  #tel[data-onglet=classe] #plan{min-width:0;gap:3px}
+  #tel[data-onglet=classe] #planBoite{overflow:visible;margin:0}
+  #tel[data-onglet=classe] .place{min-height:46px;border-radius:7px;border-width:1.5px;padding:2px 1px}
+  #tel[data-onglet=classe] .place .p{font-size:10.5px}#tel[data-onglet=classe] .place .n{font-size:9px}
+  #tel[data-onglet=classe] .legende{font-size:11px}
+}
+
 .sec-prog{height:8px;background:#e6efe8;border-radius:4px;overflow:hidden}.sec-prog i{display:block;height:100%;background:var(--vert-moyen)}
-.sec-box{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.sec-box h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;color:var(--vert);text-transform:uppercase}
-.sec-l{display:flex;flex-direction:column;gap:5px;max-height:320px;overflow:auto}
-.sec-sous{display:grid;grid-template-columns:1fr 1fr;gap:5px;align-content:start}
-.sec-it{border:2px solid var(--ligne);background:#fff;border-radius:10px;padding:6px 10px;font:800 14px var(--texte,inherit);color:var(--encre);text-align:left;cursor:pointer;display:flex;justify-content:space-between;gap:6px}
+.sec-l{display:flex;flex-direction:column;gap:2px;max-height:70vh;overflow:auto}
+.sec-sous{display:flex;flex-direction:column;gap:1px;margin:2px 0 6px 12px;border-left:2px solid #F2B97A;padding-left:8px}
+.sec-s{border:0;background:none;text-align:left;font:700 14px inherit;font-family:inherit;color:#555;padding:5px 8px;border-radius:7px;cursor:pointer}
+.sec-s:hover{background:#f3f6f4}.sec-s.on{background:var(--orange);color:#fff}.sec-s.vu{outline:2px dashed var(--orange)}
+.sec-it{border:0;background:none;border-radius:9px;padding:7px 10px;font:800 14px var(--texte,inherit);color:var(--encre);text-align:left;cursor:pointer;display:flex;justify-content:space-between;gap:6px}
 .sec-it small{color:var(--gris);font-weight:700;white-space:nowrap}
-.sec-it.on{border-color:var(--orange);background:#FFF6EC}.sec-it.fait{color:#8a8a8a;background:#f6f6f6}
-@media (max-width:620px){.sec-box{grid-template-columns:1fr}}
+.sec-it:hover{background:#f3f6f4}.sec-it.on{background:#FFF1E2;color:#9a4a00}.sec-it.fait{color:#9a9a9a}.sec-it.fait small{color:var(--vert-moyen)}
+
 .e-sel[hidden]{display:none}
 .e-top .sp{flex:1}
 #eHeure{font:800 22px/1 var(--titre);font-variant-numeric:tabular-nums}
@@ -362,7 +394,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 </section>
 
 <!-- ============ Télécommande ============ -->
-<section id="tel" hidden>
+<section id="tel" data-onglet="classe" hidden>
   <div class="t-haut"><p class="logo">Une myriade de <span>maths</span></p><span class="sp"></span><small id="tHeure"></small><button class="btn mini plein" id="tInstall" type="button" hidden>⬇ Installer</button><button class="btn mini" id="tQR" type="button" hidden>📱 Téléphone</button><button class="btn mini" id="tChanger" type="button" title="Changer d’appareil">⇄</button></div>
   <nav class="onglets" role="tablist">
     <button role="tab" data-onglet="classe" aria-selected="true" type="button">Classe</button>
@@ -376,24 +408,11 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
   <div id="tRappels" class="panneau" style="margin-bottom:12px"></div>
 
   <!-- Classe -->
-  <div class="panneau" data-p="classe">
-    <div class="ligne-flex" id="tSem"></div>
+  <div class="t-ctx" data-p="classe">
     <div class="puces" id="tClasses"></div>
-    <div class="puces" id="tModes"></div>
-    <div class="duo" id="tVue"></div>
-    <div class="bloc">
-      <h3><span id="tSeanceNom">Diaporama</span><span class="sp"></span><select id="tDeck" style="width:auto;max-width:55%;min-height:36px"></select></h3>
-      <select id="tExo" aria-label="Aller à un exercice" hidden></select>
-      <div id="tSections" hidden></div>
-      <div class="apercu" id="tApercuBox" style="cursor:pointer" title="Clic à droite : suivante · à gauche : précédente"><canvas id="tCv" hidden></canvas><div id="tSl" class="slhost" hidden></div><p id="tMsg">Aucune diapo</p></div>
-      <button class="btn contour-o" id="tModif" type="button" hidden>✎ Modifier cette diapo</button>
-      <button class="btn" id="tPronote" type="button">📝 Résumé pour Pronote</button>
-      <div class="ligne-flex" style="justify-content:space-between"><b id="tPage" style="color:var(--vert)"></b>
-        <span class="ligne-flex"><input type="number" id="tAller" min="1" placeholder="n°" style="width:80px;min-height:38px"><button class="btn mini" id="tAllerBtn" type="button">Aller</button></span></div>
-      <div class="nav"><button class="btn" id="tPrec" type="button">◀</button><button class="btn plein" id="tSuiv" type="button">Suivante ▶</button></div>
-    </div>
+    <div class="puces t-grp" id="tModes"></div>
+    <div class="ligne-flex t-sem" id="tSem"></div>
   </div>
-
   <!-- Plan -->
   <div class="panneau" data-p="plan" hidden style="margin-bottom:0">
     <div class="puces" id="tClasses2"></div>
@@ -401,27 +420,34 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
     <div class="ligne-flex"><button class="btn mini" id="planEdit" type="button">Modifier le plan</button><button class="btn mini contour-o" id="planEcran" type="button">Plan sur l’écran</button><span class="aide" id="planAide" style="flex:1"></span></div>
   </div>
 
-  <div class="panneau" data-p="classe plan" style="margin-top:14px">
-    <div class="bloc" style="background:#fff;border:2px solid var(--ligne)">
-    <div class="tableau">Bureau · tableau</div>
-    <div id="planBoite"><div id="plan"></div></div>
-    <div class="legende"><span><span class="bd tut">+</span> participation</span><span><span class="bd bav">B</span> bavardages</span><span><span class="bd neg">C</span> oubli de cahier</span><span><span class="bd neg">M</span> travail maison</span><span><span class="bd neg">T</span> pas de travail</span><span><span class="bd neg">P</span> perturbe</span><span><span class="bd tut">★</span> tuteur</span><span><span class="bd app">?</span> appels</span></div>
+  <div class="t-grille" data-p="classe plan">
+    <div class="t-g carte" data-p="classe">
+      <div class="duo t-mode" id="tVue"></div>
+      <div class="ligne-flex"><span id="tSeanceNom" hidden>Diaporama</span><select id="tDeck" aria-label="Séance" style="flex:1;min-height:38px"></select></div>
+      <select id="tExo" aria-label="Aller à un exercice" hidden></select>
+      <div id="tSections" hidden></div>
     </div>
-  </div>
-
-  <div class="panneau" data-p="classe" style="margin-top:14px">
-    <div class="bloc">
-      <h3>Minuteur</h3>
-      <div id="tTimer">05:00</div>
-      <div class="presets" id="tPresets"><button data-m="1" type="button">1 min</button><button data-m="2" type="button">2</button><button data-m="3" type="button">3</button><button data-m="5" type="button">5</button><button data-m="10" type="button">10</button><button data-m="15" type="button">15</button></div>
-      <div class="duo"><button class="btn" id="tPlay" type="button">Lancer</button><button class="btn plein" id="tRelancer" type="button">Relancer</button></div>
+    <div class="t-c carte" data-p="classe">
+      <div class="sec-prog" id="tProg"><i></i></div>
+      <div id="tApBan" class="t-apban" hidden><span>👁 Aperçu · <b id="tApNom"></b> · pas encore affiché en classe</span><button class="btn mini orange" id="tAfficher" type="button">Afficher en classe</button><button class="btn mini" id="tDirect" type="button">Revenir au direct</button></div>
+      <div class="apercu" id="tApercuBox"><canvas id="tCv" hidden></canvas><div id="tSl" class="slhost" hidden></div><p id="tMsg">Aucune diapo</p></div>
+      <div class="t-parc"><button class="btn mini" id="tApPrec" type="button" title="Voir la diapo précédente sans l’afficher">◀ Voir</button><b id="tPage"></b><button class="btn mini" id="tApSuiv" type="button" title="Voir la diapo suivante sans l’afficher">Voir ▶</button></div>
+      <div class="nav"><button class="btn" id="tPrec" type="button">◀</button><button class="btn plein" id="tSuiv" type="button">Suivante ▶</button></div>
+      <div class="t-ensuite"><div class="apercu t-mini" id="tMiniBox"><div id="tMini" class="slhost"></div></div><div class="t-ens-txt" id="tEnsuite"></div>
+        <span class="sp"></span><button class="btn mini contour-o" id="tModif" type="button" hidden>✎ Modifier</button><button class="btn mini" id="tPronote" type="button">📝 Pronote</button></div>
+      <span hidden><input type="number" id="tAller"><button id="tAllerBtn" type="button"></button><button id="tPanneau" type="button"></button></span>
     </div>
-    <div class="bloc creme">
-      <h3>Tirage au sort</h3>
-      <div id="tirageRes" hidden></div>
-      <button class="btn orange" id="tTirer" type="button">Tirer un élève présent</button>
+    <div class="t-d carte">
+      <h4 class="t-titre" data-p="classe">Plan de classe <span class="sp"></span><button class="btn mini contour-o" id="planEcran2" type="button">Plan au tableau</button></h4>
+      <div class="tableau">Bureau · tableau</div>
+      <div id="planBoite"><div id="plan"></div></div>
+      <div class="legende"><span><span class="bd tut">+</span> participation</span><span><span class="bd bav">B</span> bavardages</span><span><span class="bd neg">C</span> oubli de cahier</span><span><span class="bd neg">M</span> travail maison</span><span><span class="bd neg">T</span> pas de travail</span><span><span class="bd neg">P</span> perturbe</span><span><span class="bd tut">★</span> tuteur</span><span><span class="bd app">?</span> appels</span></div>
+      <div data-p="classe" class="t-tir">
+        <div id="tirageRes" hidden></div>
+        <button class="btn orange" id="tTirer" type="button">🎲 Tirer un élève</button>
+      </div>
+      <div hidden><div id="tTimer"></div><div id="tPresets"></div><button id="tPlay" type="button"></button><button id="tRelancer" type="button"></button></div>
     </div>
-    <button class="btn" id="tPanneau" type="button">Masquer / afficher la colonne de l’écran</button>
   </div>
 
   <!-- Outils -->
@@ -3799,14 +3825,21 @@ function optionsSections(d, page){
   if (!S.length) return optionsIndex(d, page);
   return '<option value="" selected>Contenu</option>' + S.map(x => `<optgroup label="${esc(x.k)}">${x.it.map(e => `<option value="${e.p}">${esc(e.n)}</option>`).join('')}</optgroup>`).join('');
 }
-function htmlSections(d, page){
+function htmlSections(d, page, vu){
   const S = sections(d); if (!S.length) return '';
   const cur = S.find(x => page >= x.p && page <= x.fin) || S[0];
-  let ic = 0; cur.it.forEach((e, i) => { if (e.p <= page) ic = i; });
-  return `<div class="sec-prog"><i style="width:${Math.round(100 * page / (d.pages || 1))}%"></i></div>
-    <div class="sec-box"><div><h4>Sections</h4><div class="sec-l">${S.map(x => `<button class="sec-it${x === cur ? ' on' : (x.fin < page ? ' fait' : '')}" data-secp="${x.p}" type="button">${esc(x.k)}<small>${x === cur ? 'en cours' : (x.fin < page ? '✓ fait' : '')}</small></button>`).join('')}</div></div>
-    <div><h4>Dans ${esc(cur.k.replace(/^[^\wÀ-ÿ]+\s*/, ''))}</h4><div class="sec-sous">${cur.it.map((e, i) => `<button class="sec-it${i === ic ? ' on' : ''}" data-secp="${e.p}" type="button">${esc(e.n)}</button>`).join('')}</div></div></div>`;
+  let ic = -1; cur.it.forEach((e, i) => { if (e.p <= page) ic = i; });
+  return `<h4 class="t-titre">Sections</h4><div class="sec-l">${S.map(x => `<button class="sec-it${x === cur ? ' on' : (x.fin < page ? ' fait' : '')}" data-secp="${x.p}" type="button">${esc(x.k)}<small>${x === cur ? '' : (x.fin < page ? '✓' : '')}</small></button>`
+    + (x === cur ? `<div class="sec-sous">${x.it.map((e, i) => `<button class="sec-s${i === ic ? ' on' : ''}${vu === e.p ? ' vu' : ''}" data-secp="${e.p}" type="button">${esc(e.n)}</button>`).join('')}</div>` : '')).join('')}</div>`;
 }
+/* Aperçu dans la télécommande : regarder une diapo sans l'afficher en classe */
+let AP = null;
+function diapoDe(d, page){ if (!d?.ns) return page - 1; let i = 0, r = page - 1; while (i < d.ns.length - 1 && r >= d.ns[i]) { r -= d.ns[i]; i++; } return i; }
+function debutDiapo(d, i){ if (!d?.ns) return i + 1; let p = 1; for (let k = 0; k < i; k++) p += d.ns[k]; return p; }
+function finDiapo(d, page){ if (!d?.ns) return page; const i = diapoDe(d, page); return debutDiapo(d, i) + d.ns[i] - 1; }
+function nomEntree(d, page){ const S = sections(d), x = S.find(y => page >= y.p && page <= y.fin); if (!x) return 'Diapo ' + (diapoDe(d, page) + 1); let e = null; for (const y of x.it) if (y.p <= page) e = y; return x.k + (e ? ' · ' + e.n : ''); }
+function voir(page){ const d = deckCourant(); if (!d) return; page = Math.max(1, Math.min(page, d.pages)); AP = page === (D.live.page || 1) ? null : {deck:d.id, page}; rendre(); }
+function voirPas(dl){ const d = deckCourant(); if (!d) return; const i = diapoDe(d, AP ? AP.page : (D.live.page || 1)) + dl, n = d.ns ? d.ns.length : d.pages; if (i < 0 || i >= n) return; voir(debutDiapo(d, i)); }
 const nomCourt = n => { const m = String(n || '').match(/(s[ée]ance|rapido)\s*n?°?\s*(\d+)/i); return m ? (m[1][0].toUpperCase() + m[1].slice(1).toLowerCase()).replace('Seance', 'Séance') + ' ' + m[2] : n; };
 function remplir(sel, html){ if (sel.dataset.h !== html) { sel.dataset.h = html; sel.innerHTML = html; } }
 function deckCourant(){ const c = cc(); return c && decksActifs(c).find(d => d.id === D.live.deck); }
@@ -4254,11 +4287,24 @@ function rendreTel(){
     const decks = c ? decksActifs(c) : [], d = deckCourant();
     $('#tDeck').innerHTML = decks.map(x => `<option value="${x.id}"${x.id === D.live.deck ? ' selected' : ''}>${esc(nomCourt(x.name))}</option>`).join('') || '<option value="">—</option>';
     $('#tSeanceNom').textContent = c ? c.name + (enRapido() ? ' · ⚡ Rapido' : modeDe() !== 'cours' ? ' · ' + modeLabel(c, modeDe()) : '') : 'Aucune classe';
-    $('#tPage').textContent = d ? libellePage(d, D.live.page || 1).replace(/^d/, 'D') : '';
-    $('#tExo').hidden = true; { const h = htmlSections(d, D.live.page || 1); $('#tSections').hidden = !h; if ($('#tSections').dataset.h !== h) { $('#tSections').dataset.h = h; $('#tSections').innerHTML = h; } }
-    $('#tModif').hidden = d?.kind !== 'pptx';
-    if (d?.kind === 'pptx') { $('#tCv').hidden = true; $('#tCv').dataset.cle = ''; $('#tMsg').hidden = true; $('#tSl').hidden = false; afficherPptx($('#tSl'), $('#tApercuBox'), d, D.live.page || 1, {media:true, muet:true}).catch(() => {}); }
-    else { $('#tSl').hidden = true; viderLecteur($('#tSl')); dessiner($('#tCv'), $('#tApercuBox'), $('#tMsg'), d?.id, D.live.page || 1, c ? 'Pas encore de diapos pour ce chapitre : onglet Progression' : 'Choisis une classe'); }
+    const live = D.live.page || 1;
+    if (AP && (!d || AP.deck !== d.id)) AP = null;
+    const vu = AP ? AP.page : live;
+    $('#tel').classList.toggle('t-apercu-on', !!AP); $('#tApBan').hidden = !AP;
+    if (AP) $('#tApNom').textContent = nomEntree(d, AP.page);
+    $('#tPage').textContent = d ? (AP ? 'Aperçu · ' : 'En classe · ') + libellePage(d, vu) : '';
+    $('#tProg i').style.width = d ? Math.round(100 * live / (d.pages || 1)) + '%' : '0';
+    $('#tExo').hidden = true; { const h = htmlSections(d, live, AP?.page); $('#tSections').hidden = !h; if ($('#tSections').dataset.h !== h) { $('#tSections').dataset.h = h; $('#tSections').innerHTML = h; } }
+    $('#tModif').hidden = d?.kind !== 'pptx' || !!AP;
+    // aperçu : la diapo regardée est montrée complète (sans animation)
+    const pv = AP ? finDiapo(d, AP.page) : live;
+    if (d?.kind === 'pptx') { $('#tCv').hidden = true; $('#tCv').dataset.cle = ''; $('#tMsg').hidden = true; $('#tSl').hidden = false; afficherPptx($('#tSl'), $('#tApercuBox'), d, pv, {media:!AP, muet:true}).catch(() => {}); }
+    else { $('#tSl').hidden = true; viderLecteur($('#tSl')); dessiner($('#tCv'), $('#tApercuBox'), $('#tMsg'), d?.id, pv, c ? 'Pas encore de diapos pour ce chapitre : onglet Progression' : 'Choisis une classe'); }
+    // ensuite
+    const nx = d ? (d.index || []).find(e => e.p > live) : null;
+    $('#tEnsuite').innerHTML = nx ? `Ensuite :<br><b>${esc(nomEntree(d, nx.p))}</b><br><small>diapo ${diapoDe(d, nx.p) + 1}</small>` : (d ? 'Dernière partie de la séance' : '');
+    $('#tMiniBox').hidden = !(nx && d?.kind === 'pptx');
+    if (nx && d?.kind === 'pptx') afficherPptx($('#tMini'), $('#tMiniBox'), d, finDiapo(d, nx.p), {}).catch(() => {});
   }
   if (onglet === 'plan') { pucesClasses('#tClasses2', D.live.cls); pucesModes('#tModes2'); }
   if (onglet === 'plan' || onglet === 'classe') rendrePlan();
@@ -4293,6 +4339,7 @@ function rendrePlan(){
   });
   $('#planEdit').textContent = planEdition ? 'Terminé' : 'Modifier le plan';
   $('#planEdit').classList.toggle('plein', planEdition);
+  $('#planEcran2').textContent = D.live.showPlan ? 'Retirer le plan' : 'Plan au tableau';
   $('#planEcran').textContent = D.live.showPlan ? 'Retirer le plan de l’écran' : 'Plan sur l’écran';
   $('#planAide').textContent = !planEdition ? '' : planSel ? `Place ${planSel} choisie : touche sa nouvelle place, ou un autre élève pour les échanger.`
     : 'Touche un élève puis sa nouvelle place. Place libre : ajouter un élève. Deux fois le même élève : le modifier.';
@@ -4568,7 +4615,6 @@ $('#stage').addEventListener('click', e => {
   if (e.target.id === 'eSon') return;
   if (!$('#eTirage').hidden) { $('#eTirage').hidden = true; return; }
   if (D.live.showPlan) { D.live.showPlan = false; save('app/live', D.live); rendre(); return; }
-  const r = e.currentTarget.getBoundingClientRect(); aller(e.clientX - r.left < r.width / 3 ? -1 : 1);
 });
 $('#eFs').onclick = () => { try { actx ??= new AudioContext(); actx.resume(); } catch (e) {} if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.().catch(() => toast('Plein écran indisponible ici')); };
 $('#ePanneau').onclick = $('#tPanneau').onclick = () => { D.live.hideSide = D.live.hideSide === false; save('app/live', D.live); rendre(); };
@@ -4591,14 +4637,19 @@ document.addEventListener('keydown', e => {
 });
 // Télécommande : onglets
 $('.onglets').addEventListener('click', e => { const b = e.target.closest('[data-onglet]'); if (!b) return;
-  onglet = b.dataset.onglet; $$('.onglets button').forEach(x => x.setAttribute('aria-selected', x === b));
+  onglet = b.dataset.onglet; $('#tel').dataset.onglet = onglet; $$('.onglets button').forEach(x => x.setAttribute('aria-selected', x === b));
   $$('[data-p]').forEach(p => p.hidden = !p.dataset.p.split(' ').includes(onglet));
   if (onglet === 'reglages') { editId = D.cls[editId] ? editId : (D.live.cls || classes()[0]?.id || null); editRendu = false; }
   if (onglet === 'classe') $('#tCv').dataset.cle = '';
   rendre(); });
 $('#tel').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.secp) { const d = deckCourant(); if (d) placer(d.id, +b.dataset.secp); return; }
+  if (b.dataset.secp) { voir(+b.dataset.secp); return; }
+  if (b.id === 'tAfficher') { const d = deckCourant(); if (d && AP) { const p = debutDiapo(d, diapoDe(d, AP.page)); AP = null; placer(d.id, p); } return; }
+  if (b.id === 'tDirect') { AP = null; rendre(); return; }
+  if (b.id === 'tApPrec') { voirPas(-1); return; }
+  if (b.id === 'tApSuiv') { voirPas(1); return; }
+  if (b.id === 'planEcran2') { D.live.showPlan = !D.live.showPlan; save('app/live', D.live); rendre(); return; }
   if (b.dataset.ou) majOutils(o => { const k = b.dataset.ou; o[k] = k === 'mascotte' ? o[k] === false : !o[k]; });
   else if (b.id === 'oScoreOn') majScore(s => { s.on = !s.on; });
   else if (b.id === 'oScoreZero') deuxFois(b, 'Confirmer', () => majScore(s => { s.eq.forEach(e => e.s = 0); }));
@@ -4662,7 +4713,7 @@ $('#tel').addEventListener('click', e => {
 $('#eDeck').addEventListener('change', e => { const p = D.pos[clePos(D.live.cls)]?.pages?.[e.target.value] || 1; placer(e.target.value, p); e.target.blur(); });
 $('#eExo').addEventListener('change', e => { const d = deckCourant(); if (d && e.target.value) placer(d.id, +e.target.value); e.target.blur(); });
 $('#eDeck').addEventListener('click', e => e.stopPropagation()); $('#eExo').addEventListener('click', e => e.stopPropagation());
-$('#tApercuBox').addEventListener('click', e => { const r = e.currentTarget.getBoundingClientRect(); aller(e.clientX - r.left < r.width / 3 ? -1 : 1); });
+
 $('#tel').addEventListener('input', e => { if (e.target.id === 'oSeuil') $('#oSeuilV').textContent = e.target.value; });
 $('#tel').addEventListener('change', e => {
   const t = e.target;
@@ -4709,7 +4760,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1794595071',t0=Date.now(),vue=false;
+<script>(function(){var V='1794595826',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
