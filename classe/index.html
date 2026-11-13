@@ -98,15 +98,16 @@ label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size
 .jauge-calme{position:relative;display:block;height:14px;background:#e6efe8;border-radius:7px;overflow:hidden}
 .jauge-calme i{display:block;height:100%;width:0;background:var(--vert-moyen);transition:width .1s}
 .jauge-calme b{position:absolute;top:0;bottom:0;width:3px;background:var(--rouge)}
-#eMascotte{position:absolute;left:14px;bottom:14px;z-index:4;width:170px;background:rgba(255,249,242,.95);border:3px solid var(--bord);border-radius:20px;padding:8px 10px 10px;display:flex;flex-direction:column;align-items:center;gap:4px}
-#eMascotte .masc-img{width:120px}
+#eMascotte{position:absolute;left:10px;bottom:10px;z-index:4;width:104px;background:rgba(255,249,242,.85);border:2px solid var(--bord);border-radius:16px;padding:5px 7px 7px;cursor:grab;touch-action:none;user-select:none;display:flex;flex-direction:column;align-items:center;gap:4px}
+#eMascotte .masc-img{width:70px;pointer-events:none}
+#eMascotte.tire{cursor:grabbing;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #eForet:not([hidden]) ~ #eMascotte{top:14px;bottom:auto}
 #eMascotte .masc-img svg{width:100%;display:block}
-.masc-zz{position:absolute;right:16px;top:30px;font:800 26px var(--titre);color:var(--bleu);animation:zz 2s infinite}
+.masc-zz{position:absolute;right:8px;top:16px;font:800 17px var(--titre);color:var(--bleu);animation:zz 2s infinite}
 @keyframes zz{50%{transform:translateY(-6px);opacity:.5}}
-.masc-oh{position:absolute;right:20px;top:24px;font:800 40px var(--titre);color:var(--rouge)}
-.masc-temps{font:800 26px/1 var(--titre);color:var(--vert);font-variant-numeric:tabular-nums}
-#eMascotte .jauge-calme{width:100%;height:10px}
+.masc-oh{position:absolute;right:10px;top:12px;font:800 28px var(--titre);color:var(--rouge)}
+.masc-temps{font:800 17px/1 var(--titre);color:var(--vert);font-variant-numeric:tabular-nums}
+#eMascotte .jauge-calme{width:100%;height:7px}
 #eScore{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:4;display:flex;gap:10px}
 #eScore .eq{background:#fff;border:4px solid var(--c);border-radius:16px;padding:6px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 #eScore .eq span{font:800 18px var(--texte);color:var(--c)}
@@ -3573,6 +3574,18 @@ function rendreOutilsTel(){
     <button class="btn mini danger" id="oScoreZero" type="button">Remettre à 0</button></div>
     ${(sc.eq.length ? sc.eq : equipes(2)).map((e, i) => `<div class="ligne-flex" style="background:#fff;border-radius:12px;padding:6px 8px"><input type="text" data-eqn="${i}" value="${esc(e.n)}" style="flex:1;min-height:38px"><b style="font-size:22px;min-width:36px;text-align:center;color:var(--vert)">${e.s}</b><button class="btn mini" data-eq="${i}" data-d="-1" type="button">−1</button><button class="btn mini plein" data-eq="${i}" data-d="1" type="button" style="min-width:56px">+1</button></div>`).join('')}`;
 }
+/* Paresseux : on peut le déplacer à la souris, sa place est retenue */
+(function(){
+  const m = $('#eMascotte'), st = $('#stage'); let d = null;
+  const poser = (x, y) => { x = Math.min(Math.max(x, 0), 1); y = Math.min(Math.max(y, 0), 1);
+    m.style.left = x * 100 + '%'; m.style.top = y * 100 + '%'; m.style.bottom = 'auto'; m.style.transform = `translate(${-x * 100}%, ${-y * 100}%)`; return [x, y]; };
+  try { const p = JSON.parse(localStorage.getItem('mascPos')); if (p) poser(p[0], p[1]); } catch (e) {}
+  m.addEventListener('pointerdown', e => { const r = m.getBoundingClientRect(); d = {dx:e.clientX - r.left, dy:e.clientY - r.top}; m.setPointerCapture(e.pointerId); m.classList.add('tire'); });
+  m.addEventListener('pointermove', e => { if (!d) return; const s = st.getBoundingClientRect();
+    d.p = poser((e.clientX - d.dx - s.left) / Math.max(1, s.width - m.offsetWidth), (e.clientY - d.dy - s.top) / Math.max(1, s.height - m.offsetHeight)); });
+  const fin = () => { if (!d) return; m.classList.remove('tire'); if (d.p) try { localStorage.setItem('mascPos', JSON.stringify(d.p)); } catch (e) {} d = null; };
+  m.addEventListener('pointerup', fin); m.addEventListener('pointercancel', fin);
+})();
 const equipes = n => Array.from({length:n}, (_, i) => ({n:'Équipe ' + (i + 1), s:0}));
 function majOutils(fn){ D.live.outils = {...(D.live.outils || {})}; fn(D.live.outils); save('app/live', D.live); rendre(); }
 function majScore(fn){ const s = D.live.score ??= {on:false, eq:equipes(2)}; if (!s.eq?.length) s.eq = equipes(2); fn(s); save('app/live', D.live); rendre(); }
@@ -4627,7 +4640,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1794586610',t0=Date.now(),vue=false;
+<script>(function(){var V='1794587517',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
