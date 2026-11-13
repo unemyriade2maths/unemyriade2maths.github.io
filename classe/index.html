@@ -106,7 +106,7 @@ label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size
 .masc-zz{position:absolute;right:8px;top:16px;font:800 17px var(--titre);color:var(--bleu);animation:zz 2s infinite}
 @keyframes zz{50%{transform:translateY(-6px);opacity:.5}}
 .masc-oh{position:absolute;right:10px;top:12px;font:800 28px var(--titre);color:var(--rouge)}
-.masc-temps{font:800 17px/1 var(--titre);color:var(--vert);font-variant-numeric:tabular-nums}
+.masc-temps{display:none;font:800 17px/1 var(--titre);color:var(--vert);font-variant-numeric:tabular-nums}
 #eMascotte .jauge-calme{width:100%;height:7px}
 #eScore{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:4;display:flex;gap:10px}
 #eScore .eq{background:#fff;border:4px solid var(--c);border-radius:16px;padding:6px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
@@ -4640,7 +4640,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1794587517',t0=Date.now(),vue=false;
+<script>(function(){var V='1794587598',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
