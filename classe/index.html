@@ -336,6 +336,24 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .chap-ligne span.t{flex:1;min-width:0}
 .chap-ligne.cours{border:2px solid var(--vert);background:var(--vert-pale)}
 .chap-ligne.sel{box-shadow:0 0 0 3px var(--orange)}
+.pg-haut{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pg-haut .sp{flex:1}
+.pg-liste{display:flex;flex-direction:column;gap:6px}
+.pg-per{color:var(--vert);font-size:13px;font-weight:800;margin:8px 0 0}
+.acc{background:#fff;border:1px solid var(--ligne);border-radius:14px;overflow:hidden}
+.acc.cours{border:2px solid var(--vert)}.acc.ouvert{box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.acc-t{width:100%;display:flex;align-items:center;gap:10px;background:none;border:0;padding:12px 14px;font:800 16px inherit;font-family:inherit;color:var(--encre);text-align:left;cursor:pointer}
+.acc-t .num{min-width:28px;height:28px;border-radius:999px;background:var(--vert-clair);color:var(--vert);display:flex;align-items:center;justify-content:center;font-size:13px}
+.acc-t .t{flex:1;min-width:0}.acc-t .fl{color:var(--gris);transition:transform .2s}.acc.ouvert .acc-t .fl{transform:rotate(90deg)}
+.acc-t small{font-weight:700;color:var(--gris);font-size:12px}
+.acc-c{padding:4px 14px 14px;display:flex;flex-direction:column;gap:12px}
+.acc-s{display:flex;flex-direction:column;gap:6px}.acc-s>b{color:var(--vert);font-size:14px}
+.acc-s ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.acc-s li{display:flex;align-items:center;gap:6px;background:var(--fond);border-radius:10px;padding:6px 8px;font-weight:700;font-size:14px}
+.acc-s li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acc-vide{color:var(--gris);font-size:13px;font-style:italic}
+.en-haut{font-size:12px;font-weight:800;color:var(--orange-texte);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 -2px}
+.orga-l{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--ligne);border-radius:12px;padding:8px 12px;font-weight:800}
+.orga-l input{width:64px;min-height:36px;text-align:center;font-weight:800}.orga-l span{flex:1}.orga-l select{width:auto;min-height:34px}
 .tab-bilan{overflow-x:auto;border-radius:12px;border:1px solid var(--ligne);background:#fff}
 .tab-bilan table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
 .tab-bilan th,.tab-bilan td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--ligne)}
@@ -464,10 +482,10 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 
   <!-- Progression -->
   <div class="panneau" data-p="progression" hidden>
-    <div class="puces" id="pClasses"></div>
+    <div class="pg-haut"><div class="puces" id="pClasses"></div><span class="sp"></span><button class="btn mini" id="pOrga" type="button">⇅ Organisation des séances</button></div>
     <div id="pEnCours"></div>
-    <div class="bloc creme" id="pDetail"></div>
-    <div class="bloc"><h3>Toute la progression</h3><div id="pListe" class="panneau" style="gap:6px"></div></div>
+    <div id="pDetail" hidden></div>
+    <div id="pListe" class="pg-liste"></div>
   </div>
 
   <!-- Agenda -->
@@ -3665,7 +3683,7 @@ function periodeChap(n, id, p){ (D.prog['per_' + n] ??= {})[id] = +p; save('app/
 function progParDefaut(n){ delete D.prog['ordre_' + n]; delete D.prog['per_' + n]; save('app/prog', D.prog); rendre(); }
 const chapNiv = n => (D.prog[n] && PROG[n].some(x => x.id === D.prog[n])) ? D.prog[n] : EN_COURS[n];
 const chapCourant = c => { const n = niveauDe(c); return n ? chapNiv(n) : null; };
-const chapInfo = id => { for (const n in PROG) { const L = progDe(n), i = L.findIndex(x => x.id === id); if (i >= 0) return {...L[i], n, i}; } return null; };
+const chapInfo = id => { for (const n in PROG) { const A = apListe(n), k = A.findIndex(x => x.id === id); if (k >= 0) return {...A[k], n, i:k, ap:true}; } for (const n in PROG) { const L = progDe(n), i = L.findIndex(x => x.id === id); if (i >= 0) return {...L[i], n, i}; } return null; };
 const pret = {cls:false, live:false};
 const classes = () => Object.values(D.cls).sort((a, b) => (a.name || '').localeCompare(b.name || '', 'fr', {numeric:true}));
 const cc = () => D.cls[D.live.cls];
@@ -3701,7 +3719,7 @@ function abonner(){
 /* ---------------- Demi-groupes ---------------- */
 const modeDe = () => D.live.mode || 'cours';
 const posKey = (cls, m) => (!m || m === 'cours') ? cls : cls + '_' + m;
-const decksDe = (c, m) => (!m || m === 'cours') ? (niveauDe(c) ? (D.chap[chapCourant(c)]?.decks || []) : (c.decks || [])) : ((niveauDe(c) && D.chap['ap-' + niveauDe(c)]?.decks?.length) ? D.chap['ap-' + niveauDe(c)].decks : (c.decksG || []));
+const decksDe = (c, m) => (!m || m === 'cours') ? (niveauDe(c) ? (D.chap[chapCourant(c)]?.decks || []) : (c.decks || [])) : (() => { const n = niveauDe(c), a = n && apCourant(n); return (a && D.chap[a]?.decks?.length) ? D.chap[a].decks : (n && D.chap['ap-' + n]?.decks?.length) ? D.chap['ap-' + n].decks : (c.decksG || []); })();
 const modeLabel = (c, m) => (!m || m === 'cours') ? 'Classe entière' : `${c.groupLabel || 'Groupe'} G${m.slice(1)}`;
 const aGroupes = c => (c.schedule || []).some(s => s.grp) || Object.keys(c.groups || {}).length > 0;
 function dansGroupe(c, nom){ const m = modeDe(); if (m === 'cours') return true; const G = c.groups || {}; if (!Object.keys(G).length) return true; return G[nom] === m.slice(1); }
@@ -4058,48 +4076,73 @@ function pucesModes(sel){
   const c = cc(), el = $(sel); if (!c || !aGroupes(c)) { el.innerHTML = ''; return; }
   el.innerHTML = ['cours', 'g1', 'g2'].map(x => `<button class="puce" style="--c:var(--orange-texte)" data-mode="${x}" aria-pressed="${modeDe() === x}" type="button">${esc(modeLabel(c, x))}</button>`).join('');
 }
-let progNiv = null, progSel = null;
+let progNiv = null, progSel = null, progAP = false, progOrga = false;
+/* AP : une progression à part, avec ses propres chapitres */
+const apListe = n => D.prog?.['apl_' + n] || [];
+const apCourant = n => { const L = apListe(n), c = D.prog?.['apc_' + n]; return L.some(x => x.id === c) ? c : L[0]?.id || null; };
+function lienDe(ch){ return [...(ch?.liens || []), ...(ch?.lien ? [{t:'Lien', u:ch.lien}] : [])]; }
+function accordeon(id, titre, num, sous, opt = {}){
+  const ch = D.chap[id] || {}, d = ch.decks || [], ouvert = progSel === id, P = pdfPronote(id), Ls = lienDe(ch);
+  const info = [d.length ? d.length + ' séance' + (d.length > 1 ? 's' : '') : '', P.length ? P.length + ' PDF' : '', Ls.length ? Ls.length + ' lien' + (Ls.length > 1 ? 's' : '') : ''].filter(Boolean).join(' · ');
+  let h = `<div class="acc${ouvert ? ' ouvert' : ''}${opt.cours ? ' cours' : ''}"><button class="acc-t" data-chap="${esc(id)}" type="button"><span class="num"${opt.couleur ? ` style="${opt.couleur}"` : ''}>${num}</span><span class="t">${esc(titre)}${sous ? `<br><small>${esc(sous)}</small>` : ''}</span><small>${info}</small><span class="fl">▶</span></button>`;
+  if (ouvert) {
+    h += `<div class="acc-c">
+      <div class="acc-s"><b>${opt.rapido ? '⚡ Diapos Rapido' : '📘 Séances (PowerPoint)'}</b><ul>${d.map((x, i) => `<li><span>${esc(x.name)}</span><small>${nbDiapos(x)} diapos</small>
+        <button class="btn mini" data-cd="${i}" data-act="haut" type="button" aria-label="Monter">↑</button><button class="btn mini" data-cd="${i}" data-act="bas" type="button" aria-label="Descendre">↓</button>
+        <button class="btn mini danger" data-cd="${i}" data-act="suppr" type="button">Retirer</button></li>`).join('') || '<li class="acc-vide">Aucune diapo pour l’instant.</li>'}</ul>
+        <span class="btn mini plein file-btn" style="align-self:flex-start">+ Ajouter des PowerPoint<input type="file" id="pPdf" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf,.pdf,.json" multiple></span><p class="aide" id="pEtat"></p></div>`;
+    if (!opt.rapido) h += `
+      <div class="acc-s"><b>📝 Pronote (PDF)</b><ul>${P.map((f, i) => `<li><span>📄 ${esc(f.nom)}</span><button class="btn mini" data-prdl="${i}" type="button">Ouvrir</button><button class="btn mini danger" data-prsup="${i}" type="button">Retirer</button></li>`).join('') || '<li class="acc-vide">Aucun PDF.</li>'}</ul>
+        <span class="btn mini plein file-btn" style="align-self:flex-start">+ Ajouter des PDF<input type="file" id="pPronote" accept="application/pdf,.pdf" multiple></span></div>
+      <div class="acc-s"><b>🔗 Liens</b><ul>${Ls.map((l, i) => `<li><span><a href="${esc(l.u)}" target="_blank" rel="noopener">${esc(l.t || l.u)}</a></span><button class="btn mini danger" data-lsup="${i}" type="button">Retirer</button></li>`).join('') || '<li class="acc-vide">Aucun lien.</li>'}</ul>
+        <div class="ligne-flex" style="flex-wrap:wrap"><input type="text" id="pLienT" placeholder="Nom (ex. Vidéo pgcd)" style="flex:1;min-width:140px;min-height:36px"><input type="text" inputmode="url" id="pLienU" placeholder="https://…" style="flex:2;min-width:180px;min-height:36px"><button class="btn mini plein" id="pLienAj" type="button">+ Ajouter le lien</button></div></div>
+      ${opt.cours ? '<span class="tag devoir" style="align-self:flex-start">Chapitre en cours</span>' : `<button class="btn mini" id="pMettre" type="button" style="align-self:flex-start">Mettre ce chapitre en cours</button>`}
+      ${opt.ap ? `<button class="btn mini danger" id="pApSuppr" type="button" style="align-self:flex-start">Supprimer ce chapitre d’AP</button>` : ''}`;
+    h += `</div>`;
+  }
+  return h + `</div>`;
+}
 function rendreProgression(){
   const nivs = [...new Set(classes().map(niveauDe).filter(Boolean))].sort().reverse();
   if (!nivs.includes(progNiv)) progNiv = niveauDe(cc()) || nivs[0] || null;
-  $('#pClasses').innerHTML = nivs.map(x => `<button class="puce" data-prog="${x}" aria-pressed="${x === progNiv}" type="button" style="font-size:17px;min-height:46px;padding:0 22px">Progression ${x === '6e' ? '6ᵉ' : x === '3e' ? '3ᵉ' : x}</button>`).join('');
+  $('#pClasses').innerHTML = nivs.flatMap(x => { const N = x === '6e' ? '6ᵉ' : x === '3e' ? '3ᵉ' : x; return [[x, false, 'Progression ' + N], [x, true, 'Progression ' + N + ' AP']]; })
+    .map(([x, ap, l]) => `<button class="puce" data-prog="${x}" data-progap="${ap ? 1 : ''}" aria-pressed="${x === progNiv && ap === progAP}" type="button" style="font-size:16px;min-height:44px;padding:0 18px${ap ? ';--c:#3A6FB0' : ''}">${l}</button>`).join('');
+  $('#pOrga').textContent = progOrga ? '✕ Fermer l’organisation' : '⇅ Organisation des séances';
+  $('#pOrga').classList.toggle('plein', progOrga);
   const n = progNiv;
-  if (!n) { $('#pEnCours').innerHTML = '<p class="vide-msg">Aucune classe de collège.</p>'; $('#pDetail').hidden = true; $('#pListe').innerHTML = ''; return; }
+  if (!n) { $('#pEnCours').innerHTML = '<p class="vide-msg">Aucune classe de collège.</p>'; $('#pListe').innerHTML = ''; return; }
   const noms = classes().filter(x => niveauDe(x) === n).map(x => x.name.replace(/^[3-6]e\s*/, '')).join(' et ');
-  const L = progDe(n), cur = chapNiv(n), ci = L.findIndex(x => x.id === cur), ch = L[ci];
-  const rid = 'rapido-' + n, aid = 'ap-' + n, estRap = progSel === rid, estAP = progSel === aid, nomAP = n === '6e' ? 'AP · groupe besoin' : 'AP';
-  if (!progSel || !(L.some(x => x.id === progSel) || estRap || estAP)) progSel = cur;
-  const nb = id => (D.chap[id]?.decks || []).length;
-  $('#pEnCours').innerHTML = `<div class="carte-chap"><span class="pastille" style="align-self:flex-start">Chapitre en cours · ${n} ${esc(noms)}</span><h2>${esc(ch.t)}</h2><p>Chapitre ${ci + 1} · période ${ch.p} · ${nb(cur)} séance${nb(cur) > 1 ? 's' : ''}</p></div>`
-    + (ci > 0 ? `<div class="carte-prec" style="margin-top:10px"><div style="flex:1"><small>Chapitre précédent</small>${esc(L[ci - 1].t)}</div></div>` : '');
-  const sRap = progSel === rid, sAP = estAP, s = sRap ? {t:'⚡ Rapidos'} : sAP ? {t:'🎯 ' + nomAP} : L.find(x => x.id === progSel), d = D.chap[progSel]?.decks || [];
-  const ouRap = classes().filter(x => niveauDe(x) === n).map(x => { const p = D.pos[x.id + '_rapido'], dk = (D.chap[rid]?.decks || []).find(y => y.id === p?.deck) || (D.chap[rid]?.decks || [])[0]; return dk ? `${esc(x.name)} : ${esc(dk.name)}` : ''; }).filter(Boolean).join(' · ');
-  $('#pDetail').hidden = false;
-  $('#pDetail').innerHTML = `<h3>${esc(s.t)}</h3>
-    <p class="aide">${sAP ? `Un fichier PowerPoint par séance d’${esc(nomAP)}, dans l’ordre. Ces diapos s’ouvrent quand la classe est en demi-groupe (G1 ou G2) ; chaque groupe garde sa place.` : sRap ? `Un fichier PowerPoint par Rapido, dans l’ordre. Chaque classe garde sa place dans les Rapidos, indépendamment des séances.${ouRap ? '<br><b>Où en est chaque classe :</b> ' + ouRap : ''}` : `Un fichier PowerPoint par séance, dans l’ordre (les animations au clic et les minuteurs sont gardés). Ces diapos servent à toutes tes classes de ${n} (${esc(noms)}).`}</p>
-    <ul class="decks">${d.map((x, i) => `<li><span>${esc(x.name)}</span><small>${nbDiapos(x)} diapos</small>
-      <button class="btn mini" data-cd="${i}" data-act="haut" type="button" aria-label="Monter">↑</button><button class="btn mini" data-cd="${i}" data-act="bas" type="button" aria-label="Descendre">↓</button>
-      <button class="btn mini danger" data-cd="${i}" data-act="suppr" type="button">Retirer</button></li>`).join('') || '<li class="aide" style="border:0;background:none">Aucune diapo jointe pour ce chapitre.</li>'}</ul>
-    <div class="ligne-flex"><span class="btn mini plein file-btn">+ Joindre des PowerPoint<input type="file" id="pPdf" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf,.pdf,.json" multiple></span>
-    ${sRap || sAP ? '' : progSel !== cur ? `<button class="btn mini" id="pMettre" type="button">Mettre ce chapitre en cours</button>` : '<span class="tag devoir">Chapitre en cours</span>'}</div>
-    ${sRap ? '' : `<div class="pr-fich"><b style="color:var(--vert)">📝 Pronote</b>
-        <span class="aide">Les PDF à déposer sur Pronote pour ${sAP ? 'l’AP' : 'ce chapitre'} (leçon, exercices, corrigés…). Le résumé Pronote te les proposera avec « Fait ce jour : ex … ».</span>
-        ${pdfPronote(progSel).map((f, i) => `<div class="ligne-flex"><span style="flex:1">📄 <b>${esc(f.nom)}</b></span><button class="btn mini" data-prdl="${i}" type="button">Ouvrir</button><button class="btn mini danger" data-prsup="${i}" type="button">Retirer</button></div>`).join('')}
-        <span class="btn mini plein file-btn" style="align-self:flex-start">+ Joindre des PDF<input type="file" id="pPronote" accept="application/pdf,.pdf" multiple></span></div>`}
-    ${sRap || sAP ? '' : (() => { const k = L.findIndex(x => x.id === progSel);
-      return `<div class="ligne-flex" style="flex-wrap:wrap"><b style="color:var(--vert)">Place dans l’année :</b>
-        <button class="btn mini" id="pPlusTot" type="button"${k <= 0 ? ' disabled' : ''}>↑ Plus tôt</button><button class="btn mini" id="pPlusTard" type="button"${k >= L.length - 1 ? ' disabled' : ''}>↓ Plus tard</button>
-        <label class="ligne-flex" style="gap:6px">Période <select id="pPer" style="min-height:34px;width:auto">${[1, 2, 3, 4, 5].map(x => `<option${x === s.p ? ' selected' : ''}>${x}</option>`).join('')}</select></label></div>
-      <label class="champ">Autre lien à donner aux élèves (facultatif)<input type="text" id="pLien" value="${esc(D.chap[progSel]?.lien || '')}" placeholder="https://…"></label>`; })()}
-    <p class="aide" id="pEtat"></p>`;
-  if (D.prog['ordre_' + n] || D.prog['per_' + n]) $('#pDetail').insertAdjacentHTML('beforeend', `<p class="aide">Ordre modifié pour ton établissement. <button class="btn mini" id="pDefaut" type="button">Revenir à l’ordre du site</button></p>`);
-  let per = 0, h = `<button class="chap-ligne${sRap ? ' sel' : ''}" data-chap="${rid}" type="button" style="border-color:var(--orange)"><span class="per" style="background:var(--orange-pale);color:var(--orange-fonce)">⚡</span><span class="t">Rapidos</span>${nb(rid) ? `<span class="tag interro">${nb(rid)}</span>` : ''}</button>`
-    + `<button class="chap-ligne${sAP ? ' sel' : ''}" data-chap="${aid}" type="button" style="border-color:#3A6FB0"><span class="per" style="background:#E3ECF7;color:#2A548A">🎯</span><span class="t">${esc(nomAP)}</span>${nb(aid) ? `<span class="tag interro">${nb(aid)}</span>` : ''}</button>`;
+  const L = progAP ? apListe(n) : progDe(n), cur = progAP ? apCourant(n) : chapNiv(n);
+  // organisation : changer les numéros puis confirmer
+  if (progOrga) {
+    $('#pEnCours').innerHTML = `<p class="aide" style="font-size:15px">Change le <b>numéro</b> des chapitres (par exemple mets 2 devant le chapitre que tu veux en 2ᵉ position), puis appuie sur <b>Confirmer</b>.</p>`;
+    $('#pListe').innerHTML = L.map((x, i) => `<div class="orga-l"><input type="number" min="1" max="${L.length}" value="${i + 1}" data-orga="${esc(x.id)}" aria-label="Numéro"><span>${esc(x.t)}</span>${progAP ? '' : `<label class="ligne-flex" style="gap:6px;font-weight:700">Période <select data-orgap="${esc(x.id)}">${[1, 2, 3, 4, 5].map(k => `<option${k === x.p ? ' selected' : ''}>${k}</option>`).join('')}</select></label>`}</div>`).join('')
+      + `<div class="ligne-flex" style="margin-top:8px"><button class="btn plein" id="pOrgaOk" type="button">Confirmer</button>${!progAP && (D.prog['ordre_' + n] || D.prog['per_' + n]) ? '<button class="btn" id="pDefaut" type="button">Revenir à l’ordre du site</button>' : ''}</div>`;
+    return;
+  }
+  const rid = 'rapido-' + n, ci = L.findIndex(x => x.id === cur);
+  if (progSel && !(L.some(x => x.id === progSel) || progSel === rid)) progSel = null;
+  let h = '';
+  if (ci >= 0) h += `<p class="en-haut">${progAP ? 'Chapitre d’AP en cours' : 'Chapitre en cours'} · ${n} ${esc(noms)}</p>` + accordeon(L[ci].id, L[ci].t, ci + 1, progAP ? '' : 'Période ' + L[ci].p, {cours:true, ap:progAP});
+  else if (progAP) h += `<p class="aide">Aucun chapitre d’AP pour l’instant : ajoute-en un ci-dessous.</p>`;
+  if (!progAP) h += accordeon(rid, 'Rapidos', '⚡', 'Diapos Rapido de toute l’année', {rapido:true, couleur:'background:var(--orange-pale);color:var(--orange-fonce)'});
+  $('#pEnCours').innerHTML = h;
+  let per = 0; h = `<p class="en-haut" style="color:var(--vert)">Toute la progression${progAP ? ' AP' : ''}</p>`;
   L.forEach((x, i) => {
-    if (x.p !== per) { per = x.p; h += `<b style="color:var(--vert);font-size:13px;margin-top:6px">Période ${per}</b>`; }
-    h += `<button class="chap-ligne${x.id === cur ? ' cours' : ''}${x.id === progSel ? ' sel' : ''}" data-chap="${x.id}" type="button"><span class="per">${i + 1}</span><span class="t">${esc(x.t)}</span>${nb(x.id) ? `<span class="tag devoir">${nb(x.id)}</span>` : ''}</button>`;
+    if (!progAP && x.p !== per) { per = x.p; h += `<p class="pg-per">Période ${per}</p>`; }
+    if (i !== ci) h += accordeon(x.id, x.t, i + 1, '', {ap:progAP});
+    else h += `<div class="acc" style="opacity:.6"><button class="acc-t" data-chap="${esc(x.id)}" type="button"><span class="num">${i + 1}</span><span class="t">${esc(x.t)} <small>(en cours, voir en haut)</small></span></button></div>`;
   });
+  if (progAP) h += `<div class="ligne-flex" style="margin-top:6px"><input type="text" id="pApNom" placeholder="Nouveau chapitre d’AP (ex. Calcul mental et fractions)" style="flex:1;min-height:40px"><button class="btn plein" id="pApAj" type="button">+ Ajouter</button></div>`;
   $('#pListe').innerHTML = h;
+}
+function confirmerOrga(){
+  const n = progNiv, L = progAP ? apListe(n) : progDe(n);
+  const nums = Object.fromEntries($$('[data-orga]').map(i => [i.dataset.orga, +i.value || 999]));
+  const ord = L.map((x, k) => ({x, k, v:nums[x.id] ?? k + 1})).sort((a, b) => a.v - b.v || (a.v === a.k + 1) - (b.v === b.k + 1) || a.k - b.k).map(o => o.x);
+  if (progAP) D.prog['apl_' + n] = ord;
+  else { D.prog['ordre_' + n] = ord.map(x => x.id); const per = D.prog['per_' + n] ??= {}; $$('[data-orgap]').forEach(sl => { const base = (PROG[n] || []).find(y => y.id === sl.dataset.orgap); if (base && +sl.value !== base.p) per[sl.dataset.orgap] = +sl.value; else delete per[sl.dataset.orgap]; }); }
+  save('app/prog', D.prog); progOrga = false; rendre();
 }
 function pdfPronote(id){ const ch = D.chap[id] || {}; return [...(ch.pronote || []), ...Object.values(ch.fichiers || {})]; }
 async function joindrePronote(id, files){
@@ -4280,8 +4323,10 @@ function remplirPronote(){
   const F = [];
   PR.chaps.forEach(ck => pdfPronote(ck).forEach((f, i) => F.push(`<button class="btn mini" data-prf="${esc(ck)}|${i}" type="button">⬇ ${esc(f.nom.replace(/\.pdf$/i, ''))}</button>`)));
   const manque = !F.length;
+  const LI = PR.chaps.flatMap(ck => lienDe(D.chap[ck])).map(l => `<a class="btn mini" href="${esc(l.u)}" target="_blank" rel="noopener">🔗 ${esc(l.t || l.u)}</a>`);
   $('#prFichiers').hidden = !txt;
 $('#prFichiers').innerHTML = `<b style="color:var(--vert)">PDF à déposer sur Pronote</b><div class="ligne-flex" style="flex-wrap:wrap">${F.join('')}${manque ? `<button class="btn mini orange" id="prCaptures" type="button"${PR.decks.length ? '' : ' disabled'}>📄 Créer le PDF de la séance</button>` : ''}</div>`
+    + (LI.length ? `<b style="color:var(--vert)">Liens du chapitre</b><div class="ligne-flex" style="flex-wrap:wrap">${LI.join('')}</div>` : '')
     + (manque ? '<span class="aide">Pour mettre tes propres PDF ici : onglet Progression › le chapitre › « 📝 Pronote ».</span>' : '');
 }
 $('#prClasse').onchange = $('#prJour').onchange = remplirPronote;
@@ -4779,9 +4824,15 @@ $('#tel').addEventListener('click', e => {
   else if (b.dataset.eq !== undefined) majScore(s => { const e = s.eq[+b.dataset.eq]; e.s = Math.max(0, e.s + +b.dataset.d); s.on = true; });
   else if (b.dataset.vue2) basculer(b.dataset.vue2 === 'r');
   else if (b.dataset.sem) fixerSemaine(b.dataset.sem);
-  else if (b.dataset.prog) { progNiv = b.dataset.prog; progSel = null; rendre(); }
-  else if (b.dataset.chap) { progSel = b.dataset.chap; rendre(); }
-  else if (b.id === 'pMettre') mettreEnCours(progNiv, progSel);
+  else if (b.dataset.prog) { progNiv = b.dataset.prog; progAP = !!b.dataset.progap; progSel = null; rendre(); }
+  else if (b.dataset.chap) { progSel = progSel === b.dataset.chap ? null : b.dataset.chap; rendre(); }
+  else if (b.id === 'pMettre') { if (progAP) { D.prog['apc_' + progNiv] = progSel; save('app/prog', D.prog); const c = cc(); if (c && modeDe() !== 'cours') choisirClasse(c.id, modeDe()); else rendre(); } else mettreEnCours(progNiv, progSel); }
+  else if (b.id === 'pOrga') { progOrga = !progOrga; rendre(); }
+  else if (b.id === 'pOrgaOk') confirmerOrga();
+  else if (b.id === 'pApAj') { const t = $('#pApNom').value.trim(); if (!t) return $('#pApNom').focus(); const id = 'ap-' + progNiv + '-' + Date.now().toString(36); D.prog['apl_' + progNiv] = [...apListe(progNiv), {id, t, p:1}]; save('app/prog', D.prog); progSel = id; rendre(); }
+  else if (b.id === 'pApSuppr') deuxFois(b, 'Confirmer la suppression', () => { D.prog['apl_' + progNiv] = apListe(progNiv).filter(x => x.id !== progSel); save('app/prog', D.prog); progSel = null; rendre(); });
+  else if (b.id === 'pLienAj') { const u = $('#pLienU').value.trim(), t = $('#pLienT').value.trim(); if (!/^https?:\/\//i.test(u)) return $('#pLienU').focus(); const ch = D.chap[progSel] ??= {decks:[]}; ch.liens = [...(ch.liens || []), {t:t || u, u}]; save('chap/' + progSel, ch); rendre(); }
+  else if (b.dataset.lsup) { const ch = D.chap[progSel]; if (!ch) return; const L = lienDe(ch), l = L[+b.dataset.lsup]; if (ch.lien && l?.u === ch.lien && !ch.liens?.includes(l)) delete ch.lien; else ch.liens = (ch.liens || []).filter(x => x !== l); save('chap/' + progSel, ch); rendre(); }
   else if (b.id === 'pPlusTot') deplacerChap(progNiv, progSel, -1);
   else if (b.id === 'pPlusTard') deplacerChap(progNiv, progSel, 1);
   else if (b.id === 'pDefaut') progParDefaut(progNiv);
@@ -4890,7 +4941,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795019471',t0=Date.now(),vue=false;
+<script>(function(){var V='1795020697',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
