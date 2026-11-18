@@ -515,7 +515,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 <div id="pronote" class="modal-qr" hidden><div class="qr-boite" style="max-width:560px;width:100%;align-items:stretch;text-align:left">
   <b style="color:var(--vert);font:800 22px var(--titre)">📝 Résumé pour Pronote</b>
   <div class="grille-form"><label class="champ">Classe<select id="prClasse"></select></label><label class="champ">Jour<input type="date" id="prJour"></label></div>
-  <textarea id="prTexte" style="min-height:190px"></textarea>
+  <textarea id="prTexte" style="min-height:70px"></textarea>
   <p class="aide" id="prAide"></p>
   <div id="prFichiers" class="pr-fich"></div>
   <div class="duo"><button class="btn plein" id="prCopier" type="button">Copier le texte</button><button class="btn" id="prFermer" type="button">Fermer</button></div>
@@ -4104,17 +4104,39 @@ async function joindreFichier(id, k, f){
     ch.fichiers = {...(ch.fichiers || {}), [k]:{id:a.id, nom:f.name}}; save('chap/' + id, ch); if (old) assets.delete(old.id).catch(() => {}); rendre(); }
   catch (e) { alert('Envoi impossible : ' + (e.message || e)); }
 }
+/* Séance complète en PDF : la leçon, puis pour chaque exercice l'énoncé et le corrigé complet (sans les étapes intermédiaires) */
+async function diaposSeance(d){
+  if (d.kind !== 'pptx') return Array.from({length:d.pages}, (_, i) => ({i, t:'Page ' + (i + 1)}));
+  const m = await modeleDe(d), out = [], G = [];
+  const texte = sl => (JSON.stringify(sl.shapes).match(/"t":"[^"]*"/g) || []).map(x => x.slice(5, -1)).join(' ').replace(/\s+/g, ' ');
+  m.slides.forEach((sl, i) => {
+    const tx = texte(sl), debut = tx.slice(0, 160);
+    const ex = debut.match(/Exercice\s*n°\s*(\d+)(?:\s*(?:et|à|-)\s*(\d+))?/i);
+    if (!ex) { if (/le[çc]on\s*[–-]|rappel de la m[ée]thode/i.test(debut)) out.push({i, t:/rappel/i.test(debut) ? 'Rappel de la méthode' : 'Leçon'}); return; }
+    const nums = ex[2] ? [+ex[1], +ex[2]] : [+ex[1]];
+    if (/correction/i.test(debut)) {
+      const g = [...G].reverse().find(x => nums.some(n => x.nums.includes(n))); if (!g) return;
+      if (/exercice complet/i.test(tx)) g.complet.push(i); else if (/recopier/i.test(debut)) g.recop.push(i); else g.corr.push(i);
+      return;
+    }
+    if (G.some(x => x.nums.join() === nums.join())) return; // énoncé déjà pris
+    const g = {nums, enonce:i, complet:[], recop:[], corr:[]}; G.push(g); out.push({g});
+  });
+  return out.flatMap(x => {
+    if (!x.g) return [x];
+    const g = x.g, nom = 'Ex ' + g.nums.join(' et '), c = g.complet.length ? g.complet : g.recop.length ? g.recop : g.corr.slice(-1);
+    return [{i:g.enonce, t:nom + ' · énoncé'}, ...c.map(i => ({i, t:nom + ' · corrigé'}))];
+  });
+}
 async function imprimerSeance(){
-  const c = D.cls[$('#prClasse').value], jour = $('#prJour').value || TODAY(); if (!c || !PR.vues.length) return;
-  const b = $('#prCaptures'); if (b) { b.disabled = true; b.textContent = 'Préparation des diapos…'; }
+  const c = D.cls[$('#prClasse').value]; if (!c || !PR.decks.length) return;
+  const b = $('#prCaptures'); if (b) { b.disabled = true; b.textContent = 'Préparation…'; }
   const zone = $('#impr'); zone.querySelectorAll('.slhost').forEach(h => viderLecteur(h)); zone.innerHTML = '';
-  const jf = new Date(jour + 'T12:00:00').toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-  for (const {d, e} of PR.vues) {
-    const vus = [...new Set(e.map(x => diapoDe(d, x.p)))].sort((x, y) => x - y);
-    for (const i of vus) {
+  for (const d of PR.decks.filter(x => !enRapidoDeck(x))) {
+    for (const {i, t} of await diaposSeance(d)) {
       const p0 = debutDiapo(d, i), pf = d.ns ? p0 + d.ns[i] - 1 : p0;
       const pg = document.createElement('div'); pg.className = 'impr-page';
-      pg.innerHTML = `<div class="impr-tete">${esc(c.name)} · ${esc(jf)} · ${esc(nomCourt(d.name))} · ${esc(nomEntree(d, p0))}</div><div class="impr-boite"><div class="slhost"></div><canvas hidden></canvas><p hidden></p></div>`;
+      pg.innerHTML = `<div class="impr-tete">${esc(nomCourt(d.name))} · ${esc(chapInfo(chapDuDeck(d.id))?.t || '')} · ${esc(t)}</div><div class="impr-boite"><div class="slhost"></div><canvas hidden></canvas><p hidden></p></div>`;
       zone.append(pg);
       const bx = pg.querySelector('.impr-boite');
       try { if (d.kind === 'pptx') await afficherPptx(bx.firstChild, bx, d, pf, {}); else { const cv = bx.querySelector('canvas'); cv.hidden = false; await dessiner(cv, bx, bx.querySelector('p'), d.id, pf, ''); } } catch (x) {}
@@ -4122,9 +4144,10 @@ async function imprimerSeance(){
   }
   await Promise.all([...zone.querySelectorAll('img')].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));
   await new Promise(r => setTimeout(r, 400));
-  if (b) { b.disabled = false; b.textContent = '🖼 Diapos de la séance (PDF)'; }
+  if (b) { b.disabled = false; b.textContent = '📄 Séance complète (PDF)'; }
   window.print();
 }
+const enRapidoDeck = d => /^rapido-/.test(chapDuDeck(d.id) || '');
 async function telechargerFichier(F){
   try { const u = window.__blobUrl ? await window.__blobUrl(F.id) : '/_blob/' + F.id; const a = document.createElement('a'); a.href = u; a.download = F.nom; document.body.append(a); a.click(); a.remove(); }
   catch (e) { alert('Fichier introuvable sur cet ordinateur.'); }
@@ -4188,13 +4211,13 @@ function numerosEx(l){
 function plage(ns){
   const s = [...new Set(ns)].sort((a, b) => a - b), g = [];
   for (const n of s) { const d = g[g.length - 1]; if (d && n === d[1] + 1) d[1] = n; else g.push([n, n]); }
-  const t = g.map(([a, b]) => a === b ? '' + a : b === a + 1 ? `${a}, ${b}` : `${a} à ${b}`);
+  const t = g.flatMap(([a, b]) => a === b ? ['' + a] : b === a + 1 ? ['' + a, '' + b] : [`${a} à ${b}`]);
   return t.length > 1 ? t.slice(0, -1).join(', ') + ' et ' + t[t.length - 1] : t[0] || '';
 }
 const SITE = 'https://unemyriade2maths.github.io/', CHAINE_YT = 'https://www.youtube.com/@une.myriademaths';
 let PR = {chaps:[], vues:[]};
 function resumeDuJour(c, jour){
-  PR = {chaps:[], vues:[]};
+  PR = {chaps:[], vues:[], faits:[], lecons:[], decks:[]};
   const j = D.jour[c.id + '_' + jour]; if (!j) return '';
   const lignes = [], liens = new Set();
   const parDeck = k => Object.entries(j[k] || {}).sort((x, y) => x[1].o - y[1].o).map(([id, r]) => ({d:trouverDeck(id), r})).filter(x => x.d);
@@ -4220,16 +4243,15 @@ function resumeDuJour(c, jour){
     if (sv.length) s += ` Exercice${sv.length > 1 ? 's' : ''} ${plage(sv)} à poursuivre en classe.`;
     lignes.push(s);
     if (ck && !PR.chaps.includes(ck)) PR.chaps.push(ck);
+    PR.faits.push(...faits); PR.lecons.push(...lecons); if (!PR.decks.includes(d)) PR.decks.push(d);
     PR.vues.push({d, e:vues.length ? vues : idx.filter(e => e.p >= r.a && e.p <= r.b)});
     if (D.chap[ck]?.lien) liens.add(D.chap[ck].lien);
   }
-  if (PR.chaps.length) {
-    lignes.push('');
-    for (const ck of PR.chaps) lignes.push('Le cours en ligne (' + (chapInfo(ck)?.t || ck) + ') : ' + SITE + 'chapitre.html?c=' + encodeURIComponent(ck));
-    for (const l of liens) lignes.push('À voir aussi : ' + l);
-    lignes.push('Les vidéos de la chaîne : ' + CHAINE_YT);
-    lignes.push('Mon site : ' + SITE);
-  }
+  // le texte pour Pronote : seulement ce qui a été fait ce jour-là
+  const F = [...new Set(PR.faits)];
+  if (F.length) return 'Fait ce jour : ex ' + plage(F) + '.';
+  if (PR.lecons.length) return 'Fait ce jour : leçon (' + [...new Set(PR.lecons)].join(', ') + ').';
+  return PR.decks.length ? 'Fait ce jour : ' : '';
   return lignes.join('\n');
 }
 function ouvrirPronote(){
@@ -4240,12 +4262,12 @@ function remplirPronote(){
   const c = D.cls[$('#prClasse').value]; if (!c) return;
   const txt = resumeDuJour(c, $('#prJour').value || TODAY());
   $('#prTexte').value = txt;
-    $('#prAide').innerHTML = !txt ? 'Rien n’a été projeté ce jour-là avec cette classe.' : 'Relis et corrige si besoin, puis copie le texte dans Pronote.';
+    $('#prAide').innerHTML = !txt ? 'Rien n’a été projeté ce jour-là avec cette classe.' : 'Copie ce texte dans Pronote. Le PDF de la séance : leçon + énoncé et corrigé complet de chaque exercice (choisis « Enregistrer au format PDF »).';
   const F = [];
   for (const ck of PR.chaps) for (const [k, l] of [['lecon', '📘 Leçon'], ['fiche', '📄 Fiche d’exercices']]) { const f = D.chap[ck]?.fichiers?.[k]; if (f) F.push(`<button class="btn mini" data-prf="${esc(ck)}|${k}" type="button">⬇ ${l}</button>`); }
   const manque = PR.chaps.some(ck => !D.chap[ck]?.fichiers?.lecon || !D.chap[ck]?.fichiers?.fiche);
   $('#prFichiers').hidden = !txt;
-  $('#prFichiers').innerHTML = `<b style="color:var(--vert)">Fichiers à déposer sur Pronote</b><div class="ligne-flex" style="flex-wrap:wrap">${F.join('')}<button class="btn mini orange" id="prCaptures" type="button"${PR.vues.length ? '' : ' disabled'}>🖼 Diapos de la séance (PDF)</button></div>`
+  $('#prFichiers').innerHTML = `<b style="color:var(--vert)">Fichiers à déposer sur Pronote</b><div class="ligne-flex" style="flex-wrap:wrap">${F.join('')}<button class="btn mini orange" id="prCaptures" type="button"${PR.decks.length ? '' : ' disabled'}>📄 Séance complète (PDF)</button></div>`
     + (manque ? '<span class="aide">Pour avoir la leçon et la fiche ici : onglet Progression › le chapitre › « Fichiers pour Pronote ».</span>' : '');
 }
 $('#prClasse').onchange = $('#prJour').onchange = remplirPronote;
@@ -4852,7 +4874,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795018659',t0=Date.now(),vue=false;
+<script>(function(){var V='1795019145',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
