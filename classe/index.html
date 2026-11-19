@@ -4711,53 +4711,54 @@ const nbNote = x => (x === '' || x == null || isNaN(+String(x).replace(',', '.')
 const fmtN = x => String(Math.round(x * 100) / 100).replace('.', ',');
 let graine = 0;
 function choisir(arr){ return arr[(graine++) % arr.length]; }
-/* rédaction du commentaire : positif, factuel, un ou deux conseils */
+/* rédaction du commentaire : phrases courtes, factuelles, conseil puis note positive */
+const FORT2 = {calc:'calcul', geo:'géométrie', raison:'raisonnement', redac:'rédaction', oral:'expression orale', rig:'rigueur', entraide:'entraide', auto:'autonomie'};
 function rediger(id, t, n){
   const B = bulDoc(id), e = B.T[t]?.el?.[n] || {}, r = e.rep || proposer(id, t, n), k = comptesBul(id, t, n);
   const m = nbNote(e.moy), prev = t > 1 ? B.T[t - 1]?.el?.[n] : null, mp = prev ? nbNote(prev.moy) : null, rp = prev?.rep;
   graine = [...(n + t)].reduce((a, ch) => a + ch.charCodeAt(0), 0) + (e.var || 0);
-  const ph = [];
-  // ouverture
+  const f = x => x ? ` (${x} fois)` : '', ph = [];
   const niveau = m == null ? null : m >= 16 ? 'tb' : m >= 13 ? 'b' : m >= 10 ? 'm' : 'f';
-  if (t > 1 && m != null && mp != null) {
-    const d = m - mp;
-    ph.push(d >= 1 ? `Résultats en hausse (${fmtN(mp)} → ${fmtN(m)}) : les efforts portent leurs fruits.` : d <= -1 ? `Résultats en baisse ce trimestre (${fmtN(mp)} → ${fmtN(m)}), mais rien n’est perdu.` : niveau === 'tb' || niveau === 'b' ? 'Des résultats solides et stables.' : 'Des résultats stables.');
-  } else if (niveau) ph.push({tb:'Très bon trimestre.', b:'Bon trimestre.', m:'Trimestre correct, avec des bases à consolider.', f:'Des résultats encore fragiles, mais des progrès sont possibles.'}[niveau]);
-  // attitude et travail
-  const imp = {tb:'Travail sérieux et investi en classe', b:'Travail sérieux en classe', irr:'Investissement irrégulier en classe', ins:'Le travail en classe doit devenir plus régulier'}[r.implic];
-  const pa = {act:'une participation active et pertinente', pon:'une participation ponctuelle', rare:'une participation encore discrète'}[r.part];
-  const fois = (x, un, plur) => x ? ` (${x} ${x > 1 ? plur : un})` : '';
-  if (imp) ph.push(imp + ((r.implic === 'irr' || r.implic === 'ins') && k.travail ? ` (travail non fait ${k.travail} fois)` : '') + (pa ? ', avec ' + pa : '') + (r.part !== 'rare' ? fois(k.participation, 'intervention relevée', 'interventions relevées') : '') + '.');
-  if (r.forts?.length) ph.push('Point' + (r.forts.length > 1 ? 's' : '') + ' fort' + (r.forts.length > 1 ? 's' : '') + ' : ' + r.forts.map(x => FORT[x]).join(', ') + '.');
-  if (k.tuteur && r.forts?.includes('entraide')) ph.push(`Aide volontiers ses camarades (${k.tuteur} fois tuteur).`);
+  // résultats
+  if (t > 1 && m != null && mp != null) { const d = m - mp; ph.push(d >= 1 ? `Résultats en hausse (${fmtN(mp)} → ${fmtN(m)}).` : d <= -1 ? `Résultats en baisse (${fmtN(mp)} → ${fmtN(m)}).` : 'Résultats stables.'); }
+  else if (niveau) ph.push({tb:'Très bon trimestre.', b:'Bon trimestre.', m:'Trimestre correct.', f:'Résultats encore fragiles.'}[niveau]);
+  // travail et participation
+  ph.push({tb:'Travail sérieux et investi.', b:'Travail sérieux en classe.', irr:'Ne travaille pas toujours en classe' + f(k.travail) + '.', ins:'Travail en classe insuffisant' + f(k.travail) + '.'}[r.implic] || '');
+  ph.push({act:'Participe activement' + f(k.participation) + '.', pon:'Participe parfois' + f(k.participation) + '.', rare:'Participe peu.'}[r.part] || '');
+  const mat = (r.forts || []).filter(x => ['calc', 'geo', 'raison', 'redac', 'oral'].includes(x)), qual = (r.forts || []).filter(x => ['rig', 'auto'].includes(x) || (x === 'entraide' && !k.tuteur));
+  if (mat.length) ph.push('À l’aise en ' + mat.slice(0, 2).map(x => FORT2[x]).join(' et ') + '.');
+  if (qual.length) ph.push('Qualités : ' + qual.map(x => FORT2[x]).join(', ') + '.');
+  if (k.tuteur) ph.push(`Aide ses camarades${f(k.tuteur)}.`);
+  // attitude, chaque point en une phrase courte
   const att = r.att || (r.compo ? [r.compo] : []);
-  if (att.includes('ex')) ph.push(choisir(['Attitude exemplaire.', 'Comportement très agréable en classe.']));
-  const vig = [];
-  if (att.includes('bav')) vig.push('bavardages' + (k.bav ? ` (${k.bav})` : ''));
-  if (att.includes('reve')) vig.push('tendance à rêvasser' + (k.reve ? ` (${k.reve} fois)` : ''));
-  if (att.includes('cours')) vig.push('cours ou correction non pris' + (k.cours ? ` (${k.cours} fois)` : ''));
-  if (att.includes('pert')) vig.push('cours perturbé' + (k.perturbe ? ` (${k.perturbe} fois)` : ''));
-  if (att.includes('retard') || k.retard >= 2) vig.push(k.retard ? `${k.retard} retard${k.retard > 1 ? 's' : ''}` : 'retards');
-  if (k.cahier) vig.push(`matériel oublié ${k.cahier} fois`);
-  if (vig.length) ph.push('Points de vigilance : ' + vig.join(', ') + '.');
-  if (r.maison === 'abs' || r.maison === 'irr') ph.push(`Le travail à la maison est ${r.maison === 'abs' ? 'trop souvent' : 'parfois'} oublié${k.maison ? ` (${k.maison} fois)` : ''}.`);
+  if (att.includes('ex')) ph.push('Attitude exemplaire.');
+  if (att.includes('bav')) ph.push('Bavarde souvent' + f(k.bav) + '.');
+  if (att.includes('reve')) ph.push('Rêvasse parfois' + f(k.reve) + '.');
+  if (att.includes('cours')) ph.push('Ne prend pas toujours le cours' + f(k.cours) + '.');
+  if (att.includes('pert')) ph.push('A perturbé le cours' + f(k.perturbe) + '.');
+  if (att.includes('retard') || k.retard >= 2) ph.push('Arrive en retard' + f(k.retard) + '.');
+  if (k.cahier) ph.push('Oublie son matériel' + f(k.cahier) + '.');
+  if (r.maison === 'abs' || r.maison === 'irr') ph.push('Devoirs non faits' + f(k.maison) + '.');
   // évolution depuis le trimestre précédent
   if (rp) {
     const mal = a => (a || []).some(x => !['ex', 'ok'].includes(x)), ap = rp.att || (rp.compo ? [rp.compo] : []);
-    if (mal(ap) && !mal(att)) ph.push('L’attitude s’est nettement améliorée depuis le trimestre dernier, bravo.');
-    else if (!mal(ap) && mal(att)) ph.push('L’attitude était meilleure au trimestre précédent.');
-    else if (mal(ap) && mal(att)) { const kp = comptesBul(id, t - 1, n), moins = [['bav', 'bavardages'], ['reve', 'moments d’inattention'], ['cours', 'oublis de prise de notes'], ['perturbe', 'perturbations'], ['retard', 'retards']].filter(([x]) => (kp[x] || 0) > (k[x] || 0)).map(([x, l]) => `${l} (${kp[x]} → ${k[x] || 0})`); if (moins.length) ph.push('En progrès : moins de ' + moins.join(', ') + '.'); }
-    if (rp.part === 'rare' && r.part !== 'rare') ph.push('La participation progresse.');
-    if (rp.maison !== 'reg' && r.maison === 'reg') ph.push('Le travail personnel est désormais régulier.');
-    if (rp.conseils?.length) { const ok = rp.conseils.filter(x => !(r.conseils || []).includes(x)); if (ok.length) ph.push('Les conseils du trimestre dernier ont été suivis (' + ok.map(x => CONSEIL[x]).join(', ') + ').'); }
+    if (mal(ap) && !mal(att)) ph.push('Attitude en net progrès, bravo.');
+    else if (!mal(ap) && mal(att)) ph.push('Attitude moins bonne qu’au trimestre dernier.');
+    else if (mal(ap)) { const kp = comptesBul(id, t - 1, n); [['bav', 'Moins de bavardages'], ['reve', 'Plus attentif'], ['retard', 'Moins de retards'], ['perturbe', 'Moins de perturbations']].forEach(([x, l]) => { if ((kp[x] || 0) > (k[x] || 0)) ph.push(`${l} (${kp[x]} → ${k[x] || 0}).`); }); }
+    if (rp.part === 'rare' && r.part !== 'rare') ph.push('Participe davantage.');
+    if (rp.maison !== 'reg' && r.maison === 'reg') ph.push('Devoirs désormais faits.');
+    if (rp.conseils?.length && rp.conseils.some(x => !(r.conseils || []).includes(x))) ph.push('Les conseils ont été suivis.');
   }
-  // conseils (deux au plus)
+  if (e.libre) ph.push(e.libre.trim().replace(/([^.!?])$/, '$1.'));
+  // conseil, puis note positive sur l'élève
   const c = (r.conseils || []).slice(0, 2).map(x => CONSEIL[x]);
   if (c.length) ph.push('Conseil : ' + c.join(' et ') + '.');
-  // fin encourageante
-  ph.push(niveau === 'tb' || (r.implic === 'tb' && !c.length) ? choisir(['Continuez ainsi !', 'Bravo, poursuivez dans cette voie.']) : choisir(['Courage, vous en êtes capable.', 'Je compte sur vous pour la suite.', 'Persévérez, les progrès viendront.']));
-  if (e.libre) ph.splice(ph.length - 1, 0, e.libre.trim().replace(/([^.!?])$/, '$1.'));
-  return ph.join(' ');
+  const souci = att.some(x => !['ex', 'ok'].includes(x)) || r.maison !== 'reg';
+  const pos = mat.length ? `Ses qualités en ${FORT2[mat[0]]} sont un vrai atout.` : qual.length ? `Sa ${FORT2[qual[0]]} est un vrai atout.` : r.part === 'act' ? 'Sa participation est précieuse.' : k.tuteur ? 'Son entraide est précieuse.'
+    : (r.implic === 'tb' || r.implic === 'b') && !souci ? 'Son sérieux est un atout.' : (t > 1 && m != null && mp != null && m > mp) ? 'Les progrès sont là, bravo.'
+    : choisir(['Des capacités réelles, à exploiter.', 'Je crois en ses capacités.', 'Il y a du potentiel : courage !']);
+  ph.push(pos);
+  return ph.filter(Boolean).join(' ');
 }
 function elBul(id, t, n){ const B = bulDoc(id); B.T[t] ??= {el:{}}; B.T[t].el ??= {}; return B.T[t].el[n] ??= {}; }
 function rendreBulletin(){
@@ -5182,7 +5183,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795089562',t0=Date.now(),vue=false;
+<script>(function(){var V='1795099308',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
