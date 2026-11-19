@@ -489,7 +489,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
       <h4 class="t-titre" data-p="classe">Plan de classe <span class="sp"></span><button class="btn mini contour-o" id="planEcran2" type="button">Plan au tableau</button></h4>
       <div class="tableau">Bureau · tableau</div>
       <div id="planBoite"><div id="plan"></div></div>
-      <div class="legende"><span><span class="bd tut">+</span> participation</span><span><span class="bd bav">B</span> bavardages</span><span><span class="bd neg">C</span> oubli de cahier</span><span><span class="bd neg">M</span> travail maison</span><span><span class="bd neg">T</span> pas de travail</span><span><span class="bd neg">P</span> perturbe</span><span><span class="bd tut">★</span> tuteur</span><span><span class="bd app">?</span> appels</span></div>
+      <div class="legende"><span><span class="bd tut">+</span> participation</span><span><span class="bd bav">B</span> bavardages</span><span><span class="bd neg">C</span> oubli de matériel</span><span><span class="bd bav">Z</span> rêvasse</span><span><span class="bd neg">N</span> ne prend pas le cours</span><span><span class="bd neg">R</span> retard</span><span><span class="bd neg">M</span> travail maison</span><span><span class="bd neg">T</span> pas de travail</span><span><span class="bd neg">P</span> perturbe</span><span><span class="bd tut">★</span> tuteur</span><span><span class="bd app">?</span> appels</span></div>
       <div data-p="classe" class="t-tir">
         <div id="tirageRes" hidden></div>
         <button class="btn orange" id="tTirer" type="button">🎲 Tirer un élève</button>
@@ -3060,8 +3060,8 @@ const toMin = t => { const [a, b] = String(t || '0:0').split(':').map(Number); r
 const clone = o => JSON.parse(JSON.stringify(o));
 const prenom = n => { n = String(n || ''); return n.length <= 10 ? n : n.split(' ')[0]; };
 function nextTuesday(){ const d = new Date(); d.setHours(12, 0, 0, 0); do d.setDate(d.getDate() + 1); while (d.getDay() !== 2); return iso(d); }
-const TYPES = {participation:'Participation', cahier:'Oubli de cahier', maison:'Travail maison non fait', bav:'Bavardage', travail:'Pas de travail', perturbe:'Perturbe le cours', retenue:'Retenue', tuteur:'Tuteur', appel:'Appel pour vérifier', absent:'Absence'};
-const COURT = {participation:'Part.', cahier:'Cahier', maison:'T. maison', bav:'Bav.', travail:'Trav.', perturbe:'Pert.', retenue:'Colles', tuteur:'Tut.', appel:'Appels', absent:'Abs.'};
+const TYPES = {participation:'Participation', cahier:'Oubli de matériel', retard:'Arrive en retard', reve:'Rêvasse', cours:'Ne prend pas le cours',  maison:'Travail maison non fait', bav:'Bavardage', travail:'Pas de travail', perturbe:'Perturbe le cours', retenue:'Retenue', tuteur:'Tuteur', appel:'Appel pour vérifier', absent:'Absence'};
+const COURT = {participation:'Part.', cahier:'Matériel', retard:'Retard', reve:'Rêve', cours:'Cours',  maison:'T. maison', bav:'Bav.', travail:'Trav.', perturbe:'Pert.', retenue:'Colles', tuteur:'Tut.', appel:'Appels', absent:'Abs.'};
 const DEVT = {devoir:'Devoir', controle:'Contrôle', interro:'Interro'};
 const COULEURS = ['#1F6F3D','#C76A0E','#1F4FA0','#8E3B8E','#A12222','#0F7A7A'];
 
@@ -4536,7 +4536,7 @@ function rendrePlan(){
     const cls = planEdition ? (planSel === i ? ' choisi' : nom ? '' : ' libre edit') : aesh ? ' aesh' : !nom || hors ? ' libre' : abs.has(nom) ? ' absent' : rj.has(nom) ? ' ret' : '';
     const b = [o.participation && `<span class="bd tut">+${o.participation}</span>`, o.bav && `<span class="bd bav">B${o.bav}</span>`,
       o.cahier && `<span class="bd neg">C${o.cahier}</span>`, o.maison && `<span class="bd neg">M${o.maison}</span>`, o.travail && `<span class="bd neg">T${o.travail}</span>`,
-      o.perturbe && `<span class="bd neg">P${o.perturbe}</span>`, o.tuteur && `<span class="bd tut">★${o.tuteur}</span>`, o.appel && `<span class="bd app">?${o.appel}</span>`].filter(Boolean).join('');
+      o.perturbe && `<span class="bd neg">P${o.perturbe}</span>`, o.reve && `<span class="bd bav">Z${o.reve}</span>`, o.cours && `<span class="bd neg">N${o.cours}</span>`, o.retard && `<span class="bd neg">R${o.retard}</span>`, o.tuteur && `<span class="bd tut">★${o.tuteur}</span>`, o.appel && `<span class="bd app">?${o.appel}</span>`].filter(Boolean).join('');
     h += `<button class="place${cls}" data-place="${i}" type="button"${planEdition || (nom && !hors && !aesh) ? '' : ' disabled'}><span class="n">${i}</span><span class="p">${esc(prenom(nom)) || '·'}</span>${b ? `<span class="badges">${b}</span>` : ''}</button>`;
   });
   $('#planEdit').textContent = planEdition ? 'Terminé' : 'Modifier le plan';
@@ -4604,7 +4604,10 @@ function rendreFiche(){
       <button class="act bav" data-f="bav" type="button">Bavardage<small>${o.bav || 0} aujourd’hui</small></button>
       <button class="act neg" data-f="travail" type="button">Pas de travail</button>
       <button class="act neg" data-f="perturbe" type="button">Perturbe le cours</button>
-      <button class="act neg" data-f="cahier" type="button">Oubli de cahier<small>${tot.cahier || 0} depuis le début</small></button>
+      <button class="act bav" data-f="reve" type="button">Rêvasse<small>${o.reve || 0} aujourd’hui</small></button>
+      <button class="act neg" data-f="cours" type="button">Ne prend pas le cours<small>ou la correction</small></button>
+      <button class="act neg" data-f="retard" type="button">Arrive en retard<small>${tot.retard || 0} depuis le début</small></button>
+      <button class="act neg" data-f="cahier" type="button">Oubli de matériel<small>${tot.cahier || 0} depuis le début</small></button>
       <button class="act neg" data-f="maison" type="button">Travail maison non fait<small>${tot.maison || 0} depuis le début</small></button>
       <button class="act ret${(o.bav || 0) >= seuil ? ' alerte' : ''}" data-f="retenue" type="button">Retenue${(o.bav || 0) >= seuil ? `<small>${o.bav} bavardages</small>` : ''}</button>
       <button class="act tut" data-f="tuteur" type="button">Tuteur +1<small>${o.tuteur || 0} aujourd’hui</small></button>
@@ -4628,7 +4631,7 @@ function rendreAgenda(){
     || '<li style="border:0;background:transparent;color:var(--gris)">Rien de prévu.</li>';
 }
 
-const COLS = ['participation', 'cahier', 'maison', 'tuteur', 'retenue', 'bav', 'travail', 'perturbe', 'appel', 'absent'];
+const COLS = ['participation', 'cahier', 'maison', 'tuteur', 'retenue', 'bav', 'reve', 'cours', 'travail', 'perturbe', 'retard', 'appel', 'absent'];
 function lignesBilan(c){
   const st = D.stats[c.id]?.c || {}, noms = eleves(c).map(n => (n || '').trim()).filter(n => n && !estAesh(n));
   for (const n of Object.keys(st)) if (!noms.includes(n)) noms.push(n);
@@ -4657,11 +4660,11 @@ const Q = {
   implic:{l:'Investissement en classe', o:[['tb', 'Très sérieux'], ['b', 'Sérieux'], ['irr', 'Irrégulier'], ['ins', 'Insuffisant']]},
   part:{l:'Participation', o:[['act', 'Active'], ['pon', 'Ponctuelle'], ['rare', 'Rare']]},
   maison:{l:'Travail à la maison', o:[['reg', 'Régulier'], ['irr', 'Irrégulier'], ['abs', 'Peu fait']]},
-  compo:{l:'Attitude', o:[['ex', 'Exemplaire'], ['ok', 'Correcte'], ['bav', 'Bavardages'], ['pert', 'Perturbe le cours']]},
+  att:{l:'Attitude', m:true, o:[['ex', 'Exemplaire'], ['ok', 'Correcte'], ['bav', 'Bavarde'], ['reve', 'Rêvasse'], ['cours', 'Ne prend pas le cours / la correction'], ['pert', 'Perturbe le cours'], ['retard', 'Arrive en retard']]},
   forts:{l:'Points forts', m:true, o:[['calc', 'Calcul'], ['geo', 'Géométrie'], ['raison', 'Raisonnement'], ['redac', 'Rédaction'], ['rig', 'Rigueur'], ['oral', 'À l’oral'], ['entraide', 'Entraide'], ['auto', 'Autonomie']]},
-  conseils:{l:'À travailler', m:true, o:[['lecons', 'Apprendre les leçons'], ['exos', 'Refaire les exercices'], ['redac', 'Rédiger les étapes'], ['calcm', 'Calcul mental'], ['cahier', 'Tenue du cahier'], ['devoirs', 'Faire les devoirs'], ['attention', 'Concentration'], ['questions', 'Oser poser des questions'], ['materiel', 'Avoir son matériel']]},
+  conseils:{l:'À travailler', m:true, o:[['lecons', 'Apprendre les leçons'], ['exos', 'Refaire les exercices'], ['redac', 'Rédiger les étapes'], ['calcm', 'Calcul mental'], ['cahier', 'Tenue du cahier'], ['devoirs', 'Faire les devoirs'], ['attention', 'Concentration'], ['questions', 'Oser poser des questions'], ['notes', 'Prendre le cours et la correction'], ['materiel', 'Avoir son matériel'], ['heure', 'Arriver à l’heure']]},
 };
-const CONSEIL = {lecons:'apprendre la leçon après chaque séance', exos:'refaire seul les exercices corrigés en classe', redac:'détailler chaque étape de calcul', calcm:'s’entraîner au calcul mental chaque jour', cahier:'soigner la tenue du cahier', devoirs:'faire le travail demandé à chaque séance', attention:'rester concentré tout au long de l’heure', questions:'oser poser des questions dès qu’un point bloque', materiel:'penser à son matériel et à son cahier'};
+const CONSEIL = {notes:'prendre systématiquement le cours et la correction', heure:'arriver à l’heure', lecons:'apprendre la leçon après chaque séance', exos:'refaire seul les exercices corrigés en classe', redac:'détailler chaque étape de calcul', calcm:'s’entraîner au calcul mental chaque jour', cahier:'soigner la tenue du cahier', devoirs:'faire le travail demandé à chaque séance', attention:'rester concentré tout au long de l’heure', questions:'oser poser des questions dès qu’un point bloque', materiel:'penser à son matériel et à son cahier'};
 const FORT = {calc:'le calcul', geo:'la géométrie', raison:'le raisonnement', redac:'la rédaction', rig:'la rigueur', oral:'l’oral', entraide:'l’entraide', auto:'l’autonomie'};
 function trimestreAuj(){ const j = TODAY(); return j >= BUL_DATES[3][0] ? 3 : j >= BUL_DATES[2][0] ? 2 : 1; }
 const bulDoc = id => D.bull[id] ??= {ordre:[], T:{}};
@@ -4689,14 +4692,18 @@ function proposer(id, t, n){
   const r = {forts:[], conseils:[]};
   const p = k.participation || 0;
   r.part = p >= Math.max(3, medP * 1.5) ? 'act' : p >= Math.max(1, medP / 2) ? 'pon' : 'rare';
-  const neg = (k.travail || 0) + (k.perturbe || 0);
-  r.compo = (k.perturbe || 0) >= 2 ? 'pert' : (k.bav || 0) >= 3 ? 'bav' : (k.bav || 0) === 0 && !neg ? 'ex' : 'ok';
+  const neg = (k.travail || 0) + (k.perturbe || 0) + (k.reve || 0) + (k.cours || 0) + (k.retard || 0) + (k.bav || 0);
+  r.att = [];
+  if ((k.bav || 0) >= 2) r.att.push('bav'); if ((k.reve || 0) >= 2) r.att.push('reve'); if (k.cours) r.att.push('cours'); if (k.perturbe) r.att.push('pert'); if ((k.retard || 0) >= 2) r.att.push('retard');
+  if (!r.att.length) r.att.push(neg ? 'ok' : 'ex');
   r.maison = (k.maison || 0) >= 3 ? 'abs' : (k.maison || 0) >= 1 ? 'irr' : 'reg';
   r.implic = (k.travail || 0) >= 3 ? 'ins' : (k.travail || 0) >= 1 || r.maison === 'abs' ? 'irr' : r.part === 'act' ? 'tb' : 'b';
   if (k.tuteur) r.forts.push('entraide');
   if (k.maison) r.conseils.push('devoirs');
   if (k.cahier) r.conseils.push('materiel');
-  if ((k.bav || 0) >= 3 || k.travail) r.conseils.push('attention');
+  if ((k.bav || 0) >= 3 || k.travail || (k.reve || 0) >= 2) r.conseils.push('attention');
+  if (k.cours) r.conseils.push('notes');
+  if ((k.retard || 0) >= 2) r.conseils.push('heure');
   if (r.part === 'rare') r.conseils.push('questions');
   return r;
 }
@@ -4719,17 +4726,27 @@ function rediger(id, t, n){
   // attitude et travail
   const imp = {tb:'Travail sérieux et investi en classe', b:'Travail sérieux en classe', irr:'Investissement irrégulier en classe', ins:'Le travail en classe doit devenir plus régulier'}[r.implic];
   const pa = {act:'une participation active et pertinente', pon:'une participation ponctuelle', rare:'une participation encore discrète'}[r.part];
-  if (imp) ph.push(imp + (pa ? ', avec ' + pa : '') + (r.part === 'act' && k.participation ? ` (${k.participation} interventions relevées)` : '') + '.');
+  const fois = (x, un, plur) => x ? ` (${x} ${x > 1 ? plur : un})` : '';
+  if (imp) ph.push(imp + ((r.implic === 'irr' || r.implic === 'ins') && k.travail ? ` (travail non fait ${k.travail} fois)` : '') + (pa ? ', avec ' + pa : '') + (r.part !== 'rare' ? fois(k.participation, 'intervention relevée', 'interventions relevées') : '') + '.');
   if (r.forts?.length) ph.push('Point' + (r.forts.length > 1 ? 's' : '') + ' fort' + (r.forts.length > 1 ? 's' : '') + ' : ' + r.forts.map(x => FORT[x]).join(', ') + '.');
   if (k.tuteur && r.forts?.includes('entraide')) ph.push(`Aide volontiers ses camarades (${k.tuteur} fois tuteur).`);
-  if (r.compo === 'bav') ph.push('Les bavardages gênent parfois la concentration.');
-  else if (r.compo === 'pert') ph.push('L’attitude en classe doit s’améliorer pour progresser.');
-  else if (r.compo === 'ex') ph.push(choisir(['Attitude exemplaire.', 'Comportement très agréable en classe.']));
+  const att = r.att || (r.compo ? [r.compo] : []);
+  if (att.includes('ex')) ph.push(choisir(['Attitude exemplaire.', 'Comportement très agréable en classe.']));
+  const vig = [];
+  if (att.includes('bav')) vig.push('bavardages' + (k.bav ? ` (${k.bav})` : ''));
+  if (att.includes('reve')) vig.push('tendance à rêvasser' + (k.reve ? ` (${k.reve} fois)` : ''));
+  if (att.includes('cours')) vig.push('cours ou correction non pris' + (k.cours ? ` (${k.cours} fois)` : ''));
+  if (att.includes('pert')) vig.push('cours perturbé' + (k.perturbe ? ` (${k.perturbe} fois)` : ''));
+  if (att.includes('retard') || k.retard >= 2) vig.push(k.retard ? `${k.retard} retard${k.retard > 1 ? 's' : ''}` : 'retards');
+  if (k.cahier) vig.push(`matériel oublié ${k.cahier} fois`);
+  if (vig.length) ph.push('Points de vigilance : ' + vig.join(', ') + '.');
   if (r.maison === 'abs' || r.maison === 'irr') ph.push(`Le travail à la maison est ${r.maison === 'abs' ? 'trop souvent' : 'parfois'} oublié${k.maison ? ` (${k.maison} fois)` : ''}.`);
   // évolution depuis le trimestre précédent
   if (rp) {
-    if (rp.compo === 'bav' || rp.compo === 'pert') { if (r.compo === 'ok' || r.compo === 'ex') ph.push('L’attitude s’est nettement améliorée depuis le trimestre dernier, bravo.'); }
-    else if (r.compo === 'bav' || r.compo === 'pert') ph.push('L’attitude était meilleure au trimestre précédent.');
+    const mal = a => (a || []).some(x => !['ex', 'ok'].includes(x)), ap = rp.att || (rp.compo ? [rp.compo] : []);
+    if (mal(ap) && !mal(att)) ph.push('L’attitude s’est nettement améliorée depuis le trimestre dernier, bravo.');
+    else if (!mal(ap) && mal(att)) ph.push('L’attitude était meilleure au trimestre précédent.');
+    else if (mal(ap) && mal(att)) { const kp = comptesBul(id, t - 1, n), moins = [['bav', 'bavardages'], ['reve', 'moments d’inattention'], ['cours', 'oublis de prise de notes'], ['perturbe', 'perturbations'], ['retard', 'retards']].filter(([x]) => (kp[x] || 0) > (k[x] || 0)).map(([x, l]) => `${l} (${kp[x]} → ${k[x] || 0})`); if (moins.length) ph.push('En progrès : moins de ' + moins.join(', ') + '.'); }
     if (rp.part === 'rare' && r.part !== 'rare') ph.push('La participation progresse.');
     if (rp.maison !== 'reg' && r.maison === 'reg') ph.push('Le travail personnel est désormais régulier.');
     if (rp.conseils?.length) { const ok = rp.conseils.filter(x => !(r.conseils || []).includes(x)); if (ok.length) ph.push('Les conseils du trimestre dernier ont été suivis (' + ok.map(x => CONSEIL[x]).join(', ') + ').'); }
@@ -4771,7 +4788,7 @@ function rendreBulletin(){
       <p>3. Le commentaire s’écrit tout seul. <b>Copier</b> le copie et passe à l’élève suivant : tu colles dans Pronote, et ainsi de suite.</p>
       <p class="aide">Au ${bulT > 1 ? bulT + 'ᵉ' : '2ᵉ et au 3ᵉ'} trimestre, le commentaire compare avec le trimestre précédent (moyenne, attitude, conseils suivis).</p></div>`;
   } else {
-    const e = elBul(c.id, bulT, bulEl); e.rep ??= proposer(c.id, bulT, bulEl);
+    const e = elBul(c.id, bulT, bulEl); e.rep ??= proposer(c.id, bulT, bulEl); if (!e.rep.att) e.rep.att = e.rep.compo ? [e.rep.compo] : proposer(c.id, bulT, bulEl).att;
     const k = comptesBul(c.id, bulT, bulEl), prev = bulT > 1 ? B.T[bulT - 1]?.el?.[bulEl] : null;
     const x = L.find(y => y.n === bulEl);
     h += `<div class="carte bul-q"><div class="ligne-flex"><h3 style="margin:0;color:var(--vert)">${esc(x.nom || x.n)}</h3><span class="sp"></span>
@@ -4818,6 +4835,7 @@ function clicBulletin(b){
   if (b.id === 'bulDatesBtn') { const [a, z] = bulDates(c.id, bulT), r = prompt(`Dates du ${bulT}ᵉ trimestre (début et fin, AAAA-MM-JJ) :`, a + ' ' + z); if (r) { const m = r.match(/(\d{4}-\d\d-\d\d)\D+(\d{4}-\d\d-\d\d)/); if (m) { const B = bulDoc(c.id); (B.dates ??= {})[bulT] = [m[1], m[2]]; save('bull/' + c.id, B); rendreBulletin(); } } return true; }
   if (b.dataset.bq) { const e = elBul(c.id, bulT, bulEl), q = b.dataset.bq, v = b.dataset.bv;
     if (Q[q].m) { const a = e.rep[q] ??= []; e.rep[q] = a.includes(v) ? a.filter(x => x !== v) : [...a, v]; } else e.rep[q] = v;
+    if (q === 'att') { const a = e.rep.att || []; e.rep.att = (v === 'ex' || v === 'ok') ? [v] : (a.includes(v) ? a.filter(x => x !== v) : [...a.filter(x => x !== 'ex' && x !== 'ok'), v]); if (!e.rep.att.length) e.rep.att = ['ok']; $$('[data-bq="att"]').forEach(x => x.classList.toggle('on', e.rep.att.includes(x.dataset.bv))); majCommentaire(true); return true; }
     const on = Q[q].m ? e.rep[q].includes(v) : true; if (!Q[q].m) $$(`[data-bq="${q}"]`).forEach(x => x.classList.toggle('on', x === b)); else b.classList.toggle('on', on);
     majCommentaire(true); return true; }
   if (b.id === 'bulRegen') { const e = elBul(c.id, bulT, bulEl); e.var = (e.var || 0) + 1; majCommentaire(true); return true; }
@@ -5164,7 +5182,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795085251',t0=Date.now(),vue=false;
+<script>(function(){var V='1795089562',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
