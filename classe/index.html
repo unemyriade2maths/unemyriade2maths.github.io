@@ -360,6 +360,20 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .acc-s li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .acc-vide{color:var(--gris);font-size:13px;font-style:italic}
 .ap-ajout{background:#EAF1FA;border:2px dashed #3A6FB0;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;margin-bottom:6px}.ap-ajout>b{color:#2A548A}
+.bul-grille{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.bul-grille{grid-template-columns:1fr}}
+.bul-liste{gap:4px;max-height:80vh;overflow:auto}
+.bul-el{display:flex;align-items:center;gap:8px;border:0;background:none;border-radius:10px;padding:7px 8px;font:800 14px inherit;font-family:inherit;color:var(--encre);text-align:left;cursor:pointer}
+.bul-el:hover{background:var(--fond)}.bul-el .num{min-width:24px;height:24px;border-radius:999px;background:var(--vert-clair);color:var(--vert);display:flex;align-items:center;justify-content:center;font-size:12px}
+.bul-el .t{flex:1}.bul-el small{color:var(--gris)}.bul-el.on{background:#FFF1E2;color:#8a4300}.bul-el.fait .num{background:var(--vert);color:#fff}.bul-el.fait>span:last-child{color:var(--vert)}
+.bul-q{gap:12px}.bul-ligne{display:flex;flex-direction:column;gap:6px}.bul-ligne>b{color:var(--vert);font-size:14px}
+.bul-ch{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:2px solid var(--ligne);background:#fff;border-radius:999px;padding:6px 12px;font:800 14px inherit;font-family:inherit;color:var(--encre);cursor:pointer}
+.chip.on{background:var(--vert);border-color:var(--vert);color:#fff}
+.bul-suivi{font-size:13px;color:var(--gris);display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.bul-txt textarea{width:100%;min-height:120px;font-size:15px;line-height:1.45;border:2px solid var(--orange);border-radius:12px;padding:10px}
+.bul-txt small{color:var(--gris)}
+.lien-btn{border:0;background:none;color:var(--vert);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
 .en-haut{font-size:12px;font-weight:800;color:var(--orange-texte);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 -2px}
 .orga-l{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--ligne);border-radius:12px;padding:8px 12px;font-weight:800}
 .orga-l input{width:64px;min-height:36px;text-align:center;font-weight:800}.orga-l span{flex:1}.orga-l select{width:auto;min-height:34px}
@@ -437,6 +451,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
     <button role="tab" data-onglet="progression" aria-selected="false" type="button">Progression</button>
     <button role="tab" data-onglet="agenda" aria-selected="false" type="button">Agenda</button>
     <button role="tab" data-onglet="bilan" aria-selected="false" type="button">Bilan</button>
+    <button role="tab" data-onglet="bulletin" aria-selected="false" type="button">Bulletins</button>
     <button role="tab" data-onglet="reglages" aria-selected="false" type="button">Réglages</button>
   </nav>
   <div id="tRappels" class="panneau" style="margin-bottom:12px"></div>
@@ -516,6 +531,12 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
     <div class="tab-bilan" id="bTable"></div>
     <div class="ligne-flex"><button class="btn plein" id="bTelech" type="button">Télécharger le bilan</button><button class="btn" id="bCopier" type="button">Copier</button></div>
     <p class="aide">Le fichier téléchargé s’ouvre dans ton navigateur : tu peux l’imprimer pour le conseil de classe.</p>
+  </div>
+
+  <!-- Bulletins -->
+  <div class="panneau" data-p="bulletin" hidden>
+    <div class="pg-haut"><div class="puces" id="bClasses"></div><span class="sp"></span><div class="puces" id="bTri"></div></div>
+    <div id="bulCorps"></div>
   </div>
 
   <!-- Réglages -->
@@ -3669,7 +3690,7 @@ function majScore(fn){ const s = D.live.score ??= {on:false, eq:equipes(2)}; if 
 
 /* ---------------- Données ---------------- */
 let db = null, assets = null, downloads = null;
-const D = {cls:{}, pos:{}, live:{}, ev:[], stats:{}, ret:[], dev:[], cfg:{}, chap:{}, prog:{}, jour:{}};
+const D = {cls:{}, pos:{}, live:{}, ev:[], stats:{}, ret:[], dev:[], cfg:{}, chap:{}, prog:{}, jour:{}, bull:{}};
 /* Progression : la même que sur le site Une myriade de maths */
 const PROG = {"6e": [{"id": "6e-1", "t": "Gestion de données et grands nombres entiers", "p": 1}, {"id": "6e-2", "t": "Des solides aux figures planes · Volume", "p": 1}, {"id": "fractions-6e", "t": "Fractions simples et décimales", "p": 1}, {"id": "6e-4", "t": "Cercles et distances", "p": 2}, {"id": "6e-4b", "t": "Triangles", "p": 2}, {"id": "6e-5", "t": "Des fractions décimales aux nombres décimaux", "p": 2}, {"id": "6e-6", "t": "Pré-algèbre : modèle en barres, motifs", "p": 2}, {"id": "6e-7", "t": "Addition et soustraction de décimaux · Périmètres", "p": 2}, {"id": "6e-8", "t": "Relations entre des droites · Patron d’un cube", "p": 2}, {"id": "6e-9", "t": "Aires et multiplication des décimaux", "p": 3}, {"id": "6e-10", "t": "Division euclidienne et mesure du temps", "p": 3}, {"id": "6e-11", "t": "Déplacements et programmation", "p": 3}, {"id": "6e-12", "t": "Symétrie axiale et médiatrice", "p": 4}, {"id": "6e-13", "t": "Multiplication et division décimales", "p": 4}, {"id": "6e-14", "t": "Fractions", "p": 4}, {"id": "6e-15", "t": "Aires et périmètres : le disque, figures composées", "p": 5}, {"id": "6e-16", "t": "Angles et bissectrice", "p": 5}, {"id": "6e-17", "t": "Proportionnalité", "p": 5}, {"id": "6e-18", "t": "Pourcentages", "p": 5}, {"id": "6e-19", "t": "Probabilités", "p": 5}, {"id": "6e-20", "t": "Triangles et angles des triangles particuliers", "p": 5}, {"id": "6e-21", "t": "Organisation et gestion de données : enquête", "p": 5}], "5e": [{"id": "5e-1", "t": "Priorités opératoires et distributivité simple", "p": 1}, {"id": "5e-2", "t": "Triangles (1) : construction et inégalité triangulaire", "p": 1}, {"id": "5e-3", "t": "Fractions (1) : égalités, simplification, comparaison", "p": 1}, {"id": "5e-4", "t": "Angles d’un triangle et triangles particuliers", "p": 1}, {"id": "5e-5", "t": "Proportionnalité (1) : coefficient, tableaux, pourcentages", "p": 2}, {"id": "5e-6", "t": "Nombres relatifs : repérage, comparaison, addition, soustraction", "p": 2}, {"id": "5e-7", "t": "Fractions (2) : additionner et soustraire", "p": 2}, {"id": "5e-8", "t": "Repérage : droite graduée et repère orthogonal", "p": 2}, {"id": "5e-9", "t": "Statistiques : effectifs, fréquences, moyenne, diagrammes", "p": 2}, {"id": "5e-10", "t": "Arithmétique : divisibilité, division euclidienne, nombres premiers, décomposition", "p": 3}, {"id": "5e-11", "t": "Parallélisme et angles : alternes-internes, correspondants", "p": 3}, {"id": "5e-12", "t": "Parallélogrammes", "p": 3}, {"id": "5e-13", "t": "Proportionnalité (2) : ratio, échelles, vitesses", "p": 3}, {"id": "5e-14", "t": "Calcul littéral : formules, réduire, développer, factoriser", "p": 4}, {"id": "5e-15", "t": "Puissances : carrés et cubes", "p": 4}, {"id": "5e-16", "t": "Triangles (2) : hauteurs, médianes, médiatrices, cercle circonscrit", "p": 4}, {"id": "5e-17", "t": "Équations ax = c et x + b = c", "p": 4}, {"id": "5e-18", "t": "Symétrie centrale, frises, pavages et rosaces", "p": 5}, {"id": "5e-19", "t": "Aires : triangle, parallélogramme, disque", "p": 5}, {"id": "5e-20", "t": "Espace : patrons, perspective cavalière, volumes", "p": 5}, {"id": "5e-21", "t": "Fonctions : « en fonction de », tableaux et graphiques", "p": 5}, {"id": "5e-22", "t": "Probabilités", "p": 5}], "4e": [{"id": "4e-1", "t": "Multiplication et division des nombres relatifs", "p": 1}, {"id": "4e-2", "t": "Statistiques", "p": 1}, {"id": "4e-3", "t": "Nombres premiers", "p": 1}, {"id": "4e-4", "t": "Théorème de Pythagore et racine carrée", "p": 1}, {"id": "4e-5", "t": "Puissances", "p": 2}, {"id": "4e-6", "t": "Probabilités", "p": 2}, {"id": "4e-7", "t": "Calcul littéral", "p": 2}, {"id": "4e-8", "t": "Grandeurs mesurables : volumes et conversions", "p": 2}, {"id": "4e-9", "t": "Équations", "p": 3}, {"id": "4e-10", "t": "Proportionnalité (1) : reconnaître et calculer", "p": 3}, {"id": "4e-11", "t": "Cosinus d’un angle aigu", "p": 3}, {"id": "4e-12", "t": "Nombres rationnels : comparer, additionner, soustraire", "p": 4}, {"id": "4e-13", "t": "Réciproque du théorème de Pythagore", "p": 4}, {"id": "4e-14", "t": "Proportionnalité (2) : agrandissement et réduction", "p": 4}, {"id": "4e-15", "t": "Théorème de Thalès", "p": 5}, {"id": "4e-16", "t": "Nombres rationnels : multiplier et diviser", "p": 5}, {"id": "4e-17", "t": "Réciproque du théorème de Thalès", "p": 5}, {"id": "4e-18", "t": "Grandeurs produits et quotients", "p": 5}, {"id": "4e-19", "t": "Translations", "p": 5}, {"id": "4e-20", "t": "Dépendance de deux grandeurs et graphiques", "p": 5}, {"id": "4e-21", "t": "Représenter l’espace", "p": 5}, {"id": "4e-22", "t": "Cas d’égalité des triangles", "p": 5}], "3e": [{"id": "3e-1", "t": "Nombres rationnels et problèmes", "p": 1}, {"id": "3e-2", "t": "Statistiques", "p": 1}, {"id": "3e-3", "t": "Pythagore et racine carrée (rappels)", "p": 1}, {"id": "arithmetique", "t": "Arithmétique · Fraction irréductible", "p": 1}, {"id": "3e-5", "t": "Probabilités", "p": 2}, {"id": "3e-6", "t": "Puissances et notation scientifique", "p": 2}, {"id": "3e-7", "t": "Transformations : rotation et homothétie", "p": 2}, {"id": "3e-8", "t": "Calcul littéral : développer et factoriser", "p": 2}, {"id": "3e-9", "t": "Calcul littéral : les équations", "p": 3}, {"id": "3e-10", "t": "Notion de fonction", "p": 3}, {"id": "3e-11", "t": "Théorème de Thalès", "p": 3}, {"id": "3e-12", "t": "Grandeurs et mesures", "p": 4}, {"id": "3e-13", "t": "Trigonométrie", "p": 4}, {"id": "3e-14", "t": "Fonctions linéaires et proportionnalité", "p": 4}, {"id": "3e-15", "t": "Triangles semblables", "p": 5}, {"id": "3e-16", "t": "Fonctions affines", "p": 5}, {"id": "3e-17", "t": "Représenter l’espace : sphère, boule, sections", "p": 5}, {"id": "3e-18", "t": "Repérage sur la Terre", "p": 5}]};
 const EN_COURS = {'6e':'fractions-6e', '5e':'5e-4', '4e':'4e-4', '3e':'arithmetique'};
@@ -3719,6 +3740,7 @@ function abonner(){
   db.collection('ev').where('day', '==', TODAY()).onSnapshot(s => { D.ev = s.docs.map(d => ({...d.data(), id:d.id})); rendre(); }, errSnap);
   db.collection('ret').onSnapshot(s => { D.ret = s.docs.map(d => ({...d.data(), id:d.id})); rendre(); }, errSnap);
   db.collection('dev').onSnapshot(s => { D.dev = s.docs.map(d => ({...d.data(), id:d.id})); rendre(); }, errSnap);
+  db.collection('bull').onSnapshot(s => { s.docs.forEach(d => { if (!occupe('bull/' + d.id)) D.bull[d.id] = d.data(); }); }, errSnap);
   db.doc('app/prog').onSnapshot(s => { if (!occupe('app/prog')) D.prog = s.data() || {}; rendre(); }, errSnap);
   db.collection('journal').onSnapshot(s => { s.docs.forEach(d => { if (!occupe('journal/' + d.id)) D.jour[d.id] = d.data(); }); }, errSnap);
   db.collection('chap').onSnapshot(s => { s.docs.forEach(d => { if (!occupe('chap/' + d.id)) D.chap[d.id] = d.data(); }); rendre(); }, errSnap);
@@ -4489,6 +4511,8 @@ function rendreTel(){
   if (onglet === 'agenda') rendreAgenda();
   if (onglet === 'outils') rendreOutilsTel();
   if (onglet === 'progression') rendreProgression();
+  if (onglet === 'bulletin' && $('#bulCorps').dataset.vu !== '1') { $('#bulCorps').dataset.vu = '1'; rendreBulletin(); }
+  if (onglet !== 'bulletin') $('#bulCorps').dataset.vu = '';
   if (onglet === 'bilan') { bilanCls = D.cls[bilanCls] ? bilanCls : (D.live.cls || classes()[0]?.id); pucesClasses('#tClasses3', bilanCls, 'bil'); rendreBilan(); }
   if (onglet === 'reglages') { pucesClasses('#rClasses', editId, 'edit'); $('#rClasses').insertAdjacentHTML('beforeend', '<button class="puce" id="rNouv" type="button">+ Nouvelle classe</button>'); if (!editRendu) rendreReglages(); else rendreDecks(); }
   if (!$('#fiche').hidden && ficheMode === 'eleve') rendreFiche();
@@ -4623,6 +4647,194 @@ function bilanHTML(c){
   return `<!doctype html><html lang="fr"><meta charset="utf-8"><title>Bilan ${esc(c.name)}</title><style>body{font-family:Nunito,Segoe UI,sans-serif;color:#232328;margin:30px}h1{color:#1F6F3D;margin:0}p{color:#5C5C63}table{border-collapse:collapse;width:100%;margin-top:16px}th{background:#F3F8F4;color:#1F6F3D}th,td{border:1px solid #CFE3D5;padding:6px 8px;text-align:center}td:first-child,th:first-child{text-align:left}</style>
 <h1>Bilan — ${esc(c.name)}</h1><p>Édité le ${frD(TODAY())} · Une myriade de maths</p>
 <table><tr><th>Élève</th>${COLS.map(k => `<th>${TYPES[k]}</th>`).join('')}</tr>${L.map(({n, o}) => `<tr><td>${esc(n)}</td>${COLS.map(k => `<td>${o[k] || 0}</td>`).join('')}</tr>`).join('')}</table></html>`;
+}
+
+/* ---------------- Bulletins : appréciations par trimestre ---------------- */
+let bulCls = null, bulT = null, bulEl = null, bulEv = {cls:null, ev:[], off:null}, bulCollage = false;
+const BUL_DATES = {1:['2026-08-31', '2026-11-29'], 2:['2026-11-30', '2027-03-07'], 3:['2027-03-08', '2027-07-04']};
+const sansAcc = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const Q = {
+  implic:{l:'Investissement en classe', o:[['tb', 'Très sérieux'], ['b', 'Sérieux'], ['irr', 'Irrégulier'], ['ins', 'Insuffisant']]},
+  part:{l:'Participation', o:[['act', 'Active'], ['pon', 'Ponctuelle'], ['rare', 'Rare']]},
+  maison:{l:'Travail à la maison', o:[['reg', 'Régulier'], ['irr', 'Irrégulier'], ['abs', 'Peu fait']]},
+  compo:{l:'Attitude', o:[['ex', 'Exemplaire'], ['ok', 'Correcte'], ['bav', 'Bavardages'], ['pert', 'Perturbe le cours']]},
+  forts:{l:'Points forts', m:true, o:[['calc', 'Calcul'], ['geo', 'Géométrie'], ['raison', 'Raisonnement'], ['redac', 'Rédaction'], ['rig', 'Rigueur'], ['oral', 'À l’oral'], ['entraide', 'Entraide'], ['auto', 'Autonomie']]},
+  conseils:{l:'À travailler', m:true, o:[['lecons', 'Apprendre les leçons'], ['exos', 'Refaire les exercices'], ['redac', 'Rédiger les étapes'], ['calcm', 'Calcul mental'], ['cahier', 'Tenue du cahier'], ['devoirs', 'Faire les devoirs'], ['attention', 'Concentration'], ['questions', 'Oser poser des questions'], ['materiel', 'Avoir son matériel']]},
+};
+const CONSEIL = {lecons:'apprendre la leçon après chaque séance', exos:'refaire seul les exercices corrigés en classe', redac:'détailler chaque étape de calcul', calcm:'s’entraîner au calcul mental chaque jour', cahier:'soigner la tenue du cahier', devoirs:'faire le travail demandé à chaque séance', attention:'rester concentré tout au long de l’heure', questions:'oser poser des questions dès qu’un point bloque', materiel:'penser à son matériel et à son cahier'};
+const FORT = {calc:'le calcul', geo:'la géométrie', raison:'le raisonnement', redac:'la rédaction', rig:'la rigueur', oral:'l’oral', entraide:'l’entraide', auto:'l’autonomie'};
+function trimestreAuj(){ const j = TODAY(); return j >= BUL_DATES[3][0] ? 3 : j >= BUL_DATES[2][0] ? 2 : 1; }
+const bulDoc = id => D.bull[id] ??= {ordre:[], T:{}};
+function bulDates(id, t){ return bulDoc(id).dates?.[t] || BUL_DATES[t]; }
+function ordreBul(c){
+  const noms = eleves(c).map(n => (n || '').trim()).filter(n => n && !estAesh(n)), o = bulDoc(c.id).ordre || [];
+  const L = o.filter(x => noms.includes(x.n));
+  for (const n of [...noms].sort((a, b) => sansAcc(a).localeCompare(sansAcc(b)))) if (!L.some(x => x.n === n)) L.push({n, nom:''});
+  return L;
+}
+function chargerEvBul(id){
+  if (bulEv.cls === id) return; bulEv.off?.(); bulEv = {cls:id, ev:[], off:null};
+  bulEv.off = db.collection('ev').where('cls', '==', id).onSnapshot(s => { bulEv.ev = s.docs.map(d => d.data()); if (onglet === 'bulletin' && !bulEl) rendreBulletin(); }, () => {});
+}
+function comptesBul(id, t, n){
+  const [a, b] = bulDates(id, t), o = {};
+  for (const e of bulEv.ev) if (e.name === n && e.day >= a && e.day <= b) o[e.type] = (o[e.type] || 0) + 1;
+  return o;
+}
+function mediane(arr){ const s = [...arr].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : 0; }
+/* réponses proposées d'après le suivi de classe */
+function proposer(id, t, n){
+  const k = comptesBul(id, t, n), noms = ordreBul(D.cls[id]).map(x => x.n);
+  const medP = mediane(noms.map(x => comptesBul(id, t, x).participation || 0));
+  const r = {forts:[], conseils:[]};
+  const p = k.participation || 0;
+  r.part = p >= Math.max(3, medP * 1.5) ? 'act' : p >= Math.max(1, medP / 2) ? 'pon' : 'rare';
+  const neg = (k.travail || 0) + (k.perturbe || 0);
+  r.compo = (k.perturbe || 0) >= 2 ? 'pert' : (k.bav || 0) >= 3 ? 'bav' : (k.bav || 0) === 0 && !neg ? 'ex' : 'ok';
+  r.maison = (k.maison || 0) >= 3 ? 'abs' : (k.maison || 0) >= 1 ? 'irr' : 'reg';
+  r.implic = (k.travail || 0) >= 3 ? 'ins' : (k.travail || 0) >= 1 || r.maison === 'abs' ? 'irr' : r.part === 'act' ? 'tb' : 'b';
+  if (k.tuteur) r.forts.push('entraide');
+  if (k.maison) r.conseils.push('devoirs');
+  if (k.cahier) r.conseils.push('materiel');
+  if ((k.bav || 0) >= 3 || k.travail) r.conseils.push('attention');
+  if (r.part === 'rare') r.conseils.push('questions');
+  return r;
+}
+const nbNote = x => (x === '' || x == null || isNaN(+String(x).replace(',', '.'))) ? null : +String(x).replace(',', '.');
+const fmtN = x => String(Math.round(x * 100) / 100).replace('.', ',');
+let graine = 0;
+function choisir(arr){ return arr[(graine++) % arr.length]; }
+/* rédaction du commentaire : positif, factuel, un ou deux conseils */
+function rediger(id, t, n){
+  const B = bulDoc(id), e = B.T[t]?.el?.[n] || {}, r = e.rep || proposer(id, t, n), k = comptesBul(id, t, n);
+  const m = nbNote(e.moy), prev = t > 1 ? B.T[t - 1]?.el?.[n] : null, mp = prev ? nbNote(prev.moy) : null, rp = prev?.rep;
+  graine = [...(n + t)].reduce((a, ch) => a + ch.charCodeAt(0), 0) + (e.var || 0);
+  const ph = [];
+  // ouverture
+  const niveau = m == null ? null : m >= 16 ? 'tb' : m >= 13 ? 'b' : m >= 10 ? 'm' : 'f';
+  if (t > 1 && m != null && mp != null) {
+    const d = m - mp;
+    ph.push(d >= 1 ? `Résultats en hausse (${fmtN(mp)} → ${fmtN(m)}) : les efforts portent leurs fruits.` : d <= -1 ? `Résultats en baisse ce trimestre (${fmtN(mp)} → ${fmtN(m)}), mais rien n’est perdu.` : niveau === 'tb' || niveau === 'b' ? 'Des résultats solides et stables.' : 'Des résultats stables.');
+  } else if (niveau) ph.push({tb:'Très bon trimestre.', b:'Bon trimestre.', m:'Trimestre correct, avec des bases à consolider.', f:'Des résultats encore fragiles, mais des progrès sont possibles.'}[niveau]);
+  // attitude et travail
+  const imp = {tb:'Travail sérieux et investi en classe', b:'Travail sérieux en classe', irr:'Investissement irrégulier en classe', ins:'Le travail en classe doit devenir plus régulier'}[r.implic];
+  const pa = {act:'une participation active et pertinente', pon:'une participation ponctuelle', rare:'une participation encore discrète'}[r.part];
+  if (imp) ph.push(imp + (pa ? ', avec ' + pa : '') + (r.part === 'act' && k.participation ? ` (${k.participation} interventions relevées)` : '') + '.');
+  if (r.forts?.length) ph.push('Point' + (r.forts.length > 1 ? 's' : '') + ' fort' + (r.forts.length > 1 ? 's' : '') + ' : ' + r.forts.map(x => FORT[x]).join(', ') + '.');
+  if (k.tuteur && r.forts?.includes('entraide')) ph.push(`Aide volontiers ses camarades (${k.tuteur} fois tuteur).`);
+  if (r.compo === 'bav') ph.push('Les bavardages gênent parfois la concentration.');
+  else if (r.compo === 'pert') ph.push('L’attitude en classe doit s’améliorer pour progresser.');
+  else if (r.compo === 'ex') ph.push(choisir(['Attitude exemplaire.', 'Comportement très agréable en classe.']));
+  if (r.maison === 'abs' || r.maison === 'irr') ph.push(`Le travail à la maison est ${r.maison === 'abs' ? 'trop souvent' : 'parfois'} oublié${k.maison ? ` (${k.maison} fois)` : ''}.`);
+  // évolution depuis le trimestre précédent
+  if (rp) {
+    if (rp.compo === 'bav' || rp.compo === 'pert') { if (r.compo === 'ok' || r.compo === 'ex') ph.push('L’attitude s’est nettement améliorée depuis le trimestre dernier, bravo.'); }
+    else if (r.compo === 'bav' || r.compo === 'pert') ph.push('L’attitude était meilleure au trimestre précédent.');
+    if (rp.part === 'rare' && r.part !== 'rare') ph.push('La participation progresse.');
+    if (rp.maison !== 'reg' && r.maison === 'reg') ph.push('Le travail personnel est désormais régulier.');
+    if (rp.conseils?.length) { const ok = rp.conseils.filter(x => !(r.conseils || []).includes(x)); if (ok.length) ph.push('Les conseils du trimestre dernier ont été suivis (' + ok.map(x => CONSEIL[x]).join(', ') + ').'); }
+  }
+  // conseils (deux au plus)
+  const c = (r.conseils || []).slice(0, 2).map(x => CONSEIL[x]);
+  if (c.length) ph.push('Conseil : ' + c.join(' et ') + '.');
+  // fin encourageante
+  ph.push(niveau === 'tb' || (r.implic === 'tb' && !c.length) ? choisir(['Continuez ainsi !', 'Bravo, poursuivez dans cette voie.']) : choisir(['Courage, vous en êtes capable.', 'Je compte sur vous pour la suite.', 'Persévérez, les progrès viendront.']));
+  if (e.libre) ph.splice(ph.length - 1, 0, e.libre.trim().replace(/([^.!?])$/, '$1.'));
+  return ph.join(' ');
+}
+function elBul(id, t, n){ const B = bulDoc(id); B.T[t] ??= {el:{}}; B.T[t].el ??= {}; return B.T[t].el[n] ??= {}; }
+function rendreBulletin(){
+  const ids = classes().map(c => c.id);
+  if (!ids.includes(bulCls)) bulCls = D.live.cls && ids.includes(D.live.cls) ? D.live.cls : ids[0];
+  bulT ??= trimestreAuj();
+  pucesClasses('#bClasses', bulCls, 'bul');
+  const c = D.cls[bulCls];
+  if (!c) { $('#bulCorps').innerHTML = '<p class="vide-msg">Aucune classe.</p>'; return; }
+  chargerEvBul(c.id);
+  const B = bulDoc(c.id), L = ordreBul(c), lim = B.lim || 400, [da, dbt] = bulDates(c.id, bulT);
+  if (!L.some(x => x.n === bulEl)) bulEl = null;
+  const fait = n => B.T[bulT]?.el?.[n]?.copie;
+  $('#bTri').innerHTML = [1, 2, 3].map(t => `<button class="puce" data-bult="${t}" aria-pressed="${t === bulT}" type="button">${t}ᵉ trimestre</button>`).join('');
+  let h = `<div class="bul-grille"><div class="carte bul-liste"><div class="ligne-flex"><b style="color:var(--vert)">Élèves · ordre Pronote</b><span class="sp"></span><small>${L.filter(x => fait(x.n)).length}/${L.length} copiés</small></div>
+    ${L.map((x, i) => `<button class="bul-el${x.n === bulEl ? ' on' : ''}${fait(x.n) ? ' fait' : ''}" data-bule="${esc(x.n)}" type="button"><span class="num">${i + 1}</span><span class="t">${esc(x.nom || x.n)}</span>${B.T[bulT]?.el?.[x.n]?.moy ? `<small>${esc(String(B.T[bulT].el[x.n].moy))}</small>` : ''}${fait(x.n) ? '<span>✓</span>' : ''}</button>`).join('')}
+    <button class="btn mini" id="bulColler" type="button">📋 Ordre et moyennes depuis Pronote</button>
+    <small class="aide">Période : ${frD(da)} → ${frD(dbt)} · <button class="lien-btn" id="bulDatesBtn" type="button">modifier</button></small></div>`;
+  if (bulCollage) {
+    h += `<div class="carte"><b style="color:var(--vert)">Coller depuis Pronote</b>
+      <p class="aide">Dans Pronote, ouvre le relevé de notes ou la saisie des appréciations de ${esc(c.name)}, sélectionne les lignes des élèves (nom, prénom et moyenne), copie (Ctrl + C) et colle ici (Ctrl + V). Exemple :<br><code>DUPONT Jean&nbsp;&nbsp;12,50<br>MARTIN Beverly&nbsp;&nbsp;15,25</code><br>L’application range les élèves dans le même ordre que Pronote et remplit les moyennes du ${bulT}ᵉ trimestre.</p>
+      <textarea id="bulTexte" style="min-height:220px" placeholder="Colle ici…"></textarea>
+      <div class="ligne-flex"><button class="btn plein" id="bulAnalyser" type="button">Ranger et remplir</button><button class="btn" id="bulAnnuler" type="button">Fermer</button></div><p class="aide" id="bulRes"></p></div>`;
+  } else if (!bulEl) {
+    h += `<div class="carte"><b style="color:var(--vert)">Comment faire</b>
+      <p>1. Clique sur <b>📋 Ordre et moyennes depuis Pronote</b> et colle la liste de la classe : les élèves se rangent comme dans Pronote, avec leur moyenne.</p>
+      <p>2. Clique sur le premier élève : le questionnaire est déjà prérempli avec ton suivi de classe (participation, bavardages, travail…). Ajuste en un clic.</p>
+      <p>3. Le commentaire s’écrit tout seul. <b>Copier</b> le copie et passe à l’élève suivant : tu colles dans Pronote, et ainsi de suite.</p>
+      <p class="aide">Au ${bulT > 1 ? bulT + 'ᵉ' : '2ᵉ et au 3ᵉ'} trimestre, le commentaire compare avec le trimestre précédent (moyenne, attitude, conseils suivis).</p></div>`;
+  } else {
+    const e = elBul(c.id, bulT, bulEl); e.rep ??= proposer(c.id, bulT, bulEl);
+    const k = comptesBul(c.id, bulT, bulEl), prev = bulT > 1 ? B.T[bulT - 1]?.el?.[bulEl] : null;
+    const x = L.find(y => y.n === bulEl);
+    h += `<div class="carte bul-q"><div class="ligne-flex"><h3 style="margin:0;color:var(--vert)">${esc(x.nom || x.n)}</h3><span class="sp"></span>
+      <label class="ligne-flex" style="gap:6px;font-weight:800">Moyenne <input type="text" inputmode="decimal" id="bulMoy" value="${esc(e.moy ?? '')}" style="width:80px;min-height:36px;text-align:center"></label>${prev?.moy ? `<small>T${bulT - 1} : ${esc(String(prev.moy))}</small>` : ''}</div>
+      <div class="bul-suivi">Suivi du trimestre : ${Object.keys(TYPES).filter(t => k[t]).map(t => `<span class="tag">${TYPES[t]} ${k[t]}</span>`).join(' ') || '<i>rien de noté</i>'}</div>
+      ${Object.entries(Q).map(([q, d]) => `<div class="bul-ligne"><b>${d.l}</b><div class="bul-ch">${d.o.map(([v, l]) => { const on = d.m ? (e.rep[q] || []).includes(v) : e.rep[q] === v; return `<button class="chip${on ? ' on' : ''}" data-bq="${q}" data-bv="${v}" type="button">${l}</button>`; }).join('')}</div></div>`).join('')}
+      <label class="champ">À ajouter (facultatif)<input type="text" id="bulLibre" value="${esc(e.libre || '')}" placeholder="ex. Très bon exposé sur Pythagore"></label>
+      <div class="bul-txt"><textarea id="bulCom" maxlength="${lim}">${esc(e.txt || rediger(c.id, bulT, bulEl))}</textarea><small id="bulNb"></small></div>
+      <div class="ligne-flex"><button class="btn" id="bulRegen" type="button">↻ Autre formulation</button><span class="sp"></span><button class="btn" id="bulPrec" type="button">◀</button><button class="btn plein" id="bulCopier" type="button">Copier et élève suivant ▶</button></div></div>`;
+  }
+  $('#bulCorps').innerHTML = h + '</div>';
+  majNb();
+}
+function majNb(){ const t = $('#bulCom'); if (t) $('#bulNb').textContent = t.value.length + ' / ' + t.maxLength + ' caractères'; }
+function majCommentaire(force){
+  const c = D.cls[bulCls], e = elBul(c.id, bulT, bulEl);
+  if (force || !e.edite) { e.txt = rediger(c.id, bulT, bulEl); e.edite = false; $('#bulCom').value = e.txt; majNb(); }
+  save('bull/' + c.id, bulDoc(c.id));
+}
+function collerPronote(){
+  const c = D.cls[bulCls], B = bulDoc(c.id), noms = eleves(c).map(n => (n || '').trim()).filter(n => n && !estAesh(n));
+  const lignes = $('#bulTexte').value.split(/\r?\n/).map(l => l.trim()).filter(Boolean), ordre = [], rates = [];
+  for (const l of lignes) {
+    const mm = l.match(/(\d{1,2}(?:[.,]\d{1,2})?)(?!.*\d)/), moy = mm ? mm[1].replace('.', ',') : '';
+    const txt = (mm ? l.slice(0, mm.index) : l).replace(/\t+/g, ' ').replace(/\s+/g, ' ').trim(), mots = sansAcc(txt).split(/[\s-]+/);
+    const n = noms.find(x => !ordre.some(o => o.n === x) && sansAcc(x).split(/[\s-]+/).every(w => mots.includes(w.replace(/\.$/, '')) || (w.endsWith('.') && mots.some(m => m.startsWith(w[0])))));
+    if (!n) { if (txt && !/^(nom|élève|eleve|moyenne)/i.test(txt)) rates.push(txt); continue; }
+    ordre.push({n, nom:txt}); if (moy && nbNote(moy) <= 20) elBul(c.id, bulT, n).moy = moy;
+  }
+  if (!ordre.length) { $('#bulRes').textContent = 'Aucun élève reconnu : vérifie que les prénoms sont bien dans les lignes collées.'; return; }
+  B.ordre = ordre; save('bull/' + c.id, B);
+  bulCollage = false; rendreBulletin();
+  if (rates.length) alert('Lignes non reconnues (prénom introuvable dans la classe) :\n' + rates.join('\n'));
+}
+function clicBulletin(b){
+  const c = D.cls[bulCls];
+  if (b.dataset.bul) { bulCls = b.dataset.bul; bulEl = null; bulCollage = false; rendreBulletin(); return true; }
+  if (b.dataset.bult) { bulT = +b.dataset.bult; bulEl = null; rendreBulletin(); return true; }
+  if (b.dataset.bule) { bulEl = b.dataset.bule; bulCollage = false; rendreBulletin(); return true; }
+  if (!c) return false;
+  if (b.id === 'bulColler') { bulCollage = true; rendreBulletin(); $('#bulTexte')?.focus(); return true; }
+  if (b.id === 'bulAnnuler') { bulCollage = false; rendreBulletin(); return true; }
+  if (b.id === 'bulAnalyser') { collerPronote(); return true; }
+  if (b.id === 'bulDatesBtn') { const [a, z] = bulDates(c.id, bulT), r = prompt(`Dates du ${bulT}ᵉ trimestre (début et fin, AAAA-MM-JJ) :`, a + ' ' + z); if (r) { const m = r.match(/(\d{4}-\d\d-\d\d)\D+(\d{4}-\d\d-\d\d)/); if (m) { const B = bulDoc(c.id); (B.dates ??= {})[bulT] = [m[1], m[2]]; save('bull/' + c.id, B); rendreBulletin(); } } return true; }
+  if (b.dataset.bq) { const e = elBul(c.id, bulT, bulEl), q = b.dataset.bq, v = b.dataset.bv;
+    if (Q[q].m) { const a = e.rep[q] ??= []; e.rep[q] = a.includes(v) ? a.filter(x => x !== v) : [...a, v]; } else e.rep[q] = v;
+    const on = Q[q].m ? e.rep[q].includes(v) : true; if (!Q[q].m) $$(`[data-bq="${q}"]`).forEach(x => x.classList.toggle('on', x === b)); else b.classList.toggle('on', on);
+    majCommentaire(true); return true; }
+  if (b.id === 'bulRegen') { const e = elBul(c.id, bulT, bulEl); e.var = (e.var || 0) + 1; majCommentaire(true); return true; }
+  if (b.id === 'bulCopier' || b.id === 'bulPrec') {
+    const L = ordreBul(c), i = L.findIndex(x => x.n === bulEl);
+    if (b.id === 'bulCopier') { const e = elBul(c.id, bulT, bulEl); e.txt = $('#bulCom').value; e.copie = true; save('bull/' + c.id, bulDoc(c.id));
+      navigator.clipboard.writeText(e.txt).catch(() => { $('#bulCom').select(); document.execCommand('copy'); }); }
+    const j = b.id === 'bulCopier' ? i + 1 : i - 1; bulEl = L[j]?.n || (b.id === 'bulCopier' ? null : bulEl); rendreBulletin(); return true; }
+  return false;
+}
+function saisieBulletin(t){
+  const c = D.cls[bulCls]; if (!c || !bulEl) return false;
+  const e = elBul(c.id, bulT, bulEl);
+  if (t.id === 'bulMoy') { e.moy = t.value.trim(); majCommentaire(false); return true; }
+  if (t.id === 'bulLibre') { e.libre = t.value; majCommentaire(false); return true; }
+  if (t.id === 'bulCom') { e.txt = t.value; e.edite = true; majNb(); save('bull/' + c.id, bulDoc(c.id)); return true; }
+  return false;
 }
 
 /* ---------------- Réglages ---------------- */
@@ -4822,6 +5034,7 @@ $('.onglets').addEventListener('click', e => { const b = e.target.closest('[data
   rendre(); });
 $('#tel').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
+  if (onglet === 'bulletin' && clicBulletin(b)) return;
   if (b.dataset.secp) { voir(+b.dataset.secp); return; }
   if (b.id === 'tAfficher') { const d = deckCourant(); if (d && AP) { const p = debutDiapo(d, diapoDe(d, AP.page)); AP = null; placer(d.id, p); } return; }
   if (b.id === 'tDirect') { AP = null; rendre(); return; }
@@ -4903,7 +5116,7 @@ $('#eDeck').addEventListener('change', e => { const p = D.pos[clePos(D.live.cls)
 $('#eExo').addEventListener('change', e => { const d = deckCourant(); if (d && e.target.value) placer(d.id, +e.target.value); e.target.blur(); });
 $('#eDeck').addEventListener('click', e => e.stopPropagation()); $('#eExo').addEventListener('click', e => e.stopPropagation());
 
-$('#tel').addEventListener('input', e => { if (e.target.id === 'oSeuil') $('#oSeuilV').textContent = e.target.value; });
+$('#tel').addEventListener('input', e => { if (onglet === 'bulletin' && saisieBulletin(e.target)) return; if (e.target.id === 'oSeuil') $('#oSeuilV').textContent = e.target.value; });
 $('#tel').addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'oSeuil') { majOutils(o => { o.seuil = +t.value; }); return; }
@@ -4951,7 +5164,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795021439',t0=Date.now(),vue=false;
+<script>(function(){var V='1795085251',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
