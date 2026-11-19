@@ -366,15 +366,29 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .bul-el{display:flex;align-items:center;gap:8px;border:0;background:none;border-radius:10px;padding:7px 8px;font:800 14px inherit;font-family:inherit;color:var(--encre);text-align:left;cursor:pointer}
 .bul-el:hover{background:var(--fond)}.bul-el .num{min-width:24px;height:24px;border-radius:999px;background:var(--vert-clair);color:var(--vert);display:flex;align-items:center;justify-content:center;font-size:12px}
 .bul-el .t{flex:1}.bul-el small{color:var(--gris)}.bul-el.on{background:#FFF1E2;color:#8a4300}.bul-el.fait .num{background:var(--vert);color:#fff}.bul-el.fait>span:last-child{color:var(--vert)}
-.bul-q{gap:12px}.bul-ligne{display:flex;flex-direction:column;gap:6px}.bul-ligne>b{color:var(--vert);font-size:14px}
+.bul-fiche{display:flex;flex-direction:column;gap:14px;min-width:0}
+.bul-tete{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,#1F6F3D,#2E8B57);color:#fff;border-radius:18px;padding:16px 20px}
+.bul-tete h3{margin:2px 0 0;font-size:24px;color:#fff}.bul-tete small{opacity:.85;font-weight:700}
+.bul-moy{display:flex;align-items:center;gap:8px;font-weight:800;background:rgba(255,255,255,.15);border-radius:14px;padding:6px 8px 6px 12px}
+.bul-moy input{width:84px;min-height:40px;text-align:center;font:900 20px inherit;font-family:inherit;border:0;border-radius:10px;color:var(--vert)}
+.bul-prev{font-weight:800;background:rgba(255,255,255,.15);border-radius:10px;padding:6px 10px}
+.bul-com{background:#fff;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:14px 16px;display:flex;flex-direction:column;gap:10px;border-top:5px solid var(--orange)}
+.bul-com-t{display:flex;align-items:baseline;justify-content:space-between}.bul-com-t b{color:var(--orange-fonce);font-size:15px;text-transform:uppercase;letter-spacing:.06em}.bul-com-t small{color:var(--gris);font-weight:700}
+.bul-com textarea{width:100%;min-height:110px;border:0;background:#FFFBF5;border-radius:12px;padding:12px 14px;font:600 17px/1.55 inherit;font-family:inherit;color:var(--encre);resize:vertical}
+.bul-qs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:1000px){.bul-qs{grid-template-columns:1fr}}
+.bul-ligne{background:#fff;border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.bul-ligne.large{grid-column:1/-1}
+.bul-lt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.bul-lt>b{color:var(--vert);font-size:15px}
+.bul-ligne>input{min-height:40px}
 .bul-ch{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:2px solid var(--ligne);background:#fff;border-radius:999px;padding:6px 12px;font:800 14px inherit;font-family:inherit;color:var(--encre);cursor:pointer}
+.chip{border:2px solid var(--ligne);background:#fff;border-radius:999px;padding:6px 13px;transition:background .15s;font:800 14px inherit;font-family:inherit;color:var(--encre);cursor:pointer}
 .chip.on{background:var(--vert);border-color:var(--vert);color:#fff}
 .bul-suivi{font-size:13px;color:var(--gris);display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .bul-txt textarea{width:100%;min-height:120px;font-size:15px;line-height:1.45;border:2px solid var(--orange);border-radius:12px;padding:10px}
 .bul-txt small{color:var(--gris)}
 .pt-orange{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--orange);vertical-align:middle;margin-left:4px}
-.bul-sc{display:flex;flex-wrap:wrap;gap:6px}.sc{font-size:12.5px;font-weight:700;border-radius:8px;padding:3px 8px}
+.sc{font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap}.sc b{font-weight:900;margin-left:2px}
 .sc.vert{background:var(--vert-pale);color:var(--vert)}.sc.orange{background:var(--orange-pale);color:var(--orange-fonce)}.sc.rouge{background:var(--rouge-clair);color:var(--rouge)}.sc.gris{background:#f1f1f1;color:#888}
 .bul-suivi .tag.alerte{background:var(--rouge-clair);color:var(--rouge)}
 .bul-seuils summary{cursor:pointer;font-weight:800;color:var(--vert);font-size:13px}.bul-seuils{display:flex;flex-direction:column;gap:4px;font-size:13px}
@@ -4711,6 +4725,7 @@ function depasse(id, t, n){
 /* scores sous chaque question, avec code couleur, et point orange s'il manque des informations */
 const SCORE_Q = {implic:['travail'], part:['participation'], maison:['maison'], att:['bav', 'reve', 'cours', 'perturbe', 'retard'], forts:['tuteur', 'appel'], conseils:['cahier']};
 function suiviClasse(id, t, types){ const [a, b] = bulDates(id, t); return bulEv.ev.some(e => types.includes(e.type) && e.day >= a && e.day <= b); }
+const COURT2 = {travail:'Pas de travail', participation:'Participation', maison:'Devoirs non faits', bav:'Bavardages', reve:'Rêvasse', cours:'Cours non pris', perturbe:'Perturbe', retard:'Retards', tuteur:'Tuteur', appel:'Appels', cahier:'Oublis'};
 function scoreHTML(id, t, n, q){
   const k = comptesBul(id, t, n), S = seancesBul(id, t), L = seuils();
   const noms = ordreBul(D.cls[id]).map(x => x.n), medP = mediane(noms.map(x => comptesBul(id, t, x).participation || 0));
@@ -4720,8 +4735,7 @@ function scoreHTML(id, t, n, q){
     if (x === 'participation') col = v >= Math.max(3, medP * 1.5) ? 'vert' : (v >= Math.max(1, medP / 2) || medP === 0) ? 'orange' : 'rouge';
     else if (L[x] != null) col = pc >= L[x] ? 'rouge' : pc >= L[x] / 2 ? 'orange' : 'vert';
     else col = v ? 'vert' : 'gris';
-    const det = x === 'participation' ? ` · moyenne de la classe : ${medP}` : L[x] != null ? ` · ${pc} % (seuil ${L[x]} %)` : '';
-    return `<span class="sc ${col}">${TYPES[x]} : <b>${v}</b>${det}</span>`;
+    return `<span class="sc ${col}" title="${TYPES[x]}">${COURT2[x] || TYPES[x]} <b>${v}</b></span>`;
   }).join('');
 }
 function manqueInfo(id, t, q, e){
@@ -4845,13 +4859,17 @@ function rendreBulletin(){
     const e = elBul(c.id, bulT, bulEl); e.rep ??= proposer(c.id, bulT, bulEl); if (!e.rep.att) e.rep.att = e.rep.compo ? [e.rep.compo] : proposer(c.id, bulT, bulEl).att;
     const k = comptesBul(c.id, bulT, bulEl), prev = bulT > 1 ? B.T[bulT - 1]?.el?.[bulEl] : null;
     const x = L.find(y => y.n === bulEl);
-    h += `<div class="carte bul-q"><div class="ligne-flex"><h3 style="margin:0;color:var(--vert)">${esc(x.nom || x.n)}</h3><span class="sp"></span>
-      <label class="ligne-flex" style="gap:6px;font-weight:800">${e.moy ? '' : '<span class="pt-orange" title="Moyenne non saisie"></span>'}Moyenne <input type="text" inputmode="decimal" id="bulMoy" value="${esc(e.moy ?? '')}" style="width:80px;min-height:36px;text-align:center"></label>${prev?.moy ? `<small>T${bulT - 1} : ${esc(String(prev.moy))}</small>` : ''}</div>
-      <div class="bul-suivi">${(() => { const S = seancesBul(c.id, bulT), L = seuils(); return `Suivi du trimestre (${S} séances) : ` + (Object.keys(TYPES).filter(t => k[t]).map(t => { const pc = S ? Math.round(100 * k[t] / S) : 0, al = L[t] != null && pc >= L[t]; return `<span class="tag${al ? ' alerte' : ''}" title="${L[t] != null ? 'seuil : ' + L[t] + ' % des séances' : ''}">${TYPES[t]} ${k[t]}${L[t] != null ? ` · ${pc} %` : ''}${al ? ' ⚠' : ''}</span>`; }).join(' ') || '<i>rien de noté</i>'); })()}</div>
-      ${Object.entries(Q).map(([q, d]) => `<div class="bul-ligne"><b>${d.l}${manqueInfo(c.id, bulT, q, e) ? ' <span class="pt-orange" title="Peu d’informations dans le suivi : vérifie ce choix"></span>' : ''}</b><div class="bul-ch">${d.o.map(([v, l]) => { const on = d.m ? (e.rep[q] || []).includes(v) : e.rep[q] === v; return `<button class="chip${on ? ' on' : ''}" data-bq="${q}" data-bv="${v}" type="button">${l}</button>`; }).join('')}</div><div class="bul-sc">${scoreHTML(c.id, bulT, bulEl, q)}</div></div>`).join('')}
-      <label class="champ">À ajouter (facultatif)<input type="text" id="bulLibre" value="${esc(e.libre || '')}" placeholder="ex. Très bon exposé sur Pythagore"></label>
-      <div class="bul-txt"><textarea id="bulCom" maxlength="${lim}">${esc(e.txt || rediger(c.id, bulT, bulEl))}</textarea><small id="bulNb"></small></div>
-      <div class="ligne-flex"><button class="btn" id="bulRegen" type="button">↻ Autre formulation</button><span class="sp"></span><button class="btn" id="bulPrec" type="button">◀</button><button class="btn plein" id="bulCopier" type="button">Copier et élève suivant ▶</button></div></div>`;
+    const L2 = ordreBul(c), pos = L2.findIndex(y => y.n === bulEl) + 1;
+    h += `<div class="bul-fiche">
+      <div class="bul-tete"><div><small>Élève ${pos} / ${L2.length} · ${bulT}ᵉ trimestre</small><h3>${esc(x.nom || x.n)}</h3></div><span class="sp"></span>
+        <label class="bul-moy">${e.moy ? '' : '<span class="pt-orange" title="Moyenne non saisie"></span>'}Moyenne<input type="text" inputmode="decimal" id="bulMoy" value="${esc(e.moy ?? '')}" placeholder="—"></label>${prev?.moy ? `<span class="bul-prev">T${bulT - 1} : ${esc(String(prev.moy))}</span>` : ''}</div>
+      <div class="bul-com"><div class="bul-com-t"><b>Appréciation</b><small id="bulNb"></small></div>
+        <textarea id="bulCom" maxlength="${lim}">${esc(e.txt || rediger(c.id, bulT, bulEl))}</textarea>
+        <div class="ligne-flex"><button class="btn mini" id="bulRegen" type="button">↻ Autre formulation</button><span class="sp"></span><button class="btn" id="bulPrec" type="button" aria-label="Élève précédent">◀</button><button class="btn plein" id="bulCopier" type="button">Copier · élève suivant ▶</button></div></div>
+      <div class="bul-qs">${Object.entries(Q).map(([q, d]) => `<div class="bul-ligne${d.m ? ' large' : ''}"><div class="bul-lt"><b>${d.l}</b>${manqueInfo(c.id, bulT, q, e) ? '<span class="pt-orange" title="Peu d’informations dans le suivi : vérifie ce choix"></span>' : ''}<span class="sp"></span>${scoreHTML(c.id, bulT, bulEl, q)}</div>
+        <div class="bul-ch">${d.o.map(([v, l]) => { const on = d.m ? (e.rep[q] || []).includes(v) : e.rep[q] === v; return `<button class="chip${on ? ' on' : ''}" data-bq="${q}" data-bv="${v}" type="button">${l}</button>`; }).join('')}</div></div>`).join('')}
+        <div class="bul-ligne large"><div class="bul-lt"><b>À ajouter</b><small style="color:var(--gris)">facultatif</small></div><input type="text" id="bulLibre" value="${esc(e.libre || '')}" placeholder="ex. Très bon exposé sur Pythagore"></div></div>
+    </div>`;
   }
   $('#bulCorps').innerHTML = h + '</div>';
   majNb();
@@ -5238,7 +5256,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795100379',t0=Date.now(),vue=false;
+<script>(function(){var V='1795100613',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
