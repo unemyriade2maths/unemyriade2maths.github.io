@@ -162,6 +162,20 @@ label.champ{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size
 .masc-oh{position:absolute;right:10px;top:12px;font:800 28px var(--titre);color:var(--rouge)}
 .masc-temps{display:none;font:800 17px/1 var(--titre);color:var(--vert);font-variant-numeric:tabular-nums}
 #eMascotte .jauge-calme{width:100%;height:7px}
+#eTri{position:absolute;inset:0;z-index:6;background:#fff;display:flex;flex-direction:column;padding:14px 22px;gap:10px}
+#eTri h2{margin:0;font:800 34px/1.1 var(--titre);color:var(--vert);display:flex;align-items:center;gap:12px}
+#eTri h2 .sp{flex:1}
+#eTri .tri-fig{flex:1;min-height:0;position:relative;border:1px solid #d9ddd5;border-radius:14px}
+#eTri .tri-fig svg{position:absolute;inset:0;width:100%;height:100%}
+#eTri .tri-ctrl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#eTri .tri-ctrl label{background:#f6f8f4;border:1px solid #d9ddd5;border-radius:12px;padding:6px 12px;font:800 22px var(--texte);display:flex;flex-direction:column}
+#eTri .tri-ctrl label span{display:flex;justify-content:space-between}
+#eTri input[type=range]{width:100%;height:36px;accent-color:#7846be}
+#eTri .tri-v{border-radius:14px;padding:10px 16px;border:3px solid;font:800 26px var(--texte)}
+#eTri .tri-v small{display:block;font-weight:600;font-size:20px}
+#eTri .v-ok{border-color:#148c3c;color:#148c3c;background:#e2f2e4}
+#eTri .v-flat{border-color:#e87722;color:#b85a10;background:#fde9d2}
+#eTri .v-bad{border-color:#c81e28;color:#c81e28;background:#fce4e4}
 #eScore{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:4;display:flex;gap:10px}
 #eScore .eq{background:#fff;border:4px solid var(--c);border-radius:16px;padding:6px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 #eScore .eq span{font:800 18px var(--texte);color:var(--c)}
@@ -446,7 +460,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
       <canvas id="eCv" hidden></canvas><div id="eSl" class="slhost" hidden></div><div id="eVid"></div>
       <div id="eMsg">Connexion…</div>
       <div id="ePlan" hidden><h2 id="ePlanTitre"></h2><div class="tableau">Bureau · tableau</div><div id="ePlanGrille"></div></div>
-      <div id="eForet" hidden></div><div id="eMascotte" hidden></div><div id="eScore" hidden></div>
+      <div id="eForet" hidden></div><div id="eMascotte" hidden></div><div id="eScore" hidden></div><div id="eTri" hidden></div>
       <div id="eFin" hidden>Temps écoulé !</div>
       <button id="eSon" type="button" hidden>🔊 Clique ici pour activer le son des minuteurs</button>
       <div id="eTirage" hidden><div><small>Au tableau !</small><strong id="eTirNom"></strong><span id="eTirPlace"></span></div></div>
@@ -521,6 +535,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
   <div class="panneau" data-p="outils" hidden>
     <div class="bloc"><h3>🌿 Calme de la classe</h3><div id="oCalme" class="panneau" style="gap:10px"></div></div>
     <div class="bloc"><h3>🏆 Score d’équipes</h3><div id="oScore" class="panneau" style="gap:8px"></div></div>
+    <div class="bloc"><h3>📐 Triangle constructible ?</h3><div id="oTri" class="panneau" style="gap:8px"></div></div>
   </div>
 
   <!-- Progression -->
@@ -3666,13 +3681,72 @@ function peindreCalme(seuil){
 function construireOutilsEcran(){
   $('#eForet').innerHTML = `<div class="foret-fond">${FORET_FOND}</div>${ANIMAUX.map(a => `<div class="animal" style="left:${a.x}%;top:${a.y}%;width:${a.w}%" title="${a.nom}">${a.svg}</div>`).join('')}
     <div class="foret-bas"><span class="foret-compte"></span><span class="jauge-calme"><i></i><b></b></span></div><div class="foret-chut">🤫 Trop de bruit : les animaux se cachent !</div>`;
+  construireTri();
   $('#eMascotte').innerHTML = `<div class="masc-img">${MASCOTTE(true)}</div><span class="masc-zz">Zzz</span><span class="masc-oh" hidden>!</span><b class="masc-temps">00:00</b><span class="jauge-calme"><i></i><b></b></span>`;
+}
+
+/* Triangle constructible ? (animation type GeoGebra) — état dans D.live.outils.tri */
+const TRI0 = {bc:10, ab:3, ac:4};
+const triVal = () => ({...TRI0, ...((D.live.outils || {}).tri || {})});
+const triF = x => (Math.round(x * 10) / 10).toString().replace('.', ',');
+function construireTri(){
+  $('#eTri').innerHTML = `<h2>Le triangle est-il constructible ?<span class="sp"></span><button class="btn mini" id="eTriFermer" type="button">✕ Fermer</button></h2>
+    <div class="tri-fig"><svg id="eTriSvg" role="img" aria-label="Segment BC et deux cercles"></svg></div>
+    <div class="tri-ctrl">${['bc', 'ab', 'ac'].map(k => `<label><span>${k.toUpperCase()} <b id="eTriO_${k}"></b></span><input type="range" id="eTri_${k}" data-tri="${k}" min="0.5" max="12" step="0.1"></label>`).join('')}</div>
+    <div class="tri-v" id="eTriV"></div>`;
+  const t = $('#eTri');
+  t.addEventListener('click', e => { e.stopPropagation(); if (e.target.id === 'eTriFermer') majOutils(o => { o.triOn = false; }); });
+  t.addEventListener('input', e => { if (e.target.dataset.tri) dessinerTri(); });
+  t.addEventListener('change', e => { const k = e.target.dataset.tri; if (k) { const v = +e.target.value; majOutils(o => { o.tri = {...triVal(), [k]:v}; }); } });
+  t.addEventListener('keydown', e => e.stopPropagation());
+  new ResizeObserver(() => { if (!t.hidden) dessinerTri(); }).observe(t);
+}
+function rendreTri(){
+  const on = !!(D.live.outils || {}).triOn;
+  $('#eTri').hidden = !on; if (!on) return;
+  const v = triVal();
+  for (const k of ['bc', 'ab', 'ac']) { const i = $('#eTri_' + k); if (document.activeElement !== i) i.value = v[k]; }
+  dessinerTri();
+}
+function dessinerTri(){
+  const svg = $('#eTriSvg'), g1 = k => +$('#eTri_' + k).value;
+  const bc = g1('bc'), ab = g1('ab'), ac = g1('ac');
+  for (const [k, x] of [['bc', bc], ['ab', ab], ['ac', ac]]) $('#eTriO_' + k).textContent = triF(x) + ' cm';
+  const W = svg.clientWidth, H = svg.clientHeight; if (!W || !H) return;
+  const k = Math.min(W / (bc + ab + ac + 1), H / (2 * Math.max(ab, ac) + 1.4));
+  const cy = H / 2, bx = (W - bc * k) / 2 + (ab - ac) * k / 2, B = [bx, cy], C = [bx + bc * k, cy];
+  let g = '';
+  const circ = (c, r) => `<circle cx="${c[0]}" cy="${c[1]}" r="${r}" fill="none" stroke="#7846be" stroke-width="3"/>`;
+  g += circ(B, ab * k) + circ(C, ac * k);
+  const big = Math.max(bc, ab, ac), sum = bc + ab + ac - big, eps = 0.05;
+  const autres = [bc, ab, ac]; autres.splice(autres.indexOf(big), 1);
+  const calc = `${triF(autres[0])} + ${triF(autres[1])} = ${triF(sum)}`;
+  let cls, msg, det;
+  if (sum < big - eps) { cls = 'v-bad'; msg = 'Pas de triangle : les cercles ne se coupent pas.'; det = `${calc} et ${triF(big)} > ${triF(sum)} : la plus grande longueur est plus grande que la somme des deux autres.`; }
+  else if (Math.abs(sum - big) <= eps) { cls = 'v-flat'; msg = 'Triangle aplati : les trois points sont alignés.'; det = `${calc} : la plus grande longueur est égale à la somme des deux autres.`; }
+  else { cls = 'v-ok'; msg = 'Le triangle est constructible.'; det = `${calc} et ${triF(big)} < ${triF(sum)} : la plus grande longueur est plus petite que la somme des deux autres.`; }
+  if (cls !== 'v-bad') {
+    const d = bc * k, ra = ab * k, rb = ac * k, a = (ra * ra - rb * rb + d * d) / (2 * d), h = Math.sqrt(Math.max(0, ra * ra - a * a)), A = [B[0] + a, cy - h];
+    if (cls === 'v-ok') {
+      g += `<polygon points="${B} ${A} ${C}" fill="none" stroke="#1f5caa" stroke-width="3"/>`;
+      g += `<text x="${A[0] + 10}" y="${A[1] - 12}" fill="#1f5caa" font-weight="800" font-size="24">A</text>`;
+    } else {
+      g += `<line x1="${A[0]}" y1="${cy - 10}" x2="${A[0]}" y2="${cy + 10}" stroke="#e87722" stroke-width="4"/>`;
+      g += `<text x="${A[0] - 8}" y="${cy - 18}" fill="#e87722" font-weight="800" font-size="24">A</text>`;
+    }
+  }
+  g += `<line x1="${B[0]}" y1="${cy}" x2="${C[0]}" y2="${cy}" stroke="#1e1e1e" stroke-width="4"/>`;
+  for (const P of [B, C]) g += `<line x1="${P[0]}" y1="${cy - 10}" x2="${P[0]}" y2="${cy + 10}" stroke="#1e1e1e" stroke-width="4"/>`;
+  g += `<text x="${B[0] - 28}" y="${cy + 8}" fill="#1e1e1e" font-weight="800" font-size="24">B</text><text x="${C[0] + 10}" y="${cy + 8}" fill="#1e1e1e" font-weight="800" font-size="24">C</text>`;
+  svg.innerHTML = g;
+  const v = $('#eTriV'); v.className = 'tri-v ' + cls; v.innerHTML = msg + '<small>' + det + '</small>';
 }
 function rendreOutilsEcran(){
   const o = D.live.outils || {};
   const masc = o.mascotte !== false;
   micro(!!(o.foret || masc));
   $('#eForet').hidden = !o.foret; $('#eMascotte').hidden = !masc;
+  rendreTri();
   // score
   const sc = D.live.score;
   $('#eScore').hidden = !sc?.on;
@@ -3685,6 +3759,11 @@ function rendreOutilsTel(){
     <label class="champ">Seuil de bruit : <b id="oSeuilV">${o.seuil || 60}</b><input type="range" id="oSeuil" min="20" max="95" value="${o.seuil || 60}"></label>
     <label class="champ">Un animal de plus toutes les<select id="oPas">${[0.5, 1, 2, 3, 5].map(m => `<option value="${m}"${(o.pas || 1) == m ? ' selected' : ''}>${m === 0.5 ? '30 secondes' : m + ' minute' + (m > 1 ? 's' : '')} de calme</option>`).join('')}</select></label>
     <p class="aide">Le micro de l’ordinateur mesure le bruit (rien n’est enregistré). Trop de bruit : le paresseux se réveille, le compteur repart à zéro et 2 animaux se cachent.</p>`;
+  const tv = triVal();
+  $('#oTri').innerHTML = `<button class="btn${o.triOn ? ' plein' : ''}" data-ou="triOn" type="button">${o.triOn ? 'Animation affichée · masquer' : 'Afficher l’animation à l’écran'}</button>
+    ${['bc', 'ab', 'ac'].map(k => `<label class="champ">${k.toUpperCase()} : <b id="oTriV_${k}">${triF(tv[k])} cm</b><input type="range" id="oTri_${k}" data-trik="${k}" min="0.5" max="12" step="0.1" value="${tv[k]}"></label>`).join('')}
+    <div class="ligne-flex">${[4, 7, 8].map(x => `<button class="btn mini" data-tripre="${x}" type="button">BC = 10 · AB = 3 · AC = ${x}</button>`).join('')}</div>
+    <p class="aide">Les curseurs marchent aussi directement à l’écran, à la souris.</p>`;
   $('#oScore').innerHTML = `
     <div class="ligne-flex"><button class="btn mini${sc.on ? ' plein' : ''}" id="oScoreOn" type="button">${sc.on ? 'Score affiché' : 'Afficher le score'}</button>
     <select id="oScoreN" style="width:auto;min-height:34px">${[2, 3, 4].map(n => `<option value="${n}"${(sc.eq.length || 2) === n ? ' selected' : ''}>${n} équipes</option>`).join('')}</select>
@@ -5115,7 +5194,7 @@ document.addEventListener('keydown', e => {
   else if (k === 's' || k === 'S') lancerPause();
   else if (k === 'f' || k === 'F' || k === 'F5') { e.preventDefault(); $('#eFs').click(); }
   else if (k === 'p' || k === 'P') $('#ePanneau').click();
-  else if (k === 'Escape') $('#eTirage').hidden = true;
+  else if (k === 'Escape') { $('#eTirage').hidden = true; if ((D.live.outils || {}).triOn) majOutils(o => { o.triOn = false; }); }
 });
 // Télécommande : onglets
 $('.onglets').addEventListener('click', e => { const b = e.target.closest('[data-onglet]'); if (!b) return;
@@ -5133,7 +5212,8 @@ $('#tel').addEventListener('click', e => {
   if (b.id === 'tApPrec') { voirPas(-1); return; }
   if (b.id === 'tApSuiv') { voirPas(1); return; }
   if (b.id === 'planEcran2') { D.live.showPlan = !D.live.showPlan; save('app/live', D.live); rendre(); return; }
-  if (b.dataset.ou) majOutils(o => { const k = b.dataset.ou; o[k] = k === 'mascotte' ? o[k] === false : !o[k]; });
+  if (b.dataset.tripre) majOutils(o => { o.tri = {bc:10, ab:3, ac:+b.dataset.tripre}; o.triOn = true; });
+  else if (b.dataset.ou) majOutils(o => { const k = b.dataset.ou; o[k] = k === 'mascotte' ? o[k] === false : !o[k]; });
   else if (b.id === 'oScoreOn') majScore(s => { s.on = !s.on; });
   else if (b.id === 'oScoreZero') deuxFois(b, 'Confirmer', () => majScore(s => { s.eq.forEach(e => e.s = 0); }));
   else if (b.dataset.eq !== undefined) majScore(s => { const e = s.eq[+b.dataset.eq]; e.s = Math.max(0, e.s + +b.dataset.d); s.on = true; });
@@ -5208,10 +5288,11 @@ $('#eDeck').addEventListener('change', e => { const p = D.pos[clePos(D.live.cls)
 $('#eExo').addEventListener('change', e => { const d = deckCourant(); if (d && e.target.value) placer(d.id, +e.target.value); e.target.blur(); });
 $('#eDeck').addEventListener('click', e => e.stopPropagation()); $('#eExo').addEventListener('click', e => e.stopPropagation());
 
-$('#tel').addEventListener('input', e => { if (onglet === 'bulletin' && saisieBulletin(e.target)) return; if (e.target.id === 'oSeuil') $('#oSeuilV').textContent = e.target.value; });
+$('#tel').addEventListener('input', e => { if (onglet === 'bulletin' && saisieBulletin(e.target)) return; if (e.target.id === 'oSeuil') $('#oSeuilV').textContent = e.target.value; if (e.target.dataset.trik) $('#oTriV_' + e.target.dataset.trik).textContent = triF(+e.target.value) + ' cm'; });
 $('#tel').addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'oSeuil') { majOutils(o => { o.seuil = +t.value; }); return; }
+  if (t.dataset.trik) { const k = t.dataset.trik, v = +t.value; majOutils(o => { o.tri = {...triVal(), [k]:v}; }); return; }
   if (t.id === 'oPas') { majOutils(o => { o.pas = +t.value; }); return; }
   if (t.id === 'oScoreN') { majScore(s => { const n = +t.value; while (s.eq.length < n) s.eq.push({n:'Équipe ' + (s.eq.length + 1), s:0}); s.eq.length = n; }); return; }
   if (t.dataset.eqn !== undefined) { majScore(s => { s.eq[+t.dataset.eqn].n = t.value.trim() || 'Équipe ' + (+t.dataset.eqn + 1); }); return; }
@@ -5256,7 +5337,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795100890',t0=Date.now(),vue=false;
+<script>(function(){var V='1795256539',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
