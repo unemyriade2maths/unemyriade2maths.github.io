@@ -407,6 +407,38 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .bul-suivi .tag.alerte{background:var(--rouge-clair);color:var(--rouge)}
 .bul-seuils summary{cursor:pointer;font-weight:800;color:var(--vert);font-size:13px}.bul-seuils{display:flex;flex-direction:column;gap:4px;font-size:13px}
 .lien-btn{border:0;background:none;color:var(--vert);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
+.ia-live{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#FFF1E2;border-radius:14px;padding:10px 14px;font-weight:700;color:#8a4300}.ia-live span{flex:1}
+.ia-grille-page{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:800px){.ia-grille-page{grid-template-columns:1fr}}
+.ia-filtres{gap:8px;position:sticky;top:8px}
+.ia-ch-t{display:flex;align-items:center;gap:8px;font-size:17px}.ia-nb{background:#3BA7E0;color:#fff;border-radius:999px;font-size:12px;font-weight:900;padding:1px 8px}
+.ia-dom{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.ia-dl{font-weight:900;color:#1E5AA8;font-size:13px;display:flex;gap:6px;align-items:center}
+.ia-cl{display:flex;gap:8px;align-items:center;font-weight:600;font-size:15px;padding:3px 0 3px 4px;cursor:pointer}.ia-cl small{margin-left:auto;color:var(--gris);font-weight:800}
+.ia-filtres input[type=checkbox]{width:17px;height:17px;accent-color:#1E5AA8}
+.ia-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.ia-carte{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden;display:flex;flex-direction:column;border:2px solid transparent}
+.ia-carte.proj{border-color:var(--orange)}
+.ia-vign{position:relative;height:120px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 18%,#fff),color-mix(in srgb,var(--c) 40%,#fff));display:flex;align-items:center;justify-content:center}
+.ia-ic{font-size:54px;font-weight:900;color:var(--c)}
+.ia-tag{position:absolute;top:8px;left:8px;color:#fff;font-size:12px;font-weight:800;border-radius:999px;padding:3px 10px}
+.ia-ct{padding:10px 12px 4px;display:flex;flex-direction:column;gap:2px}.ia-ct b{font-size:15px;color:var(--encre)}.ia-ct small{color:var(--gris);font-size:12px}
+.ia-cb{padding:8px 12px 12px;display:flex;gap:6px;margin-top:auto}
+.ia-plus{border:2px dashed var(--ligne);box-shadow:none;background:transparent}
+.ia-add{flex:1;border:0;background:none;cursor:pointer;font:800 16px inherit;font-family:inherit;color:var(--vert);padding:30px 10px;line-height:1.5}.ia-add small{color:var(--gris);font-weight:600}
+.ia-form{display:flex;flex-direction:column;gap:6px;padding:12px}.ia-form input,.ia-form select{min-height:36px}
+#eInter{position:absolute;inset:0;z-index:3;background:#fff;display:flex;flex-direction:column;padding:12px 20px}
+.ia-e-t{font:900 26px var(--titre,inherit);color:var(--vert);margin-bottom:6px}
+.ia-e-c{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:22px}
+.ia-e-c iframe{width:100%;flex:1;border:0;border-radius:10px}
+.ia-e-ext{font-size:14px;color:var(--gris)}
+.ia-svg{width:100%;flex:1;min-height:0;max-height:62vh}
+.ia-ctl{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+.ia-cur{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}.ia-cur input{width:180px;accent-color:var(--vert)}.ia-cur b{min-width:70px;color:var(--orange-fonce)}
+.ia-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ia-msg{font-size:26px;font-weight:800;margin:0;text-align:center}.ia-msg.ok{color:var(--vert)}.ia-msg.ko{color:var(--rouge)}
+.ia-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1}.ia-frac span:first-child{border-bottom:3px solid currentColor;padding:0 6px}
+.ia-table{border-collapse:collapse;font-size:32px;font-weight:800;margin:30px auto}.ia-table td{border:3px solid #3A6FB0;padding:14px 26px;text-align:center;min-width:80px}.ia-table .ia-coef{border:0;color:var(--orange-fonce)}
 .en-haut{font-size:12px;font-weight:800;color:var(--orange-texte);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 -2px}
 .orga-l{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--ligne);border-radius:12px;padding:8px 12px;font-weight:800}
 .orga-l input{width:64px;min-height:36px;text-align:center;font-weight:800}.orga-l span{flex:1}.orga-l select{width:auto;min-height:34px}
@@ -461,6 +493,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
       <div id="eMsg">Connexion…</div>
       <div id="ePlan" hidden><h2 id="ePlanTitre"></h2><div class="tableau">Bureau · tableau</div><div id="ePlanGrille"></div></div>
       <div id="eForet" hidden></div><div id="eMascotte" hidden></div><div id="eScore" hidden></div><div id="eTri" hidden></div>
+      <div id="eInter" hidden></div>
       <div id="eFin" hidden>Temps écoulé !</div>
       <button id="eSon" type="button" hidden>🔊 Clique ici pour activer le son des minuteurs</button>
       <div id="eTirage" hidden><div><small>Au tableau !</small><strong id="eTirNom"></strong><span id="eTirPlace"></span></div></div>
@@ -484,6 +517,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
     <button role="tab" data-onglet="progression" aria-selected="false" type="button">Progression</button>
     <button role="tab" data-onglet="agenda" aria-selected="false" type="button">Agenda</button>
     <button role="tab" data-onglet="bilan" aria-selected="false" type="button">Bilan</button>
+    <button role="tab" data-onglet="interactif" aria-selected="false" type="button">Interactif</button>
     <button role="tab" data-onglet="bulletin" aria-selected="false" type="button">Bulletins</button>
     <button role="tab" data-onglet="reglages" aria-selected="false" type="button">Réglages</button>
   </nav>
@@ -565,6 +599,12 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
     <div class="tab-bilan" id="bTable"></div>
     <div class="ligne-flex"><button class="btn plein" id="bTelech" type="button">Télécharger le bilan</button><button class="btn" id="bCopier" type="button">Copier</button></div>
     <p class="aide">Le fichier téléchargé s’ouvre dans ton navigateur : tu peux l’imprimer pour le conseil de classe.</p>
+  </div>
+
+  <!-- Interactif -->
+  <div class="panneau" data-p="interactif" hidden>
+    <div id="iaLive" class="ia-live" hidden></div>
+    <div class="ia-grille-page"><aside id="iaFiltres" class="carte ia-filtres"></aside><div id="iaGrille" class="ia-grille"></div></div>
   </div>
 
   <!-- Bulletins -->
@@ -4138,7 +4178,7 @@ const aVenir = cls => D.dev.filter(d => d.cls === cls && d.date >= TODAY()).sort
 function rendreEcran(){
   $('#eHeure').textContent = heure() + (semaine() ? ' · sem. ' + semaine() : '');
   if (!db) return;
-  rendreOutilsEcran();
+  rendreOutilsEcran(); rendreInterEcran();
   const c = cc(), d = deckCourant();
   $('#eClasse').hidden = !c; $('#eClasse').textContent = c ? c.name + (modeDe() !== 'cours' ? ' · ' + modeLabel(c, modeDe()) : '') : '';
   const chT = c && enRapido() ? '⚡ Rapido' : c && modeDe() === 'cours' && chapCourant(c) ? chapInfo(chapCourant(c))?.t : '';
@@ -4609,6 +4649,7 @@ function rendreTel(){
   if (onglet === 'agenda') rendreAgenda();
   if (onglet === 'outils') rendreOutilsTel();
   if (onglet === 'progression') rendreProgression();
+  if (onglet === 'interactif' && (!iaAjout || !$('#iaGrille').innerHTML)) rendreInteractif();
   if (onglet === 'bulletin' && $('#bulCorps').dataset.vu !== '1') { $('#bulCorps').dataset.vu = '1'; rendreBulletin(); }
   if (onglet !== 'bulletin') $('#bulCorps').dataset.vu = '';
   if (onglet === 'bilan') { bilanCls = D.cls[bilanCls] ? bilanCls : (D.live.cls || classes()[0]?.id); pucesClasses('#tClasses3', bilanCls, 'bil'); rendreBilan(); }
@@ -4748,6 +4789,184 @@ function bilanHTML(c){
   return `<!doctype html><html lang="fr"><meta charset="utf-8"><title>Bilan ${esc(c.name)}</title><style>body{font-family:Nunito,Segoe UI,sans-serif;color:#232328;margin:30px}h1{color:#1F6F3D;margin:0}p{color:#5C5C63}table{border-collapse:collapse;width:100%;margin-top:16px}th{background:#F3F8F4;color:#1F6F3D}th,td{border:1px solid #CFE3D5;padding:6px 8px;text-align:center}td:first-child,th:first-child{text-align:left}</style>
 <h1>Bilan — ${esc(c.name)}</h1><p>Édité le ${frD(TODAY())} · Une myriade de maths</p>
 <table><tr><th>Élève</th>${COLS.map(k => `<th>${TYPES[k]}</th>`).join('')}</tr>${L.map(({n, o}) => `<tr><td>${esc(n)}</td>${COLS.map(k => `<td>${o[k] || 0}</td>`).join('')}</tr>`).join('')}</table></html>`;
+}
+
+/* ---------------- Interactif : ressources à projeter, rangées par domaine et chapitre ---------------- */
+const DOMAINES = {
+  '6e':[['Automatismes', [['auto', 'Automatismes']]],
+    ['Nombres et calculs', [['entiers', 'Nombres entiers'], ['fraction', 'Notion de fraction'], ['opfrac', 'Opérations sur les fractions'], ['decimaux', 'Nombres décimaux'], ['droites', 'Demi-droites graduées'], ['operations', 'Addition, soustraction, multiplication'], ['divisions', 'Divisions']]],
+    ['Grandeurs et mesures', [['donnees', 'Organisation et gestion de données'], ['propor', 'Proportionnalité'], ['durees', 'Durées'], ['probas', 'Probabilités']]],
+    ['Espace et géométrie', [['segments', 'Droites et segments'], ['angles', 'Angles'], ['cercles', 'Cercles et disques'], ['symetrie', 'Symétrie axiale'], ['triangles', 'Triangles'], ['aires', 'Aires et volumes']]]],
+  '3e':[['Automatismes', [['auto', 'Automatismes']]],
+    ['Nombres et calculs', [['arith', 'Arithmétique'], ['puissances', 'Puissances'], ['litteral', 'Calcul littéral'], ['equations', 'Équations et inéquations'], ['fractions', 'Fractions']]],
+    ['Données et fonctions', [['stats', 'Statistiques'], ['probas', 'Probabilités'], ['propor', 'Proportionnalité et pourcentages'], ['fonctions', 'Fonctions']]],
+    ['Grandeurs et mesures', [['composees', 'Grandeurs composées'], ['agrand', 'Agrandissement et réduction']]],
+    ['Espace et géométrie', [['pythagore', 'Pythagore'], ['thales', 'Thalès'], ['trigo', 'Trigonométrie'], ['transfo', 'Transformations'], ['solides', 'Solides et sections']]],
+    ['Algorithmique', [['scratch', 'Algorithmique et Scratch']]]],
+};
+const svgN = (tag, at = {}, txt) => { const e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in at) e.setAttribute(k, at[k]); if (txt != null) e.textContent = txt; return e; };
+const curseur = (lab, min, max, val, pas = 1, unite = '') => `<label class="ia-cur"><span>${lab}</span><input type="range" min="${min}" max="${max}" step="${pas}" value="${val}"><b>${val}${unite}</b></label>`;
+function lierCurseurs(el, maj, unites = []){ el.querySelectorAll('.ia-cur input').forEach((i, k) => i.addEventListener('input', () => { i.nextElementSibling.textContent = String(i.value).replace('.', ',') + (unites[k] || ''); maj(); })); maj(); }
+const valeurs = el => [...el.querySelectorAll('.ia-cur input')].map(i => +i.value);
+/* les ressources toutes prêtes (fonctionnent sans internet) */
+const INTER = [
+  {id:'ineg', t:'Inégalité triangulaire', ch:['6e:triangles', '3e:pythagore'], ic:'△', col:'#C76A0E', run(el){
+    el.innerHTML = `<div class="ia-ctl">${curseur('AB', 1, 15, 6, 1, ' cm')}${curseur('BC', 1, 15, 4, 1, ' cm')}${curseur('AC', 1, 15, 5, 1, ' cm')}</div><svg viewBox="0 0 640 360" class="ia-svg"></svg><p class="ia-msg"></p>`;
+    const s = el.querySelector('svg');
+    lierCurseurs(el, () => { const [c, a, b] = valeurs(el), k = 30, ok = a + b > c && a + c > b && b + c > a, plat = !ok && (a + b === c || a + c === b || b + c === a);
+      s.innerHTML = ''; const x0 = 320 - c * k / 2, y0 = 300, A = [x0, y0], B = [x0 + c * k, y0];
+      s.append(svgN('line', {x1:A[0], y1:y0, x2:B[0], y2:y0, stroke:'#1F6F3D', 'stroke-width':6, 'stroke-linecap':'round'}));
+      s.append(svgN('circle', {cx:A[0], cy:y0, r:b * k, fill:'none', stroke:'#3A6FB0', 'stroke-dasharray':'6 6', 'stroke-width':2}));
+      s.append(svgN('circle', {cx:B[0], cy:y0, r:a * k, fill:'none', stroke:'#C76A0E', 'stroke-dasharray':'6 6', 'stroke-width':2}));
+      if (ok || plat) { const x = (b * b - a * a + c * c) / (2 * c), y = Math.sqrt(Math.max(0, b * b - x * x)), C = [A[0] + x * k, y0 - y * k];
+        s.append(svgN('line', {x1:A[0], y1:y0, x2:C[0], y2:C[1], stroke:'#3A6FB0', 'stroke-width':6, 'stroke-linecap':'round'}));
+        s.append(svgN('line', {x1:B[0], y1:y0, x2:C[0], y2:C[1], stroke:'#C76A0E', 'stroke-width':6, 'stroke-linecap':'round'}));
+        s.append(svgN('text', {x:C[0], y:C[1] - 14, 'text-anchor':'middle', 'font-size':26, 'font-weight':800, fill:'#222'}, 'C')); }
+      s.append(svgN('text', {x:A[0] - 14, y:y0 + 32, 'font-size':26, 'font-weight':800, fill:'#222'}, 'A')); s.append(svgN('text', {x:B[0], y:y0 + 32, 'font-size':26, 'font-weight':800, fill:'#222'}, 'B'));
+      const m = Math.max(a, b, c), r = a + b + c - m, autres = [a, b, c].sort((x, y) => y - x).slice(1).join(' + ');
+      el.querySelector('.ia-msg').innerHTML = ok ? `✅ ${m} &lt; ${autres} = ${r} : le triangle est constructible.` : plat ? `➖ ${m} = ${autres} : les points sont alignés (triangle aplati).` : `❌ ${m} &gt; ${autres} = ${r} : le triangle n’est pas constructible.`;
+      el.querySelector('.ia-msg').className = 'ia-msg ' + (ok ? 'ok' : 'ko'); }, [' cm', ' cm', ' cm']); }},
+  {id:'angles', t:'Somme des angles d’un triangle', ch:['6e:triangles', '6e:angles'], ic:'∠', col:'#B8323A', run(el){
+    el.innerHTML = `<svg viewBox="0 0 640 380" class="ia-svg" style="touch-action:none"></svg><p class="ia-msg">Déplace les sommets A, B et C.</p>`;
+    const s = el.querySelector('svg'), P = [[120, 320], [540, 320], [300, 80]], N = ['A', 'B', 'C'], cols = ['#C76A0E', '#3A6FB0', '#2E8B57'];
+    const ang = (p, q, r) => { const u = [q[0] - p[0], q[1] - p[1]], v = [r[0] - p[0], r[1] - p[1]]; return Math.acos((u[0] * v[0] + u[1] * v[1]) / Math.hypot(...u) / Math.hypot(...v)) * 180 / Math.PI; };
+    let drag = -1;
+    const dessin = () => { s.innerHTML = ''; s.append(svgN('polygon', {points:P.map(p => p.join(',')).join(' '), fill:'#F1F8F3', stroke:'#1F6F3D', 'stroke-width':5}));
+      const A = P.map((p, i) => Math.round(ang(p, P[(i + 1) % 3], P[(i + 2) % 3])));
+      const d = 180 - A[0] - A[1] - A[2]; A[2] += d; // arrondi : la somme reste 180
+      P.forEach((p, i) => { const g = svgN('g'); g.append(svgN('circle', {cx:p[0], cy:p[1], r:16, fill:cols[i], style:'cursor:grab'}));
+        g.append(svgN('text', {x:p[0], y:p[1] - 24, 'text-anchor':'middle', 'font-size':26, 'font-weight':800}, N[i]));
+        const c = [(P[0][0] + P[1][0] + P[2][0]) / 3, (P[0][1] + P[1][1] + P[2][1]) / 3], t = [p[0] + (c[0] - p[0]) * .32, p[1] + (c[1] - p[1]) * .32 + 8];
+        g.append(svgN('text', {x:t[0], y:t[1], 'text-anchor':'middle', 'font-size':24, 'font-weight':900, fill:cols[i]}, A[i] + '°')); g.dataset.i = i; s.append(g); });
+      el.querySelector('.ia-msg').innerHTML = `<span style="color:${cols[0]}">${A[0]}°</span> + <span style="color:${cols[1]}">${A[1]}°</span> + <span style="color:${cols[2]}">${A[2]}°</span> = <b>180°</b>`; };
+    const pt = e => { const r = s.getBoundingClientRect(); return [(e.clientX - r.left) * 640 / r.width, (e.clientY - r.top) * 380 / r.height]; };
+    s.addEventListener('pointerdown', e => { const p = pt(e); drag = P.findIndex(q => Math.hypot(q[0] - p[0], q[1] - p[1]) < 30); if (drag >= 0) s.setPointerCapture(e.pointerId); });
+    s.addEventListener('pointermove', e => { if (drag < 0) return; const p = pt(e); P[drag] = [Math.min(620, Math.max(20, p[0])), Math.min(360, Math.max(40, p[1]))]; dessin(); });
+    s.addEventListener('pointerup', () => { drag = -1; }); dessin(); }},
+  {id:'droite', t:'Demi-droite graduée', ch:['6e:droites', '6e:decimaux', '6e:fraction'], ic:'⟶', col:'#3A6FB0', run(el){
+    el.innerHTML = `<div class="ia-ctl">${curseur('Partage de l’unité', 1, 10, 4)}${curseur('Point M (en parts)', 0, 30, 7)}</div><svg viewBox="0 0 700 200" class="ia-svg"></svg><div class="ia-btns"><button class="btn mini" type="button" data-ia="voir">Afficher l’abscisse de M</button></div><p class="ia-msg"></p>`;
+    let voir = false; const s = el.querySelector('svg');
+    const maj = () => { const [n, m] = valeurs(el), U = 200, x0 = 40; s.innerHTML = '';
+      s.append(svgN('line', {x1:x0, y1:110, x2:680, y2:110, stroke:'#222', 'stroke-width':3})); s.append(svgN('polygon', {points:'680,102 696,110 680,118', fill:'#222'}));
+      for (let k = 0; k * U / n <= 630; k++) { const x = x0 + k * U / n, unit = k % n === 0; s.append(svgN('line', {x1:x, y1:unit ? 94 : 101, x2:x, y2:unit ? 126 : 119, stroke:'#222', 'stroke-width':unit ? 3 : 2})); if (unit) s.append(svgN('text', {x, y:156, 'text-anchor':'middle', 'font-size':24, 'font-weight':800}, k / n)); }
+      const xm = x0 + m * U / n; if (xm <= 680) { s.append(svgN('circle', {cx:xm, cy:110, r:9, fill:'#C76A0E'})); s.append(svgN('text', {x:xm, y:78, 'text-anchor':'middle', 'font-size':26, 'font-weight':900, fill:'#C76A0E'}, 'M')); }
+      const e = Math.floor(m / n), r = m % n, dec = (m / n).toFixed(3).replace(/\.?0+$/, '').replace('.', ',');
+      el.querySelector('.ia-msg').innerHTML = voir ? `M a pour abscisse <b>${m}/${n}</b>${r && e ? ` = <b>${e} + ${r}/${n}</b>` : ''}${Number.isInteger(m / n * 1000) ? ` = <b>${dec}</b>` : ''}` : 'Quelle est l’abscisse du point M ?'; };
+    el.querySelector('[data-ia="voir"]').onclick = () => { voir = !voir; maj(); }; lierCurseurs(el, maj); }},
+  {id:'fraction', t:'Fractions : bande et disque', ch:['6e:fraction', '6e:opfrac', '3e:fractions'], ic:'◔', col:'#8A4FA3', run(el){
+    el.innerHTML = `<div class="ia-ctl">${curseur('Nombre de parts', 2, 12, 4)}</div><div class="ia-btns"><button class="btn mini" data-ia="tout" type="button">Tout effacer</button></div><svg viewBox="0 0 700 300" class="ia-svg"></svg><p class="ia-msg"></p>`;
+    let on = new Set(); const s = el.querySelector('svg');
+    const maj = () => { const [n] = valeurs(el); on = new Set([...on].filter(k => k < n)); s.innerHTML = '';
+      for (let k = 0; k < n; k++) { const r = svgN('rect', {x:20 + k * 300 / n, y:110, width:300 / n, height:80, fill:on.has(k) ? '#8A4FA3' : '#fff', stroke:'#222', 'stroke-width':3, style:'cursor:pointer'}); r.onclick = () => { on.has(k) ? on.delete(k) : on.add(k); maj(); }; s.append(r);
+        const a0 = 2 * Math.PI * k / n - Math.PI / 2, a1 = 2 * Math.PI * (k + 1) / n - Math.PI / 2, R = 120, cx = 520, cy = 150;
+        const p = svgN('path', {d:`M${cx},${cy} L${cx + R * Math.cos(a0)},${cy + R * Math.sin(a0)} A${R},${R} 0 ${n === 1 ? 1 : 0} 1 ${cx + R * Math.cos(a1)},${cy + R * Math.sin(a1)} Z`, fill:on.has(k) ? '#8A4FA3' : '#fff', stroke:'#222', 'stroke-width':3, style:'cursor:pointer'}); p.onclick = r.onclick; s.append(p); }
+      el.querySelector('.ia-msg').innerHTML = `Partie coloriée : <b class="ia-frac"><span>${on.size}</span><span>${n}</span></b>${on.size && on.size % 1 === 0 && n % on.size === 0 && on.size !== n ? ` = <b class="ia-frac"><span>1</span><span>${n / on.size}</span></b>` : ''}`; };
+    el.querySelector('[data-ia="tout"]').onclick = () => { on.clear(); maj(); }; lierCurseurs(el, maj); }},
+  {id:'propor', t:'Tableau de proportionnalité', ch:['6e:propor', '3e:propor'], ic:'×', col:'#1F6F3D', run(el){
+    el.innerHTML = `<div class="ia-ctl">${curseur('Coefficient', 0.5, 10, 3, 0.5)}</div><div class="ia-btns"><button class="btn mini" data-ia="coef" type="button">Afficher le coefficient</button><button class="btn mini" data-ia="rep" type="button">Afficher les réponses</button><button class="btn mini" data-ia="nv" type="button">Nouveau tableau</button></div><div class="ia-tab"></div>`;
+    let vc = false, vr = false, xs = [2, 5, 7, 10];
+    const maj = () => { const [k] = valeurs(el), cache = [1, 3], f = x => String(Math.round(x * k * 100) / 100).replace('.', ',');
+      el.querySelector('.ia-tab').innerHTML = `<table class="ia-table"><tr>${xs.map(x => `<td>${x}</td>`).join('')}<td rowspan="2" class="ia-coef">${vc ? '× ' + String(k).replace('.', ',') : '× ?'}</td></tr><tr>${xs.map((x, i) => `<td>${cache.includes(i) && !vr ? '…' : f(x)}</td>`).join('')}</tr></table>`; };
+    el.querySelector('[data-ia="coef"]').onclick = () => { vc = !vc; maj(); }; el.querySelector('[data-ia="rep"]').onclick = () => { vr = !vr; maj(); };
+    el.querySelector('[data-ia="nv"]').onclick = () => { xs = Array.from({length:4}, () => 1 + Math.floor(Math.random() * 15)).sort((a, b) => a - b); vc = vr = false; maj(); };
+    lierCurseurs(el, maj); }},
+  {id:'des', t:'Lancers de dé : fréquences', ch:['6e:probas', '3e:probas', '3e:stats'], ic:'🎲', col:'#E07B00', run(el){
+    el.innerHTML = `<div class="ia-btns"><button class="btn plein" data-ia="1" type="button">Lancer 1 fois</button><button class="btn" data-ia="10" type="button">10 fois</button><button class="btn" data-ia="100" type="button">100 fois</button><button class="btn" data-ia="1000" type="button">1 000 fois</button><button class="btn mini" data-ia="0" type="button">Recommencer</button></div><svg viewBox="0 0 700 320" class="ia-svg"></svg><p class="ia-msg"></p>`;
+    const n = [0, 0, 0, 0, 0, 0], s = el.querySelector('svg');
+    const maj = (der) => { const T = n.reduce((a, b) => a + b, 0); s.innerHTML = '';
+      s.append(svgN('line', {x1:40, y1:270, x2:680, y2:270, stroke:'#222', 'stroke-width':2}));
+      const y6 = 270 - 1 / 6 * 600; s.append(svgN('line', {x1:40, y1:y6, x2:680, y2:y6, stroke:'#B8323A', 'stroke-dasharray':'8 6', 'stroke-width':2})); s.append(svgN('text', {x:684, y:y6 + 5, 'font-size':16, fill:'#B8323A', 'text-anchor':'end'}, '1/6'));
+      n.forEach((v, i) => { const f = T ? v / T : 0, h = Math.min(250, f * 600), x = 70 + i * 105; s.append(svgN('rect', {x, y:270 - h, width:70, height:h, fill:der === i ? '#C76A0E' : '#3A6FB0', rx:6}));
+        s.append(svgN('text', {x:x + 35, y:300, 'text-anchor':'middle', 'font-size':24, 'font-weight':800}, i + 1)); s.append(svgN('text', {x:x + 35, y:262 - h, 'text-anchor':'middle', 'font-size':16, 'font-weight':700}, T ? (Math.round(f * 1000) / 10 + ' %').replace('.', ',') : '')); });
+      el.querySelector('.ia-msg').innerHTML = T ? `${T.toLocaleString('fr-FR')} lancer${T > 1 ? 's' : ''}${der != null ? ` · dernier résultat : <b>${der + 1}</b>` : ''}. Plus on lance, plus les fréquences se rapprochent de 1/6 ≈ 16,7 %.` : 'Lance le dé !'; };
+    el.querySelectorAll('[data-ia]').forEach(b => b.onclick = () => { const k = +b.dataset.ia; if (!k) n.fill(0); let d = null; for (let i = 0; i < k; i++) { d = Math.floor(Math.random() * 6); n[d]++; } maj(k === 1 ? d : null); }); maj(); }},
+  {id:'pythagore', t:'Théorème de Pythagore : les carrés', ch:['3e:pythagore'], ic:'◺', col:'#2E8B57', run(el){
+    el.innerHTML = `<div class="ia-ctl">${curseur('AB', 1, 8, 3, 1, ' cm')}${curseur('AC', 1, 8, 4, 1, ' cm')}</div><svg viewBox="0 0 700 420" class="ia-svg"></svg><p class="ia-msg"></p>`;
+    const s = el.querySelector('svg');
+    lierCurseurs(el, () => { const [b, c] = valeurs(el), k = 22, A = [250, 260], B = [A[0], A[1] - b * k], C = [A[0] + c * k, A[1]]; s.innerHTML = '';
+      const sq = (p, q, col) => { const v = [q[0] - p[0], q[1] - p[1]], n = [v[1], -v[0]]; s.append(svgN('polygon', {points:[p, q, [q[0] + n[0], q[1] + n[1]], [p[0] + n[0], p[1] + n[1]]].map(x => x.join(',')).join(' '), fill:col, 'fill-opacity':.35, stroke:col, 'stroke-width':3})); };
+      sq(A, B, '#3A6FB0'); sq(C, A, '#C76A0E'); sq(B, C, '#2E8B57');
+      s.append(svgN('polygon', {points:[A, B, C].map(x => x.join(',')).join(' '), fill:'#fff', stroke:'#222', 'stroke-width':4}));
+      s.append(svgN('rect', {x:A[0], y:A[1] - 16, width:16, height:16, fill:'none', stroke:'#222', 'stroke-width':2}));
+      [['A', A, -24, 26], ['B', B, -24, 0], ['C', C, 8, 26]].forEach(([t, p, dx, dy]) => s.append(svgN('text', {x:p[0] + dx, y:p[1] + dy, 'font-size':24, 'font-weight':800}, t)));
+      const h = Math.sqrt(b * b + c * c), hs = (Math.round(h * 100) / 100).toString().replace('.', ',');
+      el.querySelector('.ia-msg').innerHTML = `<span style="color:#3A6FB0">AB² = ${b * b}</span> + <span style="color:#C76A0E">AC² = ${c * c}</span> = <span style="color:#2E8B57">BC² = ${b * b + c * c}</span> donc BC = √${b * b + c * c}${Number.isInteger(h) ? ' = ' + h : ' ≈ ' + hs} cm`; }, [' cm', ' cm']); }},
+  {id:'symetrie', t:'Symétrie axiale sur quadrillage', ch:['6e:symetrie', '3e:transfo'], ic:'⇋', col:'#8A4FA3', run(el){
+    el.innerHTML = `<p class="ia-msg" style="margin:0">Colorie des cases à gauche de l’axe, puis affiche le symétrique.</p><div class="ia-btns"><button class="btn mini" data-ia="voir" type="button">Afficher le symétrique</button><button class="btn mini" data-ia="eff" type="button">Effacer</button></div><svg viewBox="0 0 700 360" class="ia-svg"></svg>`;
+    const s = el.querySelector('svg'), on = new Set(); let voir = false; const C = 36, L = 9, H = 9, x0 = 26, y0 = 20;
+    const maj = () => { s.innerHTML = '';
+      for (let i = 0; i < 2 * L; i++) for (let j = 0; j < H; j++) { const g = i < L, k = i + ',' + j, m = (2 * L - 1 - i) + ',' + j, plein = g ? on.has(k) : (voir && on.has(m));
+        const r = svgN('rect', {x:x0 + i * C, y:y0 + j * C, width:C, height:C, fill:plein ? (g ? '#3A6FB0' : '#C76A0E') : '#fff', stroke:'#c9d6cc', 'stroke-width':1.5, style:g ? 'cursor:pointer' : ''}); if (g) r.onclick = () => { on.has(k) ? on.delete(k) : on.add(k); maj(); }; s.append(r); }
+      s.append(svgN('line', {x1:x0 + L * C, y1:y0 - 10, x2:x0 + L * C, y2:y0 + H * C + 10, stroke:'#B8323A', 'stroke-width':5})); s.append(svgN('text', {x:x0 + L * C + 8, y:y0 + H * C + 6, 'font-size':22, 'font-weight':800, fill:'#B8323A'}, '(d)')); };
+    el.querySelector('[data-ia="voir"]').onclick = () => { voir = !voir; maj(); }; el.querySelector('[data-ia="eff"]').onclick = () => { on.clear(); voir = false; maj(); }; maj(); }},
+  {id:'affine', t:'Fonction affine f(x) = ax + b', ch:['3e:fonctions'], ic:'📈', col:'#3A6FB0', run(el){
+    el.innerHTML = `<div class="ia-ctl">${curseur('a', -4, 4, 2, 0.5)}${curseur('b', -5, 5, 1, 0.5)}</div><svg viewBox="0 0 560 420" class="ia-svg"></svg><p class="ia-msg"></p>`;
+    const s = el.querySelector('svg'), U = 40, O = [280, 210], X = x => O[0] + x * U, Y = y => O[1] - y * U;
+    lierCurseurs(el, () => { const [a, b] = valeurs(el), fr = v => String(v).replace('.', ','); s.innerHTML = '';
+      for (let i = -6; i <= 6; i++) { s.append(svgN('line', {x1:X(i), y1:0, x2:X(i), y2:420, stroke:'#e3ebe5'})); }
+      for (let j = -5; j <= 5; j++) { s.append(svgN('line', {x1:0, y1:Y(j), x2:560, y2:Y(j), stroke:'#e3ebe5'})); }
+      s.append(svgN('line', {x1:0, y1:O[1], x2:560, y2:O[1], stroke:'#222', 'stroke-width':2})); s.append(svgN('line', {x1:O[0], y1:0, x2:O[0], y2:420, stroke:'#222', 'stroke-width':2}));
+      s.append(svgN('text', {x:X(1) - 4, y:O[1] + 22, 'font-size':16}, '1')); s.append(svgN('text', {x:O[0] - 16, y:Y(1) + 5, 'font-size':16}, '1'));
+      s.append(svgN('line', {x1:X(-7), y1:Y(a * -7 + b), x2:X(7), y2:Y(a * 7 + b), stroke:'#C76A0E', 'stroke-width':4}));
+      s.append(svgN('circle', {cx:O[0], cy:Y(b), r:7, fill:'#2E8B57'}));
+      el.querySelector('.ia-msg').innerHTML = `f(x) = <b>${fr(a)}x ${b < 0 ? '− ' + fr(-b) : '+ ' + fr(b)}</b> · coefficient directeur ${fr(a)} · ordonnée à l’origine <span style="color:#2E8B57">${fr(b)}</span>${a === 0 ? ' · fonction constante' : b === 0 ? ' · fonction linéaire' : ''}`; }); }},
+];
+/* ---- onglet Interactif ---- */
+let iaNiv = null, iaSel = new Set(), iaAjout = false;
+const iaPerso = () => D.cfg.inter || [];
+const iaChNom = key => { const [n, c] = key.split(':'); for (const [, L] of DOMAINES[n] || []) for (const [k, t] of L) if (k === c) return t; return c; };
+function iaToutes(){ return [...INTER.map(x => ({...x, kind:'inter'})), ...iaPerso()]; }
+function rendreInteractif(){
+  const nivs = [...new Set(classes().map(niveauDe).filter(n => DOMAINES[n]))].sort().reverse();
+  if (!nivs.includes(iaNiv)) iaNiv = niveauDe(cc()) && DOMAINES[niveauDe(cc())] ? niveauDe(cc()) : nivs[0] || '6e';
+  const dom = DOMAINES[iaNiv], cle = k => iaNiv + ':' + k, R = iaToutes().filter(r => r.ch.some(c => c.startsWith(iaNiv + ':')));
+  const nb = k => R.filter(r => r.ch.includes(cle(k))).length;
+  $('#iaFiltres').innerHTML = `<div class="puces">${nivs.map(n => `<button class="puce" data-ianiv="${n}" aria-pressed="${n === iaNiv}" type="button">${n}</button>`).join('')}</div>
+    <div class="ia-ch-t"><b>Chapitres</b>${iaSel.size ? `<span class="ia-nb">${iaSel.size}</span><button class="lien-btn" data-iaraz="1" type="button">tout voir</button>` : ''}</div>
+    ${dom.map(([d, L]) => { const tous = L.every(([k]) => iaSel.has(cle(k))), certains = L.some(([k]) => iaSel.has(cle(k)));
+      return `<div class="ia-dom"><label class="ia-dl"><input type="checkbox" data-iadom="${esc(d)}"${tous ? ' checked' : ''}${!tous && certains ? ' data-mixte="1"' : ''}> ${esc(d)}</label>${L.map(([k, t]) => `<label class="ia-cl"><input type="checkbox" data-iach="${cle(k)}"${iaSel.has(cle(k)) ? ' checked' : ''}> ${esc(t)}${nb(k) ? `<small>${nb(k)}</small>` : ''}</label>`).join('')}</div>`; }).join('')}`;
+  $$('#iaFiltres [data-mixte]').forEach(i => { i.indeterminate = true; });
+  const V = R.filter(r => !iaSel.size || r.ch.some(c => iaSel.has(c))), live = D.live.inter;
+  $('#iaGrille').innerHTML = V.map(r => { const tag = r.kind === 'inter' ? ['Interactif', '#E8457A'] : r.kind === 'pdf' ? ['PDF', '#8A4FA3'] : /geogebra/i.test(r.u || '') ? ['GeoGebra', '#E8457A'] : ['Lien', '#3A6FB0'];
+    return `<div class="ia-carte${live === r.id ? ' proj' : ''}"><div class="ia-vign" style="--c:${r.col || tag[1]}"><span class="ia-tag" style="background:${tag[1]}">${tag[0]}</span><span class="ia-ic">${r.ic || (r.kind === 'pdf' ? '📄' : '🔗')}</span></div>
+      <div class="ia-ct"><b>${esc(r.t)}</b><small>${r.ch.filter(c => c.startsWith(iaNiv + ':')).map(iaChNom).join(' · ')}</small></div>
+      <div class="ia-cb">${live === r.id ? `<button class="btn mini orange" data-iastop="1" type="button">■ Arrêter</button>` : `<button class="btn mini plein" data-iaproj="${esc(r.id)}" type="button">▶ Projeter</button>`}${r.kind !== 'inter' ? `<button class="btn mini danger" data-iasup="${esc(r.id)}" type="button" aria-label="Retirer">✕</button>` : ''}</div></div>`; }).join('')
+    + `<div class="ia-carte ia-plus">${iaAjout ? `<div class="ia-form"><b>Nouvelle ressource</b><input type="text" id="iaT" placeholder="Titre (ex. Cercle circonscrit)"><select id="iaCh">${dom.flatMap(([d, L]) => L.map(([k, t]) => `<option value="${cle(k)}"${iaSel.has(cle(k)) ? ' selected' : ''}>${esc(t)}</option>`)).join('')}</select><input type="text" id="iaU" placeholder="Lien GeoGebra ou site (https://…)"><span class="btn mini file-btn">ou un PDF<input type="file" id="iaPdf" accept="application/pdf,.pdf"></span><div class="ligne-flex"><button class="btn mini plein" id="iaOk" type="button">Ajouter</button><button class="btn mini" id="iaNon" type="button">Annuler</button></div></div>` : `<button class="ia-add" id="iaAdd" type="button">＋<br>Ajouter une ressource<br><small>lien GeoGebra, site, PDF</small></button>`}</div>`;
+  $('#iaLive').innerHTML = live ? `<span>▶ Au tableau : <b>${esc(iaToutes().find(r => r.id === live)?.t || '')}</b></span><button class="btn mini orange" data-iastop="1" type="button">■ Arrêter et revenir à la diapo</button>` : '';
+  $('#iaLive').hidden = !live;
+}
+function urlIntegrable(u){ const m = String(u).match(/geogebra\.org\/(?:m|material\/show\/id|classic|calculator)\/([A-Za-z0-9]+)/); return m ? `https://www.geogebra.org/material/iframe/id/${m[1]}/width/1280/height/720/border/888888/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/false/rc/false/ld/false/sdz/true/ctl/false` : u; }
+async function iaClic(b){
+  if (b.dataset.ianiv) { iaNiv = b.dataset.ianiv; iaSel.clear(); rendreInteractif(); return true; }
+  if (b.dataset.iaraz) { iaSel.clear(); rendreInteractif(); return true; }
+  if (b.dataset.iaproj) { D.live.inter = b.dataset.iaproj; save('app/live', D.live); rendre(); rendreInteractif(); return true; }
+  if (b.dataset.iastop) { D.live.inter = null; save('app/live', D.live); rendre(); if (onglet === 'interactif') rendreInteractif(); return true; }
+  if (b.dataset.iasup) { if (!confirm('Retirer cette ressource ?')) return true; const r = iaPerso().find(x => x.id === b.dataset.iasup); D.cfg.inter = iaPerso().filter(x => x.id !== b.dataset.iasup); save('app/config', D.cfg); if (r?.asset) assets?.delete(r.asset).catch(() => {}); rendreInteractif(); return true; }
+  if (b.id === 'iaAdd') { iaAjout = true; rendreInteractif(); $('#iaT')?.focus(); return true; }
+  if (b.id === 'iaNon') { iaAjout = false; rendreInteractif(); return true; }
+  if (b.id === 'iaOk') { const t = $('#iaT').value.trim(), u = $('#iaU').value.trim(), f = $('#iaPdf').files?.[0], ch = $('#iaCh').value;
+    if (!t) return $('#iaT').focus(), true; if (!f && !/^https?:\/\//i.test(u)) { $('#iaU').focus(); return true; }
+    const r = {id:'p' + Date.now().toString(36), t, ch:[ch], kind:f ? 'pdf' : 'lien'};
+    if (f) { try { const a = await assets.upload(f); r.asset = a.id; r.nom = f.name; } catch (e) { alert('Envoi impossible'); return true; } } else r.u = u;
+    D.cfg.inter = [...iaPerso(), r]; save('app/config', D.cfg); iaAjout = false; rendreInteractif(); return true; }
+  return false;
+}
+function iaChange(t){
+  if (t.dataset.iach) { t.checked ? iaSel.add(t.dataset.iach) : iaSel.delete(t.dataset.iach); rendreInteractif(); return true; }
+  if (t.dataset.iadom) { const L = DOMAINES[iaNiv].find(([d]) => d === t.dataset.iadom)[1]; L.forEach(([k]) => t.checked ? iaSel.add(iaNiv + ':' + k) : iaSel.delete(iaNiv + ':' + k)); rendreInteractif(); return true; }
+  return false;
+}
+/* ---- écran de classe : la ressource projetée ---- */
+async function rendreInterEcran(){
+  const h = $('#eInter'), id = D.live.inter, r = id && iaToutes().find(x => x.id === id);
+  if (!r) { if (!h.hidden) { h.hidden = true; h.innerHTML = ''; h.dataset.id = ''; } return; }
+  if (h.dataset.id === id) return;
+  h.dataset.id = id; h.hidden = false;
+  h.innerHTML = `<div class="ia-e-t"><b>${esc(r.t)}</b></div><div class="ia-e-c"></div>`;
+  const c = h.querySelector('.ia-e-c');
+  if (r.kind === 'inter') r.run(c);
+  else if (r.kind === 'pdf') { try { const u = window.__blobUrl ? await window.__blobUrl(r.asset) : '/_blob/' + r.asset; c.innerHTML = `<iframe src="${u}" title="${esc(r.t)}"></iframe>`; } catch (e) { c.textContent = 'PDF introuvable sur cet ordinateur.'; } }
+  else c.innerHTML = `<iframe src="${esc(urlIntegrable(r.u))}" title="${esc(r.t)}" allowfullscreen></iframe><a class="ia-e-ext" href="${esc(r.u)}" target="_blank" rel="noopener">Si rien ne s’affiche : ouvrir dans une fenêtre ↗</a>`;
 }
 
 /* ---------------- Bulletins : appréciations par trimestre ---------------- */
@@ -5206,6 +5425,7 @@ $('.onglets').addEventListener('click', e => { const b = e.target.closest('[data
 $('#tel').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (onglet === 'bulletin' && clicBulletin(b)) return;
+  if ((onglet === 'interactif' || b.dataset.iastop) && b.closest('[data-p="interactif"]')) { iaClic(b); return; }
   if (b.dataset.secp) { voir(+b.dataset.secp); return; }
   if (b.id === 'tAfficher') { const d = deckCourant(); if (d && AP) { const p = debutDiapo(d, diapoDe(d, AP.page)); AP = null; placer(d.id, p); } return; }
   if (b.id === 'tDirect') { AP = null; rendre(); return; }
@@ -5289,7 +5509,7 @@ $('#eExo').addEventListener('change', e => { const d = deckCourant(); if (d && e
 $('#eDeck').addEventListener('click', e => e.stopPropagation()); $('#eExo').addEventListener('click', e => e.stopPropagation());
 
 $('#tel').addEventListener('input', e => { if (onglet === 'bulletin' && saisieBulletin(e.target)) return; if (e.target.id === 'oSeuil') $('#oSeuilV').textContent = e.target.value; if (e.target.dataset.trik) $('#oTriV_' + e.target.dataset.trik).textContent = triF(+e.target.value) + ' cm'; });
-$('#tel').addEventListener('change', e => {
+$('#tel').addEventListener('change', e => { if (onglet === 'interactif' && iaChange(e.target)) return;
   const t = e.target;
   if (t.id === 'oSeuil') { majOutils(o => { o.seuil = +t.value; }); return; }
   if (t.dataset.trik) { const k = t.dataset.trik, v = +t.value; majOutils(o => { o.tri = {...triVal(), [k]:v}; }); return; }
@@ -5337,7 +5557,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795256539',t0=Date.now(),vue=false;
+<script>(function(){var V='1795283354',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
