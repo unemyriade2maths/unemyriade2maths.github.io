@@ -618,7 +618,6 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
       <div class="ou-cartes">
         <div class="ou-carte"><h4>🌿 Calme de la classe</h4><div id="oCalme" class="panneau" style="gap:10px"></div></div>
         <div class="ou-carte"><h4>🏆 Score d’équipes</h4><div id="oScore" class="panneau" style="gap:8px"></div></div>
-        <div class="ou-carte"><h4>📐 Triangle constructible ?</h4><div id="oTri" class="panneau" style="gap:8px"></div></div>
       </div></section>
   </div>
 
@@ -654,6 +653,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
   <!-- Interactif -->
   <div class="panneau" data-p="interactif" hidden>
     <div id="iaLive" class="ia-live" hidden></div>
+    <div id="iaTri" class="carte" hidden><h4 style="margin:0;color:var(--vert)">📐 Triangle constructible ? · réglages</h4><div id="oTri" class="panneau" style="gap:8px"></div></div>
     <div class="ia-grille-page"><aside id="iaFiltres" class="carte ia-filtres"></aside><div id="iaGrille" class="ia-grille"></div></div>
   </div>
 
@@ -3842,6 +3842,13 @@ function rendreOutilsEcran(){
   $('#eScore').hidden = !sc?.on;
   if (sc?.on) $('#eScore').innerHTML = sc.eq.map((e, i) => `<div class="eq" style="--c:${['var(--vert)', 'var(--orange-texte)', 'var(--bleu)', '#8E3B8E'][i]}"><span>${esc(e.n)}</span><b>${e.s}</b></div>`).join('');
 }
+function rendreTriTel(){
+  const o = D.live.outils || {}, tv = triVal();
+  $('#oTri').innerHTML = `<button class="btn${o.triOn ? ' plein' : ''}" data-ou="triOn" type="button">${o.triOn ? 'Animation affichée · masquer' : 'Afficher l’animation à l’écran'}</button>
+    ${['bc', 'ab', 'ac'].map(k => `<label class="champ">${k.toUpperCase()} : <b id="oTriV_${k}">${triF(tv[k])} cm</b><input type="range" id="oTri_${k}" data-trik="${k}" min="0.5" max="12" step="0.1" value="${tv[k]}"></label>`).join('')}
+    <div class="ligne-flex">${[4, 7, 8].map(x => `<button class="btn mini" data-tripre="${x}" type="button">BC = 10 · AB = 3 · AC = ${x}</button>`).join('')}</div>
+    <p class="aide">Les curseurs marchent aussi directement à l’écran, à la souris.</p>`;
+}
 function rendreOutilsTel(){
   const o = D.live.outils || {}, sc = D.live.score || {on:false, eq:[]};
   $('#oFlot').innerHTML = [...Object.entries(FLOT).map(([k, d]) => `<button class="ou-tuile" data-oflot="${k}" type="button"><span>${d.ic}</span>${d.t}</button>`), `<button class="ou-tuile" data-oflot="cmp" type="button"><span>½ ¾</span>Comparer 2 fractions</button>`].join('');
@@ -3852,11 +3859,7 @@ function rendreOutilsTel(){
     <label class="champ">Seuil de bruit : <b id="oSeuilV">${o.seuil || 60}</b><input type="range" id="oSeuil" min="20" max="95" value="${o.seuil || 60}"></label>
     <label class="champ">Un animal de plus toutes les<select id="oPas">${[0.5, 1, 2, 3, 5].map(m => `<option value="${m}"${(o.pas || 1) == m ? ' selected' : ''}>${m === 0.5 ? '30 secondes' : m + ' minute' + (m > 1 ? 's' : '')} de calme</option>`).join('')}</select></label>
     <p class="aide">Le micro de l’ordinateur mesure le bruit (rien n’est enregistré). Trop de bruit : le paresseux se réveille, le compteur repart à zéro et 2 animaux se cachent.</p>`;
-  const tv = triVal();
-  $('#oTri').innerHTML = `<button class="btn${o.triOn ? ' plein' : ''}" data-ou="triOn" type="button">${o.triOn ? 'Animation affichée · masquer' : 'Afficher l’animation à l’écran'}</button>
-    ${['bc', 'ab', 'ac'].map(k => `<label class="champ">${k.toUpperCase()} : <b id="oTriV_${k}">${triF(tv[k])} cm</b><input type="range" id="oTri_${k}" data-trik="${k}" min="0.5" max="12" step="0.1" value="${tv[k]}"></label>`).join('')}
-    <div class="ligne-flex">${[4, 7, 8].map(x => `<button class="btn mini" data-tripre="${x}" type="button">BC = 10 · AB = 3 · AC = ${x}</button>`).join('')}</div>
-    <p class="aide">Les curseurs marchent aussi directement à l’écran, à la souris.</p>`;
+  rendreTriTel();
   $('#oScore').innerHTML = `
     <div class="ligne-flex"><button class="btn mini${sc.on ? ' plein' : ''}" id="oScoreOn" type="button">${sc.on ? 'Score affiché' : 'Afficher le score'}</button>
     <select id="oScoreN" style="width:auto;min-height:34px">${[2, 3, 4].map(n => `<option value="${n}"${(sc.eq.length || 2) === n ? ' selected' : ''}>${n} équipes</option>`).join('')}</select>
@@ -5018,6 +5021,7 @@ const INTER = [
       const m = Math.max(a, b, c), r = a + b + c - m, autres = [a, b, c].sort((x, y) => y - x).slice(1).join(' + ');
       el.querySelector('.ia-msg').innerHTML = ok ? `✅ ${m} &lt; ${autres} = ${r} : le triangle est constructible.` : plat ? `➖ ${m} = ${autres} : les points sont alignés (triangle aplati).` : `❌ ${m} &gt; ${autres} = ${r} : le triangle n’est pas constructible.`;
       el.querySelector('.ia-msg').className = 'ia-msg ' + (ok ? 'ok' : 'ko'); }, [' cm', ' cm', ' cm']); }},
+  {id:'trianim', t:'Triangle constructible ? (animation)', ch:['6e:triangles', '3e:pythagore'], ic:'📐', col:'#2E8B57', anim:true},
   {id:'angles', t:'Somme des angles d’un triangle', ch:['6e:triangles', '6e:angles'], ic:'∠', col:'#B8323A', run(el){
     el.innerHTML = `<svg viewBox="0 0 640 380" class="ia-svg" style="touch-action:none"></svg><p class="ia-msg">Déplace les sommets A, B et C.</p>`;
     const s = el.querySelector('svg'), P = [[120, 320], [540, 320], [300, 80]], N = ['A', 'B', 'C'], cols = ['#C76A0E', '#3A6FB0', '#2E8B57'];
@@ -5118,21 +5122,22 @@ function rendreInteractif(){
     ${dom.map(([d, L]) => { const tous = L.every(([k]) => iaSel.has(cle(k))), certains = L.some(([k]) => iaSel.has(cle(k)));
       return `<div class="ia-dom"><label class="ia-dl"><input type="checkbox" data-iadom="${esc(d)}"${tous ? ' checked' : ''}${!tous && certains ? ' data-mixte="1"' : ''}> ${esc(d)}</label>${L.map(([k, t]) => `<label class="ia-cl"><input type="checkbox" data-iach="${cle(k)}"${iaSel.has(cle(k)) ? ' checked' : ''}> ${esc(t)}${nb(k) ? `<small>${nb(k)}</small>` : ''}</label>`).join('')}</div>`; }).join('')}`;
   $$('#iaFiltres [data-mixte]').forEach(i => { i.indeterminate = true; });
-  const V = R.filter(r => !iaSel.size || r.ch.some(c => iaSel.has(c))), live = D.live.inter;
+  const V = R.filter(r => !iaSel.size || r.ch.some(c => iaSel.has(c))), live = D.live.outils?.triOn ? 'trianim' : D.live.inter;
   $('#iaGrille').innerHTML = V.map(r => { const tag = r.kind === 'inter' ? ['Interactif', '#E8457A'] : r.kind === 'pdf' ? ['PDF', '#8A4FA3'] : /geogebra/i.test(r.u || '') ? ['GeoGebra', '#E8457A'] : ['Lien', '#3A6FB0'];
     return `<div class="ia-carte${live === r.id ? ' proj' : ''}"><div class="ia-vign" style="--c:${r.col || tag[1]}"><span class="ia-tag" style="background:${tag[1]}">${tag[0]}</span><span class="ia-ic">${r.ic || (r.kind === 'pdf' ? '📄' : '🔗')}</span></div>
       <div class="ia-ct"><b>${esc(r.t)}</b><small>${r.ch.filter(c => c.startsWith(iaNiv + ':')).map(iaChNom).join(' · ')}</small></div>
       <div class="ia-cb">${live === r.id ? `<button class="btn mini orange" data-iastop="1" type="button">■ Arrêter</button>` : `<button class="btn mini plein" data-iaproj="${esc(r.id)}" type="button">▶ Projeter</button>`}${r.kind !== 'inter' ? `<button class="btn mini danger" data-iasup="${esc(r.id)}" type="button" aria-label="Retirer">✕</button>` : ''}</div></div>`; }).join('')
     + `<div class="ia-carte ia-plus">${iaAjout ? `<div class="ia-form"><b>Nouvelle ressource</b><input type="text" id="iaT" placeholder="Titre (ex. Cercle circonscrit)"><select id="iaCh">${dom.flatMap(([d, L]) => L.map(([k, t]) => `<option value="${cle(k)}"${iaSel.has(cle(k)) ? ' selected' : ''}>${esc(t)}</option>`)).join('')}</select><input type="text" id="iaU" placeholder="Lien GeoGebra ou site (https://…)"><span class="btn mini file-btn">ou un PDF<input type="file" id="iaPdf" accept="application/pdf,.pdf"></span><div class="ligne-flex"><button class="btn mini plein" id="iaOk" type="button">Ajouter</button><button class="btn mini" id="iaNon" type="button">Annuler</button></div></div>` : `<button class="ia-add" id="iaAdd" type="button">＋<br>Ajouter une ressource<br><small>lien GeoGebra, site, PDF</small></button>`}</div>`;
   $('#iaLive').innerHTML = live ? `<span>▶ Au tableau : <b>${esc(iaToutes().find(r => r.id === live)?.t || '')}</b></span><button class="btn mini orange" data-iastop="1" type="button">■ Arrêter et revenir à la diapo</button>` : '';
+  $('#iaTri').hidden = live !== 'trianim'; if (live === 'trianim') rendreTriTel();
   $('#iaLive').hidden = !live;
 }
 function urlIntegrable(u){ const m = String(u).match(/geogebra\.org\/(?:m|material\/show\/id|classic|calculator)\/([A-Za-z0-9]+)/); return m ? `https://www.geogebra.org/material/iframe/id/${m[1]}/width/1280/height/720/border/888888/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/false/rc/false/ld/false/sdz/true/ctl/false` : u; }
 async function iaClic(b){
   if (b.dataset.ianiv) { iaNiv = b.dataset.ianiv; iaSel.clear(); rendreInteractif(); return true; }
   if (b.dataset.iaraz) { iaSel.clear(); rendreInteractif(); return true; }
-  if (b.dataset.iaproj) { D.live.inter = b.dataset.iaproj; save('app/live', D.live); rendre(); rendreInteractif(); return true; }
-  if (b.dataset.iastop) { D.live.inter = null; save('app/live', D.live); rendre(); if (onglet === 'interactif') rendreInteractif(); return true; }
+  if (b.dataset.iaproj) { const an = b.dataset.iaproj === 'trianim'; D.live.inter = an ? null : b.dataset.iaproj; D.live.outils = {...(D.live.outils || {}), triOn:an}; save('app/live', D.live); rendre(); rendreInteractif(); return true; }
+  if (b.dataset.iastop) { D.live.inter = null; D.live.outils = {...(D.live.outils || {}), triOn:false}; save('app/live', D.live); rendre(); if (onglet === 'interactif') rendreInteractif(); return true; }
   if (b.dataset.iasup) { if (!confirm('Retirer cette ressource ?')) return true; const r = iaPerso().find(x => x.id === b.dataset.iasup); D.cfg.inter = iaPerso().filter(x => x.id !== b.dataset.iasup); save('app/config', D.cfg); if (r?.asset) assets?.delete(r.asset).catch(() => {}); rendreInteractif(); return true; }
   if (b.id === 'iaAdd') { iaAjout = true; rendreInteractif(); $('#iaT')?.focus(); return true; }
   if (b.id === 'iaNon') { iaAjout = false; rendreInteractif(); return true; }
@@ -5694,7 +5699,7 @@ $('.onglets').addEventListener('click', e => { const b = e.target.closest('[data
 $('#tel').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (onglet === 'bulletin' && clicBulletin(b)) return;
-  if ((onglet === 'interactif' || b.dataset.iastop) && b.closest('[data-p="interactif"]')) { iaClic(b); return; }
+  if ((onglet === 'interactif' || b.dataset.iastop) && b.closest('[data-p="interactif"]') && !b.closest('#iaTri')) { iaClic(b); return; }
   if (b.dataset.secp) { voir(+b.dataset.secp); return; }
   if (b.id === 'tAfficher') { const d = deckCourant(); if (d && AP) { const p = debutDiapo(d, diapoDe(d, AP.page)); AP = null; placer(d.id, p); } return; }
   if (b.id === 'tDirect') { AP = null; rendre(); return; }
@@ -5829,7 +5834,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795360293',t0=Date.now(),vue=false;
+<script>(function(){var V='1795360894',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
