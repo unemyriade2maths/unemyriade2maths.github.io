@@ -461,9 +461,15 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .sc-l s{color:#B8323A}.sc-l sup{position:absolute;top:-14px;right:-6px;font-size:22px;color:#B8323A}.sc-l:nth-child(2){border-bottom:4px solid #1F3A5F}.sc-res{color:#1E5AA8}
 .ou-ouverts{display:flex;flex-direction:column;gap:10px}.ou-ouverts:empty{display:none}
 .ou-reg-t{display:flex;align-items:center;gap:10px}.ou-reg-t b{color:var(--orange-fonce)}
-.ou-regs{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:10px}
-.ou-reg{background:#FFF8F0;border:2px solid #F7D3AE;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
-.ou-reg-h{display:flex;align-items:center;gap:8px}.ou-reg-h .ico{width:26px;height:26px}.ou-taille{display:flex;align-items:center;gap:4px;font-weight:800;font-size:13px;color:var(--gris)}
+.ou-regs{display:grid;grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:14px}
+.ou-reg{background:#fff;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:12px;display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center}
+.ou-apercu{width:200px;max-height:170px;background:#F4F8F5;border-radius:12px;container-type:size;display:flex;flex-direction:column;overflow:hidden;padding:6px;cursor:pointer}
+.ou-apercu input{pointer-events:none}
+.ou-reg-c{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ou-reg-h{display:flex;align-items:center;gap:8px}.ou-reg-h .ico{width:28px;height:28px}.ou-reg-h b{font-size:16px;color:var(--vert)}
+.ou-x{border:0;background:#F4F4F4;border-radius:999px;width:30px;height:30px;cursor:pointer;font-weight:900;color:#777}.ou-x:hover{background:#FBE3E3;color:#B8323A}
+.ou-reg .fl-barre{gap:6px}.ou-reg .fl-b{border:0;background:#F1F4F2;border-radius:10px;min-height:34px;min-width:38px;font-size:15px}.ou-reg .fl-b.on{background:var(--vert);color:#fff}
+.ou-taille{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13px;color:var(--gris)}
 .ou-chip{display:inline-flex;align-items:center;gap:6px;background:#FFF1E2;color:#8a4300;border-radius:999px;padding:4px 6px 4px 12px;font-weight:800;font-size:14px}.ou-chip button{border:0;background:#fff;border-radius:999px;width:24px;height:24px;cursor:pointer}
 .ou-cartes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
 .ou-carte{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:14px 16px;display:flex;flex-direction:column;gap:10px}.ou-carte h4{margin:0;color:var(--vert);font-size:16px}
@@ -471,9 +477,9 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .fl{position:absolute;pointer-events:auto;background:transparent;display:flex;flex-direction:column;overflow:visible;resize:both;min-width:120px;min-height:90px;container-type:size;border:2px dashed transparent;border-radius:10px}
 .fl:hover{border-color:rgba(31,111,61,.45)}
 .fl::-webkit-resizer{background:transparent}
-.fl-t{position:absolute;left:-2px;bottom:100%;margin-bottom:4px;display:flex;align-items:center;gap:6px;background:#1F6F3D;color:#fff;border-radius:10px;padding:4px;cursor:grab;user-select:none;touch-action:none;opacity:0;pointer-events:none;transition:opacity .15s;z-index:2;white-space:nowrap}
-.fl:hover .fl-t,.fl-t:hover{opacity:1;pointer-events:auto}.fl-grip{font-size:18px;padding:0 6px}.fl-reg{display:flex;gap:4px;align-items:center}.fl-reg .fl-b{min-height:28px;min-width:28px;font-size:13px}
-.fl-x{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;width:28px;height:28px;cursor:pointer;font-weight:900}
+.fl-t{position:absolute;left:-2px;bottom:100%;margin-bottom:6px;display:flex;align-items:center;gap:4px;background:#fff;color:#1F6F3D;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.18);padding:4px 6px;cursor:grab;user-select:none;touch-action:none;opacity:0;pointer-events:none;transition:opacity .15s;z-index:2;white-space:nowrap}
+.fl:hover .fl-t,.fl-t:hover{opacity:1;pointer-events:auto}.fl-grip{font-size:18px;padding:0 6px}.fl-reg{display:flex;gap:4px;align-items:center}.fl-reg .fl-b{border:0;background:#F1F4F2;border-radius:999px;min-height:28px;min-width:30px;font-size:13px}.fl-reg .fl-b.on{background:#1F6F3D;color:#fff}
+.fl-x{border:0;background:#F4F4F4;color:#777;border-radius:999px;width:28px;height:28px;cursor:pointer;font-weight:900}
 .fl-corps{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:6px;position:relative}
 .fl-barre{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .fl-b{border:2px solid #d6e5da;background:#fff;border-radius:9px;min-width:34px;min-height:32px;font:800 14px Nunito,'Segoe UI',sans-serif;cursor:pointer;padding:0 8px}.fl-b.on{background:#1F6F3D;border-color:#1F6F3D;color:#fff}
@@ -3877,7 +3883,7 @@ function rendreOutilsTel(){
   const L = flots();
   const ouv = $('#oOuverts'), sigO = JSON.stringify(L);
   if (ouv.dataset.sig !== sigO && !(ouv.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) { ouv.dataset.sig = sigO;
-    ouv.innerHTML = L.length ? `<div class="ou-reg-t"><b>Au tableau, à régler</b><button class="btn mini danger" id="oFlotRaz" type="button">Tout retirer</button></div><div class="ou-regs">${L.map(f => `<div class="ou-reg" data-fid="${f.id}"><div class="ou-reg-h">${ICO[f.type]}<b>${FLOT[f.type].t}</b><span class="sp"></span><span class="ou-taille">Taille <button class="fl-b" data-ftaille="-1" type="button">−</button><button class="fl-b" data-ftaille="1" type="button">+</button></span><button class="fl-b" data-ofx="${f.id}" type="button" aria-label="Retirer">✕</button></div><div class="fl-barre">${partsFlot(f).barre || '<span class="aide">Rien à régler : on agit directement sur l’écran.</span>'}</div></div>`).join('')}</div>` : ''; }
+    ouv.innerHTML = L.length ? `<div class="ou-reg-t"><b>Au tableau, à régler</b><button class="btn mini danger" id="oFlotRaz" type="button">Tout retirer</button></div><div class="ou-regs">${L.map(f => `<div class="ou-reg" data-fid="${f.id}"><div class="ou-apercu fl-${f.type}" style="aspect-ratio:${(f.w * 16 / f.h / 9).toFixed(3)}">${partsFlot(f).objet}</div><div class="ou-reg-c"><div class="ou-reg-h">${ICO[f.type]}<b>${FLOT[f.type].t}</b><span class="sp"></span><button class="ou-x" data-ofx="${f.id}" type="button" aria-label="Retirer du tableau">✕</button></div><div class="fl-barre">${partsFlot(f).barre || '<span class="aide">On agit directement sur l’écran.</span>'}</div><div class="ou-taille">Taille <button class="fl-b" data-ftaille="-1" type="button">−</button><button class="fl-b" data-ftaille="1" type="button">+</button></div></div></div>`).join('')}</div>` : ''; }
   $('#oCalme').innerHTML = `
     <div class="duo"><button class="btn${o.foret ? ' plein' : ''}" data-ou="foret" type="button">🌳 Forêt de Guyane${o.foret ? ' · affichée' : ''}</button><button class="btn${o.mascotte !== false ? ' plein' : ''}" data-ou="mascotte" type="button">🦥 Paresseux${o.mascotte !== false ? ' · affiché' : ''}</button></div>
     <label class="champ">Seuil de bruit : <b id="oSeuilV">${o.seuil || 60}</b><input type="range" id="oSeuil" min="20" max="95" value="${o.seuil || 60}"></label>
@@ -3989,6 +3995,7 @@ function rendreFlotsEcran(){
     if (w.dataset.sig !== sig && !(w.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) { w.dataset.sig = sig; const P = partsFlot(f); w.querySelector('.fl-reg').innerHTML = P.barre; w.querySelector('.fl-corps').innerHTML = P.objet; }
   }
 }
+$('#oOuverts').addEventListener('click', e => { const a = e.target.closest('.ou-apercu'); if (!a) return; e.stopPropagation(); actionFlot(a.closest('[data-fid]').dataset.fid, e.target); });
 /* une action sur un outil (depuis l'écran ou la télécommande) */
 function actionFlot(id, t){
   const part = t.closest('[data-part]'), b = t.closest('button');
@@ -5807,7 +5814,7 @@ $('#tel').addEventListener('click', e => {
   if (b.id === 'planEcran2') { D.live.showPlan = !D.live.showPlan; save('app/live', D.live); rendre(); return; }
   if (b.dataset.tripre) majOutils(o => { o.tri = {bc:10, ab:3, ac:+b.dataset.tripre}; o.triOn = true; });
   else if (b.dataset.oflot) { if (b.dataset.oflot === 'cmp') { ajouterFlot('frac', {n:4, k:[0, 1, 2]}); ajouterFlot('frac', {n:8, k:[0, 1, 2, 3, 4, 5]}); const L = flots(); Object.assign(L[L.length - 2], {x:8, y:14}); Object.assign(L[L.length - 1], {x:52, y:14}); save('app/live', D.live); rendre(); } else ajouterFlot(b.dataset.oflot); }
-  else if (b.closest('[data-fid]') && !b.dataset.ofx) { actionFlot(b.closest('[data-fid]').dataset.fid, b); }
+  else if (b.closest('[data-fid]') && !b.dataset.ofx && !b.closest('.ou-apercu')) { actionFlot(b.closest('[data-fid]').dataset.fid, b); }
   else if (b.dataset.ofx) { D.live.flot = flots().filter(f => f.id !== b.dataset.ofx); save('app/live', D.live); rendre(); }
   else if (b.id === 'oFlotRaz') { D.live.flot = []; save('app/live', D.live); rendre(); }
   else if (b.dataset.ou) majOutils(o => { const k = b.dataset.ou; o[k] = k === 'mascotte' ? o[k] === false : !o[k]; });
@@ -5934,7 +5941,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795362271',t0=Date.now(),vue=false;
+<script>(function(){var V='1795363156',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
