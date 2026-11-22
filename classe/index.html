@@ -506,6 +506,13 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .fl-op2 .barre{text-decoration:line-through 2px;opacity:.7}
 .fl-op2 tr.op-res td{font-weight:700}
 .fl-phr{margin:0;font:600 3.4cqmin Arial,sans-serif;color:#1F3A5F;text-align:center;max-width:95%}.fl-err{margin:auto;font:700 4cqmin Nunito,sans-serif;color:#B8323A}
+.op-barre{flex-direction:column;align-items:stretch;gap:8px}.fl-reg .op-barre{flex-direction:row}
+.op-saisie{display:flex;align-items:center;gap:8px}.op-saisie .fl-in{flex:1;min-width:0}
+.op-seg{display:flex;border:2px solid #2F5597;border-radius:10px;overflow:hidden}.op-seg button{border:0;background:#fff;width:38px;height:34px;font:700 20px Arial,sans-serif;color:var(--c-op);cursor:pointer}.op-seg button+button{border-left:1.5px solid #2F5597}.op-seg button.on{background:#2F5597;color:#fff}
+.op-pas{display:flex;align-items:center;gap:8px}.op-dots{display:flex;gap:4px;flex:1;flex-wrap:wrap}.op-dots i{width:9px;height:9px;border-radius:50%;background:#d7deea}.op-dots i.on{background:#2F5597}
+.op-r{border:0;background:#EEF2F8;color:#2F5597;width:34px;height:34px;border-radius:50%;font:700 22px/1 Arial;cursor:pointer}.op-r:disabled{opacity:.35}
+.op-n{border:0;background:#2F5597;color:#fff;border-radius:999px;height:36px;padding:0 16px;font:800 14px Nunito,'Segoe UI',sans-serif;cursor:pointer}
+.op-t{border:0;background:none;color:#2F5597;font:700 13px Nunito,sans-serif;text-decoration:underline;cursor:pointer}.op-ph{font:600 13px Nunito,sans-serif;color:#555;display:flex;gap:4px;align-items:center}
 .fl-in{width:5.5em;min-height:32px;border:2px solid #2F5597;border-radius:9px;font:800 15px Nunito,'Segoe UI',sans-serif;text-align:center;padding:0 4px}
 .fl-op{border-collapse:collapse;margin:0 auto;background:#fff}.fl-op td{width:min(11cqw,13cqh);height:min(11cqw,13cqh);border:1px dashed #b9cbe3;padding:0}
 .fl-op .fl-trait tr:first-child td,.fl-op tr.fl-trait td{border-top:3px solid #1F3A5F}
@@ -4090,7 +4097,7 @@ function calcOp(o){
 function htmlOp(o){
   const R = calcOp(o); if (R.err) return `<p class="fl-err">${R.err}</p>`;
   const e = Math.min(o.e ?? 0, R.N), vis = it => it.s <= e && (it.h == null || e < it.h);
-  const cell = (r, c) => (r.c[c] || []).filter(vis).map(it => `<span class="${[it.cls, r.cls === 'op-ret' ? (it.s === e && e ? 'circ' : 'barre') : '', r.cls !== 'op-ret' && it.s === e && e && (it.cls === 'pre' || it.cls === 'sub') ? 'circ' : ''].filter(Boolean).join(' ')}">${it.t}</span>`).join('');
+  const cell = (r, c) => (r.c[c] || []).filter(vis).sort((x, y) => (y.cls === 'pre') - (x.cls === 'pre')).map(it => `<span class="${[it.cls, r.cls === 'op-ret' ? (it.s === e && e ? 'circ' : 'barre') : '', r.cls !== 'op-ret' && it.s === e && e && (it.cls === 'pre' || it.cls === 'sub') ? 'circ' : ''].filter(Boolean).join(' ')}">${it.t}</span>`).join('');
   const ph = o.phr && R.phr && e >= R.N;
   return `<div class="fl-opw"><table class="fl-op2" style="--nc:${R.nc};--nr:${R.rows.length + (ph ? 2 : 0)}">${R.rows.map(r => `<tr class="${[r.cls, r.trait ? 'op-trait' : ''].join(' ')}">${Array.from({length:R.nc}, (_, c) => `<td>${c === 0 ? `<span class="${r.sg === '=' ? 'eg' : 'sg'}">${r.sg}</span>` : cell(r, c)}</td>`).join('')}</tr>`).join('')}</table>${ph ? `<p class="fl-phr">${R.phr}</p>` : ''}</div>`;
 }
@@ -4108,8 +4115,8 @@ function corpsFlot(f){
     for (let i = 1; i <= 10; i++) h += `<tr><th class="${sr === i ? 'hl' : ''}">${i}</th>${[...Array(10)].map((_, j) => { const on = sr === i && sc === j + 1, ax = sr === i || sc === j + 1; return `<td data-pyt="${i}-${j + 1}" class="${on ? 'sel' : ax && o.sel ? 'ax' : ''}">${o.cache && !on ? '' : i * (j + 1)}</td>`; }).join('')}</tr>`;
     return h + `</table>`; }
   if (f.type === 'op') { const R = calcOp(o), N = R.N || 0, e = Math.min(o.e ?? 0, N);
-    return `<div class="fl-barre"><input class="fl-in" data-fv="a" value="${esc(o.a)}" inputmode="decimal" aria-label="Premier nombre">${['+', '−', '×'].map(x => `<button class="fl-b${o.op === x ? ' on' : ''}" data-fop="${x}" type="button">${x}</button>`).join('')}<input class="fl-in" data-fv="b" value="${esc(o.b)}" inputmode="decimal" aria-label="Deuxième nombre">
-      <span class="fl-sep"></span><button class="fl-b" data-fet="0" type="button" title="Recommencer">⏮</button><button class="fl-b" data-fet="-1" type="button">◀</button><b class="fl-nb">${e} / ${N}</b><button class="fl-b" data-fet="1" type="button">Étape ▶</button><button class="fl-b" data-fet="all" type="button">Tout</button>${o.op === '×' ? `<button class="fl-b${o.phr ? ' on' : ''}" data-fphr="1" type="button" title="Phrase sur la virgule">Phrase</button>` : ''}</div>${htmlOp(o)}`; }
+    return `<div class="fl-barre op-barre"><div class="op-saisie"><input class="fl-in" data-fv="a" value="${esc(o.a)}" inputmode="decimal" aria-label="Premier nombre"><div class="op-seg">${['+', '−', '×'].map(x => `<button class="${o.op === x ? 'on' : ''}" data-fop="${x}" type="button">${x}</button>`).join('')}</div><input class="fl-in" data-fv="b" value="${esc(o.b)}" inputmode="decimal" aria-label="Deuxième nombre"></div>
+      <div class="op-pas"><button class="op-r" data-fet="-1" type="button" aria-label="Étape précédente" ${e ? '' : 'disabled'}>‹</button><span class="op-dots">${Array.from({length:N}, (_, k) => `<i class="${k < e ? 'on' : ''}"></i>`).join('')}</span><button class="op-n" data-fet="${e >= N ? '0' : '1'}" type="button">${e >= N ? 'Recommencer' : e ? 'Étape suivante' : 'Commencer'}</button>${e < N ? `<button class="op-t" data-fet="all" type="button">Tout</button>` : ''}${o.op === '×' && R.phr ? `<label class="op-ph"><input type="checkbox" data-fphr="1" ${o.phr ? 'checked' : ''}> phrase</label>` : ''}</div></div>${htmlOp(o)}`; }
   if (f.type === 'mult') return `<div class="fl-barre"><button class="fl-b" data-fvide="1" type="button">Effacer</button></div><table class="fl-op"><tbody>${grille(f.id, 2, 7, '', o)}</tbody><tbody class="fl-trait">${grille(f.id, 3, 7, '', o).replace(/data-fc="(\d)-/g, (m, r) => `data-fc="${+r + 2}-`)}</tbody><tbody class="fl-trait">${grille(f.id, 1, 7, 'res', o).replace(/data-fc="0-/g, 'data-fc="5-')}</tbody></table><span class="fl-signe">×</span>`;
   if (f.type === 'div') return `<div class="fl-barre"><button class="fl-b" data-fvide="1" type="button">Effacer</button></div><div class="fl-div"><table class="fl-op">${grille(f.id, 7, 5, '', o)}</table><table class="fl-op fl-divd"><tr>${[0, 1, 2, 3].map(c => `<td><input class="fl-c" maxlength="2" data-fc="d-${c}" value="${esc(o.c['d-' + c] || '')}"></td>`).join('')}</tr><tr class="fl-trait">${[0, 1, 2, 3].map(c => `<td><input class="fl-c res" maxlength="2" data-fc="q-${c}" value="${esc(o.c['q-' + c] || '')}"></td>`).join('')}</tr></table></div>`;
   if (f.type === 'num') { const cl = [['Millions', 3, '#8A4FA3'], ['Mille', 3, '#3A6FB0'], ['Unités simples', 3, '#2E8B57'], ['Partie décimale', 3, '#C76A0E']];
@@ -4146,7 +4153,7 @@ function rendreFlotsEcran(){
 function saisieFlot(e){ const c = e.target.closest('[data-fv]'); if (!c) return; const box = c.closest('[data-fid],.fl'), id = box.dataset.fid || box.dataset.id;
   clearTimeout(c._t); c._t = setTimeout(() => { majFlot(id, f => { f.o[c.dataset.fv] = c.value; f.o.e = 0; }); const f = flots().find(x => x.id === id); rendre();
     const ap = box.querySelector('.ou-apercu'); if (ap && f) ap.innerHTML = partsFlot(f).objet; }, 350); }
-$('#oOuverts').addEventListener('input', saisieFlot); $('#eFlots').addEventListener('input', saisieFlot);
+$('#oOuverts').addEventListener('input', saisieFlot); $('#oOuverts').addEventListener('change', e => { const c = e.target.closest('input[data-fphr]'); if (c) actionFlot(c.closest('[data-fid]').dataset.fid, c); }); $('#eFlots').addEventListener('input', saisieFlot);
 $('#oOuverts').addEventListener('click', e => { const a = e.target.closest('.ou-apercu'); if (!a) return; e.stopPropagation(); actionFlot(a.closest('[data-fid]').dataset.fid, e.target); });
 /* une action sur un outil (depuis l'écran ou la télécommande) */
 function actionFlot(id, t){
@@ -4154,6 +4161,7 @@ function actionFlot(id, t){
   const go = fn => { majFlot(id, fn); rendre(); };
   if (part) return go(f => { const i = +part.dataset.part, k = f.o.k; f.o.k = k.includes(i) ? k.filter(x => x !== i) : [...k, i]; });
   const cel = t.closest('[data-pyt]'); if (cel) { const [r, c] = cel.dataset.pyt.split('-').map(Number); return go(f => { f.o.sel = f.o.sel && f.o.sel[0] === r && f.o.sel[1] === c ? null : [r, c]; }); }
+  const cb = t.closest('[data-fphr]'); if (cb && cb.tagName === 'INPUT') return go(f => { f.o.phr = cb.checked; });
   if (!b) return;
   if (b.dataset.ftaille) return go(f => { const k = b.dataset.ftaille > 0 ? 1.15 : 1 / 1.15; f.w = Math.max(10, Math.min(95, f.w * k)); f.h = Math.max(12, Math.min(95, f.h * k)); f.x = Math.min(f.x, 99 - f.w); f.y = Math.min(f.y, 99 - f.h); });
   if (b.dataset.fx) { D.live.flot = flots().filter(f => f.id !== id); save('app/live', D.live); return rendre(); }
@@ -6117,7 +6125,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795368708',t0=Date.now(),vue=false;
+<script>(function(){var V='1795369589',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
