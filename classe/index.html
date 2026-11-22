@@ -440,6 +440,48 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .ia-msg{font-size:26px;font-weight:800;margin:0;text-align:center}.ia-msg.ok{color:var(--vert)}.ia-msg.ko{color:var(--rouge)}
 .ia-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1}.ia-frac span:first-child{border-bottom:3px solid currentColor;padding:0 6px}
 .ia-table{border-collapse:collapse;font-size:32px;font-weight:800;margin:30px auto}.ia-table td{border:3px solid #3A6FB0;padding:14px 26px;text-align:center;min-width:80px}.ia-table .ia-coef{border:0;color:var(--orange-fonce)}
+.ou-sec{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.ou-tete{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}.ou-tete h3{margin:0;color:var(--vert);font-size:20px}
+.ou-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.ou-tuile{background:#fff;border:0;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;font:800 14px Nunito,'Segoe UI',sans-serif;color:var(--encre);cursor:pointer;transition:transform .12s}
+.ou-tuile:hover{transform:translateY(-2px)}.ou-tuile span{font-size:34px;line-height:1;color:var(--orange-fonce)}
+.ou-ouverts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.ou-ouverts:empty{display:none}
+.ou-chip{display:inline-flex;align-items:center;gap:6px;background:#FFF1E2;color:#8a4300;border-radius:999px;padding:4px 6px 4px 12px;font-weight:800;font-size:14px}.ou-chip button{border:0;background:#fff;border-radius:999px;width:24px;height:24px;cursor:pointer}
+.ou-cartes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+.ou-carte{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:14px 16px;display:flex;flex-direction:column;gap:10px}.ou-carte h4{margin:0;color:var(--vert);font-size:16px}
+#eFlots{position:absolute;inset:0;z-index:4;pointer-events:none}
+.fl{position:absolute;pointer-events:auto;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;resize:both;min-width:200px;min-height:140px;border:2px solid #1F6F3D}
+.fl-t{display:flex;align-items:center;gap:8px;background:#1F6F3D;color:#fff;font:800 15px Nunito,'Segoe UI',sans-serif;padding:5px 6px 5px 12px;cursor:grab;user-select:none;touch-action:none}.fl-t span{flex:1}
+.fl-x{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;width:28px;height:28px;cursor:pointer;font-weight:900}
+.fl-corps{flex:1;min-height:0;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:6px;position:relative}
+.fl-barre{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.fl-b{border:2px solid #d6e5da;background:#fff;border-radius:9px;min-width:34px;min-height:32px;font:800 14px Nunito,'Segoe UI',sans-serif;cursor:pointer;padding:0 8px}.fl-b.on{background:#1F6F3D;border-color:#1F6F3D;color:#fff}
+.fl-sep{width:8px}.fl-nb{font-size:15px;min-width:64px;text-align:center}
+.fl-frac{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:14px}
+.fl-svg{height:100%;max-height:100%;width:auto;max-width:72%;flex:0 1 auto;min-height:0}
+.fl-f{display:flex;flex-direction:column;align-items:center;font:900 44px/1.1 Nunito,'Segoe UI',sans-serif;color:#1F3A5F}.fl-f span:first-child{color:#F28C28;border-bottom:4px solid #1F3A5F;padding:0 8px}
+.fl-mur{flex:1;display:flex;flex-direction:column;gap:3px}
+.fl-mur-l{flex:1;display:flex;gap:0}
+.fl-mur-c{flex:1;border:1.5px solid rgba(0,0,0,.35);background:hsl(calc(var(--h)*1deg) 75% 72%);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;min-width:0}
+.fl-mur-c.on{background:#1F3A5F;color:#fff}
+.fl-mini{display:inline-flex;flex-direction:column;font:800 10px/1 Nunito,'Segoe UI',sans-serif}.fl-mini i{font-style:normal}.fl-mini i:first-child{border-bottom:1.5px solid currentColor}
+.fl-pyt{border-collapse:collapse;width:100%;height:100%;font:800 17px Nunito,'Segoe UI',sans-serif;table-layout:fixed}
+.fl-pyt th,.fl-pyt td{border:1.5px solid #3A6FB0;text-align:center;padding:2px}.fl-pyt th{background:#E3ECF7;color:#1E5AA8}.fl-pyt th.hl{background:#F28C28;color:#fff}
+.fl-pyt td{cursor:pointer}.fl-pyt td.ax{background:#FFF1E2}.fl-pyt td.sel{background:#F28C28;color:#fff;font-size:20px}
+.fl-op{border-collapse:collapse;margin:0 auto}.fl-op td{width:38px;height:38px;border:1px dashed #b9cbe3;padding:0}
+.fl-op .fl-trait tr:first-child td,.fl-op tr.fl-trait td{border-top:3px solid #1F3A5F}
+.fl-c{width:100%;height:100%;border:0;text-align:center;font:800 24px Nunito,'Segoe UI',sans-serif;background:transparent;color:#1F3A5F;padding:0}.fl-c.res{color:#C76A0E}
+.fl-signe{position:absolute;left:14px;top:84px;font:900 28px Nunito,'Segoe UI',sans-serif;color:#1F3A5F}
+.fl-div{display:flex;gap:0;align-items:flex-start;justify-content:center}.fl-divd{border-left:3px solid #1F3A5F;margin:0}
+.fl-num{border-collapse:collapse;width:100%;font:800 14px Nunito,'Segoe UI',sans-serif}.fl-num th{color:#fff;padding:6px;border:2px solid #fff}
+.fl-num td{border:1.5px solid #9fb6d6;text-align:center;height:40px;padding:0}.fl-num td.virg{border-right:5px solid #B8323A}
+.fl-briq{flex:1;min-height:0;position:relative;background:repeating-linear-gradient(0deg,#f7faf8 0 24px,#fff 24px 48px);border-radius:10px}
+.br{position:absolute;cursor:grab;border:1.5px solid rgba(0,0,0,.4);touch-action:none}
+.br-c,.br-U{width:110px;height:110px;background-image:repeating-linear-gradient(90deg,#0003 0 1px,#0000 1px 11px),repeating-linear-gradient(0deg,#0003 0 1px,#0000 1px 11px);background-color:#F28C28}
+.br-d,.br-di{width:11px;height:110px;background-image:repeating-linear-gradient(0deg,#0003 0 1px,#0000 1px 11px);background-color:#3A6FB0}
+.br-u,.br-ce{width:11px;height:11px;background-color:#2E8B57}
+.br-U{background-color:#8A4FA3}.br-di{background-color:#C76A0E}.br-ce{background-color:#B8323A}
+.fl-tot{font:800 18px Nunito,'Segoe UI',sans-serif;text-align:center;color:#1F3A5F}.fl-tot b{font-size:26px;color:#C76A0E}
 .en-haut{font-size:12px;font-weight:800;color:var(--orange-texte);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 -2px}
 .orga-l{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--ligne);border-radius:12px;padding:8px 12px;font-weight:800}
 .orga-l input{width:64px;min-height:36px;text-align:center;font-weight:800}.orga-l span{flex:1}.orga-l select{width:auto;min-height:34px}
@@ -494,6 +536,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
       <div id="eMsg">Connexion…</div>
       <div id="ePlan" hidden><h2 id="ePlanTitre"></h2><div class="tableau">Bureau · tableau</div><div id="ePlanGrille"></div></div>
       <div id="eForet" hidden></div><div id="eMascotte" hidden></div><div id="eScore" hidden></div><div id="eTri" hidden></div>
+      <div id="eFlots"></div>
       <div id="eInter" hidden></div>
       <div id="eFin" hidden>Temps écoulé !</div>
       <button id="eSon" type="button" hidden>🔊 Clique ici pour activer le son des minuteurs</button>
@@ -568,9 +611,15 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 
   <!-- Outils -->
   <div class="panneau" data-p="outils" hidden>
-    <div class="bloc"><h3>🌿 Calme de la classe</h3><div id="oCalme" class="panneau" style="gap:10px"></div></div>
-    <div class="bloc"><h3>🏆 Score d’équipes</h3><div id="oScore" class="panneau" style="gap:8px"></div></div>
-    <div class="bloc"><h3>📐 Triangle constructible ?</h3><div id="oTri" class="panneau" style="gap:8px"></div></div>
+    <section class="ou-sec"><div class="ou-tete"><h3>Au tableau, par-dessus la diapo</h3><span class="aide">La diapo reste derrière. Sur l’écran de classe, chaque outil se déplace par sa barre de titre et s’agrandit par son coin.</span></div>
+      <div class="ou-grille" id="oFlot"></div>
+      <div id="oOuverts" class="ou-ouverts"></div></section>
+    <section class="ou-sec"><div class="ou-tete"><h3>Vie de classe</h3></div>
+      <div class="ou-cartes">
+        <div class="ou-carte"><h4>🌿 Calme de la classe</h4><div id="oCalme" class="panneau" style="gap:10px"></div></div>
+        <div class="ou-carte"><h4>🏆 Score d’équipes</h4><div id="oScore" class="panneau" style="gap:8px"></div></div>
+        <div class="ou-carte"><h4>📐 Triangle constructible ?</h4><div id="oTri" class="panneau" style="gap:8px"></div></div>
+      </div></section>
   </div>
 
   <!-- Progression -->
@@ -3795,6 +3844,9 @@ function rendreOutilsEcran(){
 }
 function rendreOutilsTel(){
   const o = D.live.outils || {}, sc = D.live.score || {on:false, eq:[]};
+  $('#oFlot').innerHTML = [...Object.entries(FLOT).map(([k, d]) => `<button class="ou-tuile" data-oflot="${k}" type="button"><span>${d.ic}</span>${d.t}</button>`), `<button class="ou-tuile" data-oflot="cmp" type="button"><span>½ ¾</span>Comparer 2 fractions</button>`].join('');
+  const L = flots();
+  $('#oOuverts').innerHTML = L.length ? `<b>Au tableau :</b>${L.map(f => `<span class="ou-chip">${FLOT[f.type].ic} ${FLOT[f.type].t}<button data-ofx="${f.id}" type="button" aria-label="Retirer">✕</button></span>`).join('')}<button class="btn mini danger" id="oFlotRaz" type="button">Tout retirer</button>` : '';
   $('#oCalme').innerHTML = `
     <div class="duo"><button class="btn${o.foret ? ' plein' : ''}" data-ou="foret" type="button">🌳 Forêt de Guyane${o.foret ? ' · affichée' : ''}</button><button class="btn${o.mascotte !== false ? ' plein' : ''}" data-ou="mascotte" type="button">🦥 Paresseux${o.mascotte !== false ? ' · affiché' : ''}</button></div>
     <label class="champ">Seuil de bruit : <b id="oSeuilV">${o.seuil || 60}</b><input type="range" id="oSeuil" min="20" max="95" value="${o.seuil || 60}"></label>
@@ -3811,6 +3863,132 @@ function rendreOutilsTel(){
     <button class="btn mini danger" id="oScoreZero" type="button">Remettre à 0</button></div>
     ${(sc.eq.length ? sc.eq : equipes(2)).map((e, i) => `<div class="ligne-flex" style="background:#fff;border-radius:12px;padding:6px 8px"><input type="text" data-eqn="${i}" value="${esc(e.n)}" style="flex:1;min-height:38px"><b style="font-size:22px;min-width:36px;text-align:center;color:var(--vert)">${e.s}</b><button class="btn mini" data-eq="${i}" data-d="-1" type="button">−1</button><button class="btn mini plein" data-eq="${i}" data-d="1" type="button" style="min-width:56px">+1</button></div>`).join('')}`;
 }
+/* ---------------- Outils au tableau : fenêtres déplaçables par-dessus la diapo ---------------- */
+const FLOT = {
+  frac:{t:'Fraction', ic:'½', w:30, h:52, o:() => ({forme:'cercle', n:4, k:[], voir:true})},
+  mur:{t:'Mur des fractions', ic:'▤', w:46, h:62, o:() => ({k:[]})},
+  pytha:{t:'Table de Pythagore', ic:'✖', w:40, h:70, o:() => ({sel:null, cache:false})},
+  mult:{t:'Multiplication posée', ic:'×', w:26, h:56, o:() => ({c:{}})},
+  div:{t:'Division posée', ic:'÷', w:34, h:58, o:() => ({c:{}})},
+  num:{t:'Tableau de numération', ic:'🔢', w:72, h:32, o:() => ({c:{}})},
+  conv:{t:'Tableau de conversion', ic:'📏', w:56, h:36, o:() => ({u:'m', c:{}})},
+  briq:{t:'Briques de numération', ic:'🧱', w:46, h:60, o:() => ({mode:'ent', p:[]})},
+};
+const flots = () => D.live.flot || [];
+function majFlot(id, fn){ const L = (D.live.flot ||= []), x = L.find(y => y.id === id); if (!x) return; fn(x); save('app/live', D.live); }
+function ajouterFlot(type, extra = {}){
+  const L = (D.live.flot ||= []), n = L.length, d = FLOT[type];
+  L.push({id:type + Date.now().toString(36) + n, type, x:[4, 50, 27, 4, 50][n % 5] + Math.floor(n / 5) * 3, y:[6, 6, 30, 40, 40][n % 5] + Math.floor(n / 5) * 3, w:d.w, h:d.h, o:{...d.o(), ...extra}});
+  const z = L[L.length - 1]; z.x = Math.max(1, Math.min(z.x, 99 - z.w)); z.y = Math.max(1, Math.min(z.y, 99 - z.h));
+  save('app/live', D.live); rendre();
+}
+/* dessin d'une fraction : cercle, rectangle, hexagone */
+function svgFraction(o){
+  const n = o.n, k = new Set(o.k), col = i => k.has(i) ? '#F28C28' : '#fff', st = 'stroke="#1F3A5F" stroke-width="2.5" stroke-linejoin="round" style="cursor:pointer"';
+  let p = '';
+  if (o.forme === 'rect') for (let i = 0; i < n; i++) p += `<rect data-part="${i}" x="${10 + i * 280 / n}" y="60" width="${280 / n}" height="180" fill="${col(i)}" ${st}/>`;
+  else if (o.forme === 'hex') {
+    const R = 140, c = [150, 150], V = a => [c[0] + R * Math.cos(a), c[1] + R * Math.sin(a)];
+    const pts = []; for (let j = 0; j < 12; j++) pts.push(j % 2 ? (() => { const a = V((j - 1) * Math.PI / 6 - Math.PI / 2), b = V((j + 1) * Math.PI / 6 - Math.PI / 2); return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; })() : V(j * Math.PI / 6 - Math.PI / 2));
+    const pas = 12 / n; // n parmi 1, 2, 3, 6, 12
+    for (let i = 0; i < n; i++) { const P = [c]; for (let j = i * pas; j <= (i + 1) * pas; j++) P.push(pts[j % 12]); p += `<polygon data-part="${i}" points="${P.map(q => q.join(',')).join(' ')}" fill="${col(i)}" ${st}/>`; }
+  } else {
+    const R = 140, c = [150, 150];
+    if (n === 1) p = `<circle data-part="0" cx="150" cy="150" r="${R}" fill="${col(0)}" ${st}/>`;
+    else for (let i = 0; i < n; i++) { const a0 = 2 * Math.PI * i / n - Math.PI / 2, a1 = 2 * Math.PI * (i + 1) / n - Math.PI / 2;
+      p += `<path data-part="${i}" d="M150,150 L${c[0] + R * Math.cos(a0)},${c[1] + R * Math.sin(a0)} A${R},${R} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${c[0] + R * Math.cos(a1)},${c[1] + R * Math.sin(a1)} Z" fill="${col(i)}" ${st}/>`; }
+  }
+  return `<svg viewBox="0 0 300 300" class="fl-svg">${p}</svg>`;
+}
+const NHEX = [1, 2, 3, 6, 12];
+const grille = (id, lig, col, cls = '', o) => Array.from({length:lig}, (_, r) => `<tr>${Array.from({length:col}, (_, c) => `<td><input class="fl-c ${cls}" maxlength="2" data-fc="${r}-${c}" value="${esc(o.c[r + '-' + c] || '')}"></td>`).join('')}</tr>`).join('');
+const UNITES = {m:['km', 'hm', 'dam', 'm', 'dm', 'cm', 'mm'], g:['kg', 'hg', 'dag', 'g', 'dg', 'cg', 'mg'], L:['kL', 'hL', 'daL', 'L', 'dL', 'cL', 'mL']};
+const BRIQ = {ent:[['c', 'Centaine', 100], ['d', 'Dizaine', 10], ['u', 'Unité', 1]], dec:[['U', 'Unité', 1], ['di', 'Dixième', 0.1], ['ce', 'Centième', 0.01]]};
+function corpsFlot(f){
+  const o = f.o;
+  if (f.type === 'frac') { const N = o.forme === 'hex' ? NHEX : null;
+    return `<div class="fl-barre">${[['cercle', '◯'], ['rect', '▭'], ['hex', '⬡']].map(([v, l]) => `<button class="fl-b${o.forme === v ? ' on' : ''}" data-fforme="${v}" type="button" title="${v}">${l}</button>`).join('')}
+      <span class="fl-sep"></span><button class="fl-b" data-fn="-1" type="button">−</button><b class="fl-nb">${o.n} parts</b><button class="fl-b" data-fn="1" type="button">+</button>
+      <span class="fl-sep"></span><button class="fl-b${o.voir ? ' on' : ''}" data-fvoir="1" type="button" title="Afficher la fraction">👁</button></div>
+      <div class="fl-frac">${svgFraction(o)}<div class="fl-f" ${o.voir ? '' : 'style="visibility:hidden"'}><span>${o.k.length}</span><span>${o.n}</span></div></div>`; }
+  if (f.type === 'mur') { const k = new Set(o.k);
+    return `<div class="fl-mur">${Array.from({length:12}, (_, i) => i + 1).map(n => `<div class="fl-mur-l" style="--h:${(n - 1) * 28}">${Array.from({length:n}, (_, j) => `<button class="fl-mur-c${k.has(n + '-' + j) ? ' on' : ''}" data-mur="${n}-${j}" type="button"><span class="fl-mini"><i>1</i><i>${n}</i></span></button>`).join('')}</div>`).join('')}</div>`; }
+  if (f.type === 'pytha') { const [sr, sc] = o.sel || [];
+    let h = `<div class="fl-barre"><button class="fl-b${o.cache ? ' on' : ''}" data-pcache="1" type="button">${o.cache ? 'Résultats cachés' : 'Cacher les résultats'}</button></div><table class="fl-pyt"><tr><th>×</th>${[...Array(10)].map((_, j) => `<th class="${sc === j + 1 ? 'hl' : ''}">${j + 1}</th>`).join('')}</tr>`;
+    for (let i = 1; i <= 10; i++) h += `<tr><th class="${sr === i ? 'hl' : ''}">${i}</th>${[...Array(10)].map((_, j) => { const on = sr === i && sc === j + 1, ax = sr === i || sc === j + 1; return `<td data-pyt="${i}-${j + 1}" class="${on ? 'sel' : ax && o.sel ? 'ax' : ''}">${o.cache && !on ? '' : i * (j + 1)}</td>`; }).join('')}</tr>`;
+    return h + `</table>`; }
+  if (f.type === 'mult') return `<div class="fl-barre"><button class="fl-b" data-fvide="1" type="button">Effacer</button></div><table class="fl-op"><tbody>${grille(f.id, 2, 7, '', o)}</tbody><tbody class="fl-trait">${grille(f.id, 3, 7, '', o).replace(/data-fc="(\d)-/g, (m, r) => `data-fc="${+r + 2}-`)}</tbody><tbody class="fl-trait">${grille(f.id, 1, 7, 'res', o).replace(/data-fc="0-/g, 'data-fc="5-')}</tbody></table><span class="fl-signe">×</span>`;
+  if (f.type === 'div') return `<div class="fl-barre"><button class="fl-b" data-fvide="1" type="button">Effacer</button></div><div class="fl-div"><table class="fl-op">${grille(f.id, 7, 5, '', o)}</table><table class="fl-op fl-divd"><tr>${[0, 1, 2, 3].map(c => `<td><input class="fl-c" maxlength="2" data-fc="d-${c}" value="${esc(o.c['d-' + c] || '')}"></td>`).join('')}</tr><tr class="fl-trait">${[0, 1, 2, 3].map(c => `<td><input class="fl-c res" maxlength="2" data-fc="q-${c}" value="${esc(o.c['q-' + c] || '')}"></td>`).join('')}</tr></table></div>`;
+  if (f.type === 'num') { const cl = [['Millions', 3, '#8A4FA3'], ['Mille', 3, '#3A6FB0'], ['Unités simples', 3, '#2E8B57'], ['Partie décimale', 3, '#C76A0E']];
+    let c = 0; const T = cl.map(([t, k, co]) => { const s = c; c += k; return [t, k, co, s]; });
+    return `<div class="fl-barre"><button class="fl-b" data-fvide="1" type="button">Effacer</button></div><table class="fl-num"><tr>${T.map(([t, k, co]) => `<th colspan="${k}" style="background:${co}">${t}</th>`).join('')}</tr>
+      <tr>${T.map(([t, k, co], i) => (i < 3 ? ['c', 'd', 'u'] : ['dixièmes', 'centièmes', 'millièmes']).map((l, j) => `<td class="${i === 2 && j === 2 ? 'virg' : ''}" style="color:${co}">${l}</td>`).join('')).join('')}</tr>
+      ${[0, 1].map(r => `<tr>${Array.from({length:12}, (_, j) => `<td class="${j === 8 ? 'virg' : ''}"><input class="fl-c" maxlength="1" data-fc="${r}-${j}" value="${esc(o.c[r + '-' + j] || '')}"></td>`).join('')}</tr>`).join('')}</table>`; }
+  if (f.type === 'conv') { const U = UNITES[o.u];
+    return `<div class="fl-barre">${Object.keys(UNITES).map(u => `<button class="fl-b${o.u === u ? ' on' : ''}" data-fu="${u}" type="button">${u === 'm' ? 'Longueurs' : u === 'g' ? 'Masses' : 'Contenances'}</button>`).join('')}<span class="fl-sep"></span><button class="fl-b" data-fvide="1" type="button">Effacer</button></div>
+      <table class="fl-num"><tr>${U.map((x, j) => `<th style="background:${j === 3 ? '#C76A0E' : '#3A6FB0'}">${x}</th>`).join('')}</tr>${[0, 1, 2].map(r => `<tr>${U.map((_, j) => `<td><input class="fl-c" maxlength="2" data-fc="${r}-${j}" value="${esc(o.c[r + '-' + j] || '')}"></td>`).join('')}</tr>`).join('')}</table>`; }
+  if (f.type === 'briq') { const B = BRIQ[o.mode], tot = o.p.reduce((s, x) => s + (B.find(b => b[0] === x.t)?.[2] || 0), 0);
+    const nbt = t => o.p.filter(x => x.t === t).length;
+    return `<div class="fl-barre"><button class="fl-b${o.mode === 'ent' ? ' on' : ''}" data-bmode="ent" type="button">c · d · u</button><button class="fl-b${o.mode === 'dec' ? ' on' : ''}" data-bmode="dec" type="button">u · dixième · centième</button><span class="fl-sep"></span>
+      ${B.map(([t, l]) => `<button class="fl-b" data-badd="${t}" type="button">+ ${l}</button>`).join('')}<button class="fl-b" data-fvide="1" type="button">Vider</button></div>
+      <div class="fl-briq">${o.p.map((x, i) => `<div class="br br-${x.t}" data-br="${i}" style="left:${x.x}%;top:${x.y}%" title="double-clic pour retirer"></div>`).join('')}</div>
+      <div class="fl-tot">${B.map(([t, l]) => `${nbt(t)} ${l.toLowerCase()}${nbt(t) > 1 ? 's' : ''}`).join(' · ')} = <b>${String(Math.round(tot * 100) / 100).replace('.', ',')}</b></div>`; }
+  return '';
+}
+function rendreFlotsEcran(){
+  const zone = $('#eFlots'), L = flots(), ids = new Set(L.map(f => f.id));
+  zone.querySelectorAll('.fl').forEach(w => { if (!ids.has(w.dataset.id)) w.remove(); });
+  for (const f of L) {
+    let w = zone.querySelector(`.fl[data-id="${f.id}"]`);
+    if (!w) { w = document.createElement('div'); w.className = 'fl'; w.dataset.id = f.id;
+      w.innerHTML = `<div class="fl-t"><span>${FLOT[f.type].ic} ${FLOT[f.type].t}</span><button class="fl-x" data-fx="1" type="button" aria-label="Fermer">✕</button></div><div class="fl-corps"></div>`; zone.append(w); }
+    w.style.left = f.x + '%'; w.style.top = f.y + '%'; if (!w.dataset.redim) { w.style.width = f.w + '%'; w.style.height = f.h + '%'; }
+    const sig = JSON.stringify(f.o);
+    if (w.dataset.sig !== sig && !(w.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) { w.dataset.sig = sig; w.querySelector('.fl-corps').innerHTML = corpsFlot(f); }
+  }
+}
+/* interactions sur l'écran de classe */
+(function(){
+  const zone = $('#eFlots'); let drag = null, zMax = 10;
+  zone.addEventListener('pointerdown', e => {
+    const w = e.target.closest('.fl'); if (!w) return; w.style.zIndex = ++zMax; // au premier plan
+    const st = $('#stage').getBoundingClientRect();
+    if (e.target.closest('.fl-t') && !e.target.closest('button')) { const r = w.getBoundingClientRect(); drag = {w, k:'fen', dx:e.clientX - r.left, dy:e.clientY - r.top, st}; w.setPointerCapture(e.pointerId); return; }
+    const b = e.target.closest('.br'); if (b) { const box = b.parentElement.getBoundingClientRect(), r = b.getBoundingClientRect(); drag = {w, k:'br', b, i:+b.dataset.br, box, dx:e.clientX - r.left, dy:e.clientY - r.top}; b.setPointerCapture(e.pointerId); e.preventDefault(); }
+  });
+  zone.addEventListener('pointermove', e => { if (!drag) return;
+    if (drag.k === 'fen') { const x = (e.clientX - drag.dx - drag.st.left) / drag.st.width * 100, y = (e.clientY - drag.dy - drag.st.top) / drag.st.height * 100; drag.x = Math.max(-5, Math.min(95, x)); drag.y = Math.max(0, Math.min(92, y)); drag.w.style.left = drag.x + '%'; drag.w.style.top = drag.y + '%'; }
+    else { drag.x = Math.max(0, Math.min(92, (e.clientX - drag.dx - drag.box.left) / drag.box.width * 100)); drag.y = Math.max(0, Math.min(90, (e.clientY - drag.dy - drag.box.top) / drag.box.height * 100)); drag.b.style.left = drag.x + '%'; drag.b.style.top = drag.y + '%'; } });
+  const fin = () => { if (!drag) return; const d = drag; drag = null; if (d.x == null) return;
+    if (d.k === 'fen') majFlot(d.w.dataset.id, f => { f.x = d.x; f.y = d.y; });
+    else majFlot(d.w.dataset.id, f => { const p = f.o.p[d.i]; if (p) { p.x = d.x; p.y = d.y; } }); };
+  zone.addEventListener('pointerup', fin); zone.addEventListener('pointercancel', fin);
+  zone.addEventListener('dblclick', e => { const b = e.target.closest('.br'); if (!b) return; const id = b.closest('.fl').dataset.id; majFlot(id, f => { f.o.p.splice(+b.dataset.br, 1); }); rendre(); });
+  // la taille choisie à la souris (coin en bas à droite) est gardée
+  new MutationObserver(() => zone.querySelectorAll('.fl:not([data-obs])').forEach(w => { w.dataset.obs = '1'; new ResizeObserver(es => { if (!w.dataset.pret) { w.dataset.pret = '1'; return; } w.dataset.redim = '1'; clearTimeout(w._t); w._t = setTimeout(() => { const st = $('#stage').getBoundingClientRect(); majFlot(w.dataset.id, f => { f.w = w.offsetWidth / st.width * 100; f.h = w.offsetHeight / st.height * 100; }); }, 500); }).observe(w); })).observe(zone, {childList:true});
+  zone.addEventListener('click', e => {
+    const w = e.target.closest('.fl'); if (!w) return; const id = w.dataset.id, t = e.target;
+    const part = t.closest('[data-part]'), b = t.closest('button');
+    const go = fn => { majFlot(id, fn); rendre(); };
+    if (part) return go(f => { const i = +part.dataset.part, k = f.o.k; f.o.k = k.includes(i) ? k.filter(x => x !== i) : [...k, i]; });
+    const cel = t.closest('[data-pyt]'); if (cel) { const [r, c] = cel.dataset.pyt.split('-').map(Number); return go(f => { f.o.sel = f.o.sel && f.o.sel[0] === r && f.o.sel[1] === c ? null : [r, c]; }); }
+    if (!b) return;
+    if (b.dataset.fx) { D.live.flot = flots().filter(f => f.id !== id); save('app/live', D.live); return rendre(); }
+    if (b.dataset.fforme) return go(f => { f.o.forme = b.dataset.fforme; if (f.o.forme === 'hex' && !NHEX.includes(f.o.n)) f.o.n = 6; f.o.k = f.o.k.filter(x => x < f.o.n); });
+    if (b.dataset.fn) return go(f => { if (f.o.forme === 'hex') { const i = NHEX.indexOf(f.o.n) + +b.dataset.fn; f.o.n = NHEX[Math.max(0, Math.min(NHEX.length - 1, i < 0 ? 0 : i))]; } else f.o.n = Math.max(1, Math.min(24, f.o.n + +b.dataset.fn)); f.o.k = f.o.k.filter(x => x < f.o.n); });
+    if (b.dataset.fvoir) return go(f => { f.o.voir = !f.o.voir; });
+    if (b.dataset.mur) return go(f => { const k = b.dataset.mur; f.o.k = f.o.k.includes(k) ? f.o.k.filter(x => x !== k) : [...f.o.k, k]; });
+    if (b.dataset.pcache) return go(f => { f.o.cache = !f.o.cache; });
+    if (b.dataset.fvide) return go(f => { if (f.o.c) f.o.c = {}; if (f.o.p) f.o.p = []; });
+    if (b.dataset.fu) return go(f => { f.o.u = b.dataset.fu; });
+    if (b.dataset.bmode) return go(f => { f.o.mode = b.dataset.bmode; f.o.p = []; });
+    if (b.dataset.badd) return go(f => { const n = f.o.p.filter(x => x.t === b.dataset.badd).length, j = BRIQ[f.o.mode].findIndex(x => x[0] === b.dataset.badd); f.o.p.push({t:b.dataset.badd, x:4 + j * 34 + (n % 6) * 4, y:6 + (n % 6) * 8 + Math.floor(n / 6) * 4}); });
+  });
+  zone.addEventListener('input', e => { const c = e.target.closest('[data-fc]'); if (!c) return; const id = c.closest('.fl').dataset.id;
+    clearTimeout(c._t); c._t = setTimeout(() => majFlot(id, f => { f.o.c[c.dataset.fc] = c.value; }), 300); });
+  zone.addEventListener('keydown', e => { e.stopPropagation(); }); // taper un chiffre ne change pas de diapo
+})();
+
 /* Paresseux : on peut le déplacer à la souris, sa place est retenue */
 (function(){
   const m = $('#eMascotte'), st = $('#stage'); let d = null;
@@ -4179,7 +4357,7 @@ const aVenir = cls => D.dev.filter(d => d.cls === cls && d.date >= TODAY()).sort
 function rendreEcran(){
   $('#eHeure').textContent = heure() + (semaine() ? ' · sem. ' + semaine() : '');
   if (!db) return;
-  rendreOutilsEcran(); rendreInterEcran();
+  rendreOutilsEcran(); rendreInterEcran(); rendreFlotsEcran();
   const c = cc(), d = deckCourant();
   $('#eClasse').hidden = !c; $('#eClasse').textContent = c ? c.name + (modeDe() !== 'cours' ? ' · ' + modeLabel(c, modeDe()) : '') : '';
   const chT = c && enRapido() ? '⚡ Rapido' : c && modeDe() === 'cours' && chapCourant(c) ? chapInfo(chapCourant(c))?.t : '';
@@ -5524,6 +5702,9 @@ $('#tel').addEventListener('click', e => {
   if (b.id === 'tApSuiv') { voirPas(1); return; }
   if (b.id === 'planEcran2') { D.live.showPlan = !D.live.showPlan; save('app/live', D.live); rendre(); return; }
   if (b.dataset.tripre) majOutils(o => { o.tri = {bc:10, ab:3, ac:+b.dataset.tripre}; o.triOn = true; });
+  else if (b.dataset.oflot) { if (b.dataset.oflot === 'cmp') { ajouterFlot('frac', {n:4, k:[0, 1, 2]}); ajouterFlot('frac', {n:8, k:[0, 1, 2, 3, 4, 5]}); const L = flots(); Object.assign(L[L.length - 2], {x:8, y:14}); Object.assign(L[L.length - 1], {x:52, y:14}); save('app/live', D.live); rendre(); } else ajouterFlot(b.dataset.oflot); }
+  else if (b.dataset.ofx) { D.live.flot = flots().filter(f => f.id !== b.dataset.ofx); save('app/live', D.live); rendre(); }
+  else if (b.id === 'oFlotRaz') { D.live.flot = []; save('app/live', D.live); rendre(); }
   else if (b.dataset.ou) majOutils(o => { const k = b.dataset.ou; o[k] = k === 'mascotte' ? o[k] === false : !o[k]; });
   else if (b.id === 'oScoreOn') majScore(s => { s.on = !s.on; });
   else if (b.id === 'oScoreZero') deuxFois(b, 'Confirmer', () => majScore(s => { s.eq.forEach(e => e.s = 0); }));
@@ -5648,7 +5829,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795343956',t0=Date.now(),vue=false;
+<script>(function(){var V='1795360293',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
