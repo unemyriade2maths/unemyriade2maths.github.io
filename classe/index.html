@@ -4988,9 +4988,66 @@ const bulDoc = id => D.bull[id] ??= {ordre:[], T:{}};
 function bulDates(id, t){ return bulDoc(id).dates?.[t] || BUL_DATES[t]; }
 function ordreBul(c){
   const noms = eleves(c).map(n => (n || '').trim()).filter(n => n && !estAesh(n)), o = bulDoc(c.id).ordre || [];
-  const L = o.filter(x => noms.includes(x.n));
+  const L = o.filter(x => x.ext || noms.includes(x.n));
   for (const n of [...noms].sort((a, b) => sansAcc(a).localeCompare(sansAcc(b)))) if (!L.some(x => x.n === n)) L.push({n, nom:''});
   return L;
+}
+/* Import des listes d'élèves (relevé de notes Word .docx) : chaque fichier va dans la classe qui lui correspond le mieux */
+function lev(a, b){ const m = a.length, n = b.length, d = Array.from({length:m + 1}, (_, i) => [i, ...Array(n).fill(0)]); for (let j = 1; j <= n; j++) d[0][j] = j;
+  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
+const motsNom = t => sansAcc(t).replace(/[^a-z' -]/g, ' ').split(/\s+/).filter(Boolean).flatMap(w => w.includes('-') ? [w, w.replace(/-/g, '')] : [w]);
+function apparier(c, lignes){
+  const noms = eleves(c).map(n => (n || '').trim()).filter(n => n && !estAesh(n)), P = [];
+  noms.forEach(n => { const k = sansAcc(n).replace(/\s+[a-z]\.?$/, '').split(/\s+/)[0].replace(/-/g, ''), seuil = k.length >= 5 ? 2 : 1;
+    lignes.forEach((l, i) => { const M = motsNom(l); let d = Math.min(...M.map(w => lev(k, w.replace(/-/g, ''))), lev(k, M.slice(-2).join(' '))); if (d <= seuil) P.push({n, i, d}); }); });
+  P.sort((a, b) => a.d - b.d); const pris = new Set(), lig = {};
+  for (const x of P) if (!pris.has(x.n) && lig[x.i] == null) { pris.add(x.n); lig[x.i] = x.n; }
+  return lig;
+}
+async function lireDocx(f){
+  const z = await JSZip.loadAsync(await f.arrayBuffer()), x = await z.file('word/document.xml').async('string');
+  const doc = new DOMParser().parseFromString(x, 'application/xml'), W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+  const rows = [...doc.getElementsByTagNameNS(W, 'tr')];
+  const txt = el => [...el.getElementsByTagNameNS(W, 't')].map(t => t.textContent).join('').trim();
+  const L = rows.length ? rows.map(r => txt(r.getElementsByTagNameNS(W, 'tc')[0] || r)) : [...doc.getElementsByTagNameNS(W, 'p')].map(txt);
+  return L.filter(l => l && !/^classe\s*:/i.test(l) && /[a-zA-Z]/.test(l));
+}
+async function importerListes(files){
+  const res = [];
+  for (const f of files) {
+    let lignes; try { lignes = await lireDocx(f); } catch (e) { res.push(`${f.name} : fichier illisible`); continue; }
+    let best = null; for (const c of classes()) { const m = apparier(c, lignes), k = Object.keys(m).length; if (!best || k > best.k) best = {c, m, k}; }
+    if (!best || best.k < 3) { res.push(`${f.name} : classe non reconnue`); continue; }
+    const B = bulDoc(best.c.id);
+    B.ordre = lignes.map((l, i) => best.m[i] ? {n:best.m[i], nom:l} : {n:l, nom:l, ext:true}).sort((a, b) => sansAcc(a.nom).localeCompare(sansAcc(b.nom)));
+    save('bull/' + best.c.id, B);
+    const absents = lignes.filter((_, i) => !best.m[i]);
+    res.push(`${best.c.name} : ${lignes.length} élèves rangés par ordre alphabétique${absents.length ? ` (${absents.length} pas sur ton plan de classe : ${absents.join(', ')})` : ''}`);
+  }
+  bulCollage = false; rendreBulletin(); alert(res.join('\n\n'));
+}
+/* Correction des fautes et version bulletin (Claude) */
+async function iaBulletin(mode){
+  const c = D.cls[bulCls], e = elBul(c.id, bulT, bulEl), t = $('#bulCom').value.trim(); if (!t) return;
+  const prev = bulT > 1 ? bulDoc(c.id).T[bulT - 1]?.el?.[bulEl] : null, lim = bulDoc(c.id).lim || 400;
+  const choix = Object.entries(Q).map(([q, d]) => { const v = e.rep?.[q], L = d.o.filter(([k]) => d.m ? (v || []).includes(k) : v === k).map(([, l]) => l); return L.length ? d.l + ' : ' + L.join(', ') : ''; }).filter(Boolean).join(' ; ');
+  const consigne = mode === 'corr'
+    ? `Corrige uniquement l’orthographe, la grammaire et la ponctuation de cette appréciation de bulletin scolaire, sans changer le sens, le ton ni la longueur. Réponds uniquement par le texte corrigé, sans guillemets.\n\nTexte :\n${t}`
+    : `Tu es professeure de mathématiques au collège. Transforme ces notes en appréciation de bulletin du ${bulT}e trimestre : des phrases courtes, un ton positif, bienveillant et factuel, aucun chiffre, aucun prénom. Termine par un conseil bref pour progresser en mathématiques, puis par une note positive sur l’élève. ${lim} caractères au maximum. N’invente aucun fait qui ne soit pas dans les notes.${prev?.txt ? ` Appréciation du trimestre précédent, pour signaler les évolutions : « ${prev.txt} ».` : ''}${e.moy ? ` Moyenne : ${e.moy}${prev?.moy ? ` (trimestre précédent : ${prev.moy})` : ''}.` : ''}${choix ? ` Observations : ${choix}.` : ''} Réponds uniquement par l’appréciation, sans guillemets.\n\nNotes :\n${t}`;
+  const sample = await claude.use('sample');
+  const b = $(mode === 'corr' ? '#bulCorr' : '#bulVers'), l0 = b.textContent;
+  if (!sample) {
+    // version installée : Claude n'est pas joignable depuis la page → on prépare la demande
+    try { await navigator.clipboard.writeText(consigne); } catch (x) {}
+    window.open('https://claude.ai/new', '_blank', 'noopener');
+    b.textContent = '✓ Demande copiée : colle-la dans Claude'; setTimeout(() => { b.textContent = l0; }, 4000);
+    return;
+  }
+  b.disabled = true; b.textContent = mode === 'corr' ? 'Correction…' : 'Rédaction…';
+  try { const r = await sample(consigne, {modelTier:'quick'}); const v = (r.text || '').trim().replace(/^["«]\s*|\s*["»]$/g, '');
+    if (v) { $('#bulCom').value = v.slice(0, lim); e.txt = $('#bulCom').value; e.edite = true; majNb(); save('bull/' + c.id, bulDoc(c.id)); } }
+  catch (x) { alert(x?.code === 'rate_limited' ? 'Trop de demandes : réessaie dans un instant.' : 'Claude n’a pas pu répondre.'); }
+  b.disabled = false; b.textContent = l0;
 }
 function chargerEvBul(id){
   if (bulEv.cls === id) return; bulEv.off?.(); bulEv = {cls:id, ev:[], off:null};
@@ -5138,7 +5195,8 @@ function rendreBulletin(){
   $('#bTri').innerHTML = [1, 2, 3].map(t => `<button class="puce" data-bult="${t}" aria-pressed="${t === bulT}" type="button">${t}ᵉ trimestre</button>`).join('');
   let h = `<div class="bul-grille"><div class="carte bul-liste"><div class="ligne-flex"><b style="color:var(--vert)">Élèves · ordre Pronote</b><span class="sp"></span><small>${L.filter(x => fait(x.n)).length}/${L.length} copiés</small></div>
     ${L.map((x, i) => `<button class="bul-el${x.n === bulEl ? ' on' : ''}${fait(x.n) ? ' fait' : ''}" data-bule="${esc(x.n)}" type="button"><span class="num">${i + 1}</span><span class="t">${esc(x.nom || x.n)}</span>${B.T[bulT]?.el?.[x.n]?.moy ? `<small>${esc(String(B.T[bulT].el[x.n].moy))}</small>` : ''}${fait(x.n) ? '<span>✓</span>' : ''}</button>`).join('')}
-    <button class="btn mini" id="bulColler" type="button">📋 Ordre et moyennes depuis Pronote</button>
+    <span class="btn mini plein file-btn">📄 Importer les listes (Word)<input type="file" id="bulDocx" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple></span>
+    <button class="btn mini" id="bulColler" type="button">📋 Coller depuis Pronote (moyennes)</button>
     <small class="aide">Période : ${frD(da)} → ${frD(dbt)} · <button class="lien-btn" id="bulDatesBtn" type="button">modifier</button></small>
     <details class="bul-seuils"><summary>Seuils d’alerte (% des séances)</summary><p class="aide">Un point n’est signalé dans l’appréciation que s’il dépasse ce pourcentage des séances du trimestre. Exemple : 24 séances et un seuil de 10 % → signalé à partir de 3 oublis.</p>
       ${Object.entries(seuils()).map(([x, v]) => `<label class="ligne-flex" style="justify-content:space-between"><span>${SEUIL_NOM[x]}</span><span><input type="number" min="1" max="100" data-seuil="${x}" value="${v}" style="width:64px;min-height:32px;text-align:center"> %</span></label>`).join('')}</details></div>`;
@@ -5162,8 +5220,8 @@ function rendreBulletin(){
       <div class="bul-tete"><div><small>Élève ${pos} / ${L2.length} · ${bulT}ᵉ trimestre</small><h3>${esc(x.nom || x.n)}</h3></div><span class="sp"></span>
         <label class="bul-moy">${e.moy ? '' : '<span class="pt-orange" title="Moyenne non saisie"></span>'}Moyenne<input type="text" inputmode="decimal" id="bulMoy" value="${esc(e.moy ?? '')}" placeholder="—"></label>${prev?.moy ? `<span class="bul-prev">T${bulT - 1} : ${esc(String(prev.moy))}</span>` : ''}</div>
       <div class="bul-com"><div class="bul-com-t"><b>Appréciation</b><small id="bulNb"></small></div>
-        <textarea id="bulCom" maxlength="${lim}">${esc(e.txt || rediger(c.id, bulT, bulEl))}</textarea>
-        <div class="ligne-flex"><button class="btn mini" id="bulRegen" type="button">↻ Autre formulation</button><span class="sp"></span><button class="btn" id="bulPrec" type="button" aria-label="Élève précédent">◀</button><button class="btn plein" id="bulCopier" type="button">Copier · élève suivant ▶</button></div></div>
+        <textarea id="bulCom" maxlength="${lim}" spellcheck="true" lang="fr">${esc(e.edite ? (e.txt || '') : (e.txt || rediger(c.id, bulT, bulEl)))}</textarea>
+        <div class="ligne-flex" style="flex-wrap:wrap"><button class="btn mini" id="bulCorr" type="button">✓ Corriger les fautes</button><button class="btn mini orange" id="bulVers" type="button">✨ Version bulletin</button><button class="btn mini" id="bulVide" type="button">✎ Écrire moi-même</button><button class="btn mini" id="bulRegen" type="button">↻ Proposition automatique</button><span class="sp"></span><button class="btn" id="bulPrec" type="button" aria-label="Élève précédent">◀</button><button class="btn plein" id="bulCopier" type="button">Copier · élève suivant ▶</button></div></div>
       <div class="bul-qs">${Object.entries(Q).map(([q, d]) => `<div class="bul-ligne${d.m ? ' large' : ''}"><div class="bul-lt"><b>${d.l}</b>${manqueInfo(c.id, bulT, q, e) ? '<span class="pt-orange" title="Peu d’informations dans le suivi : vérifie ce choix"></span>' : ''}<span class="sp"></span>${scoreHTML(c.id, bulT, bulEl, q)}</div>
         <div class="bul-ch">${d.o.map(([v, l]) => { const on = d.m ? (e.rep[q] || []).includes(v) : e.rep[q] === v; return `<button class="chip${on ? ' on' : ''}" data-bq="${q}" data-bv="${v}" type="button">${l}</button>`; }).join('')}</div></div>`).join('')}
         <div class="bul-ligne large"><div class="bul-lt"><b>À ajouter</b><small style="color:var(--gris)">facultatif</small></div><input type="text" id="bulLibre" value="${esc(e.libre || '')}" placeholder="ex. Très bon exposé sur Pythagore"></div></div>
@@ -5208,6 +5266,9 @@ function clicBulletin(b){
     if (q === 'att') { const a = e.rep.att || []; e.rep.att = (v === 'ex' || v === 'ok') ? [v] : (a.includes(v) ? a.filter(x => x !== v) : [...a.filter(x => x !== 'ex' && x !== 'ok'), v]); if (!e.rep.att.length) e.rep.att = ['ok']; $$('[data-bq="att"]').forEach(x => x.classList.toggle('on', e.rep.att.includes(x.dataset.bv))); majCommentaire(true); return true; }
     const on = Q[q].m ? e.rep[q].includes(v) : true; if (!Q[q].m) $$(`[data-bq="${q}"]`).forEach(x => x.classList.toggle('on', x === b)); else b.classList.toggle('on', on);
     majCommentaire(true); return true; }
+  if (b.id === 'bulCorr') { iaBulletin('corr'); return true; }
+  if (b.id === 'bulVers') { iaBulletin('vers'); return true; }
+  if (b.id === 'bulVide') { const e = elBul(c.id, bulT, bulEl); e.txt = ''; e.edite = true; $('#bulCom').value = ''; $('#bulCom').placeholder = 'Écris tes remarques en vrac (ex. bon élève mais bavard, oublie souvent son cahier, progrès en calcul), puis « ✨ Version bulletin ».'; $('#bulCom').focus(); majNb(); save('bull/' + c.id, bulDoc(c.id)); return true; }
   if (b.id === 'bulRegen') { const e = elBul(c.id, bulT, bulEl); e.var = (e.var || 0) + 1; majCommentaire(true); return true; }
   if (b.id === 'bulCopier' || b.id === 'bulPrec') {
     const L = ordreBul(c), i = L.findIndex(x => x.n === bulEl);
@@ -5509,7 +5570,7 @@ $('#eExo').addEventListener('change', e => { const d = deckCourant(); if (d && e
 $('#eDeck').addEventListener('click', e => e.stopPropagation()); $('#eExo').addEventListener('click', e => e.stopPropagation());
 
 $('#tel').addEventListener('input', e => { if (onglet === 'bulletin' && saisieBulletin(e.target)) return; if (e.target.id === 'oSeuil') $('#oSeuilV').textContent = e.target.value; if (e.target.dataset.trik) $('#oTriV_' + e.target.dataset.trik).textContent = triF(+e.target.value) + ' cm'; });
-$('#tel').addEventListener('change', e => { if (onglet === 'interactif' && iaChange(e.target)) return;
+$('#tel').addEventListener('change', e => { if (e.target.id === 'bulDocx' && e.target.files?.length) { importerListes([...e.target.files]); e.target.value = ''; return; } if (onglet === 'interactif' && iaChange(e.target)) return;
   const t = e.target;
   if (t.id === 'oSeuil') { majOutils(o => { o.seuil = +t.value; }); return; }
   if (t.dataset.trik) { const k = t.dataset.trik, v = +t.value; majOutils(o => { o.tri = {...triVal(), [k]:v}; }); return; }
@@ -5557,7 +5618,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795283354',t0=Date.now(),vue=false;
+<script>(function(){var V='1795343013',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
