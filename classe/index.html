@@ -444,7 +444,21 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .ou-tete{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}.ou-tete h3{margin:0;color:var(--vert);font-size:20px}
 .ou-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .ou-tuile{background:#fff;border:0;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;font:800 14px Nunito,'Segoe UI',sans-serif;color:var(--encre);cursor:pointer;transition:transform .12s}
-.ou-tuile:hover{transform:translateY(-2px)}.ou-tuile span{font-size:34px;line-height:1;color:var(--orange-fonce)}
+.ou-tuile:hover{transform:translateY(-2px)}.ou-tuile .ico{width:52px;height:52px;background:#F4F8F5;border-radius:14px;padding:6px}
+.ou-chip .ico{width:20px;height:20px}.fl-t .ico{width:22px;height:22px;background:#fff;border-radius:6px;padding:2px;vertical-align:middle;margin-right:4px}
+.dv-zone{display:flex;flex-direction:column;align-items:center;gap:12px;flex:1}
+.dv-pot{display:flex;gap:0;font:800 54px/1.15 'Courier New',monospace;color:#1F3A5F}
+.dv-g{display:flex;flex-direction:column;padding-right:14px}.dv-l{display:grid;width:calc(var(--n,6)*1ch)}.dv-l span{width:1.1ch;text-align:center}
+.dv-p{color:#C76A0E;border-bottom:3px solid #1F3A5F}.dv-r{color:#2E8B57}.dv-l .ab{color:#3A6FB0;text-decoration:underline}
+.dv-d{border-left:4px solid #1F3A5F;display:flex;flex-direction:column;min-width:3ch}.dv-dv{border-bottom:4px solid #1F3A5F;padding:0 14px}.dv-q{padding:0 14px;color:#B8323A}
+.dv-msg{max-width:900px}
+.sc-zone{display:flex;gap:40px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.sc-blocs{display:flex;gap:18px}.sc-col{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px;background:#F4F8F5;border-radius:14px;padding:8px}.sc-col>b{font-size:18px;color:var(--vert)}.sc-n{font-size:30px!important;color:#C76A0E!important}
+.sc-pile{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:240px;min-height:60px}
+.br-mini{display:inline-block;border:1.5px solid rgba(0,0,0,.35);transition:opacity .4s}.br-mini.br-u{width:18px;height:18px;background:#2E8B57}.br-mini.br-d{width:12px;height:70px;background:#3A6FB0}.br-mini.br-c{width:70px;height:70px;background:#F28C28}
+.br-mini.neuf{background:#7FD08F;outline:2px solid #F28C28}.br-mini.barre{opacity:.18}
+.sc-pose{font:800 56px/1.2 'Courier New',monospace;color:#1F3A5F}.sc-l{display:flex;justify-content:flex-end}.sc-l span{width:1.2ch;text-align:center;position:relative}
+.sc-l s{color:#B8323A}.sc-l sup{position:absolute;top:-14px;right:-6px;font-size:22px;color:#B8323A}.sc-l:nth-child(2){border-bottom:4px solid #1F3A5F}.sc-res{color:#C76A0E}
 .ou-ouverts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.ou-ouverts:empty{display:none}
 .ou-chip{display:inline-flex;align-items:center;gap:6px;background:#FFF1E2;color:#8a4300;border-radius:999px;padding:4px 6px 4px 12px;font-weight:800;font-size:14px}.ou-chip button{border:0;background:#fff;border-radius:999px;width:24px;height:24px;cursor:pointer}
 .ou-cartes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
@@ -3851,9 +3865,9 @@ function rendreTriTel(){
 }
 function rendreOutilsTel(){
   const o = D.live.outils || {}, sc = D.live.score || {on:false, eq:[]};
-  $('#oFlot').innerHTML = [...Object.entries(FLOT).map(([k, d]) => `<button class="ou-tuile" data-oflot="${k}" type="button"><span>${d.ic}</span>${d.t}</button>`), `<button class="ou-tuile" data-oflot="cmp" type="button"><span>½ ¾</span>Comparer 2 fractions</button>`].join('');
+  $('#oFlot').innerHTML = [...Object.entries(FLOT).map(([k, d]) => `<button class="ou-tuile" data-oflot="${k}" type="button">${ICO[k]}${d.t}</button>`), `<button class="ou-tuile" data-oflot="cmp" type="button">${ICO.cmp}Comparer 2 fractions</button>`].join('');
   const L = flots();
-  $('#oOuverts').innerHTML = L.length ? `<b>Au tableau :</b>${L.map(f => `<span class="ou-chip">${FLOT[f.type].ic} ${FLOT[f.type].t}<button data-ofx="${f.id}" type="button" aria-label="Retirer">✕</button></span>`).join('')}<button class="btn mini danger" id="oFlotRaz" type="button">Tout retirer</button>` : '';
+  $('#oOuverts').innerHTML = L.length ? `<b>Au tableau :</b>${L.map(f => `<span class="ou-chip">${ICO[f.type]} ${FLOT[f.type].t}<button data-ofx="${f.id}" type="button" aria-label="Retirer">✕</button></span>`).join('')}<button class="btn mini danger" id="oFlotRaz" type="button">Tout retirer</button>` : '';
   $('#oCalme').innerHTML = `
     <div class="duo"><button class="btn${o.foret ? ' plein' : ''}" data-ou="foret" type="button">🌳 Forêt de Guyane${o.foret ? ' · affichée' : ''}</button><button class="btn${o.mascotte !== false ? ' plein' : ''}" data-ou="mascotte" type="button">🦥 Paresseux${o.mascotte !== false ? ' · affiché' : ''}</button></div>
     <label class="champ">Seuil de bruit : <b id="oSeuilV">${o.seuil || 60}</b><input type="range" id="oSeuil" min="20" max="95" value="${o.seuil || 60}"></label>
@@ -3867,6 +3881,19 @@ function rendreOutilsTel(){
     ${(sc.eq.length ? sc.eq : equipes(2)).map((e, i) => `<div class="ligne-flex" style="background:#fff;border-radius:12px;padding:6px 8px"><input type="text" data-eqn="${i}" value="${esc(e.n)}" style="flex:1;min-height:38px"><b style="font-size:22px;min-width:36px;text-align:center;color:var(--vert)">${e.s}</b><button class="btn mini" data-eq="${i}" data-d="-1" type="button">−1</button><button class="btn mini plein" data-eq="${i}" data-d="1" type="button" style="min-width:56px">+1</button></div>`).join('')}`;
 }
 /* ---------------- Outils au tableau : fenêtres déplaçables par-dessus la diapo ---------------- */
+/* icônes des outils (dessinées, même style) */
+const ICO = (() => { const V = '#1F6F3D', O = '#F28C28', B = '#3A6FB0', w = c => `<svg viewBox="0 0 48 48" class="ico" fill="none" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">${c}</svg>`;
+  return {
+    frac:w(`<circle cx="24" cy="24" r="18" stroke="${V}"/><path d="M24 24V6A18 18 0 0 1 42 24Z" fill="${O}" stroke="${V}"/><path d="M24 24H42" stroke="${V}"/>`),
+    cmp:w(`<circle cx="14" cy="24" r="10" stroke="${V}"/><path d="M14 24V14A10 10 0 0 1 24 24Z" fill="${O}" stroke="${V}"/><circle cx="35" cy="24" r="10" stroke="${V}"/><path d="M35 24V14A10 10 0 0 1 35 34Z" fill="${B}" stroke="${V}"/>`),
+    mur:w(`<rect x="6" y="8" width="36" height="9" fill="#F4A3A3" stroke="${V}"/><rect x="6" y="19" width="18" height="9" fill="#F7C68B" stroke="${V}"/><rect x="24" y="19" width="18" height="9" fill="#F7C68B" stroke="${V}"/><rect x="6" y="30" width="12" height="9" fill="#9ED3A8" stroke="${V}"/><rect x="18" y="30" width="12" height="9" fill="#9ED3A8" stroke="${V}"/><rect x="30" y="30" width="12" height="9" fill="#9ED3A8" stroke="${V}"/>`),
+    pytha:w(`<rect x="6" y="6" width="36" height="36" rx="3" stroke="${B}"/><path d="M18 6V42M30 6V42M6 18H42M6 30H42" stroke="${B}" stroke-width="2"/><rect x="18" y="18" width="12" height="12" fill="${O}" stroke="${B}" stroke-width="2"/>`),
+    mult:w(`<path d="M20 9h18M20 18h18M8 23h32M20 32h18" stroke="${V}"/><path d="M8 11l6 6M14 11l-6 6" stroke="${O}"/><path d="M8 38h32" stroke="${V}"/><path d="M26 41h12" stroke="${O}"/>`),
+    div:w(`<path d="M26 6v36M26 16h16" stroke="${V}"/><path d="M8 11h12M8 22h10M10 30h8" stroke="${B}"/><path d="M31 25h8" stroke="${O}"/>`),
+    num:w(`<rect x="4" y="12" width="40" height="24" rx="3" stroke="${V}"/><path d="M4 20h40M14 12v24M24 12v24M34 12v24" stroke="${V}" stroke-width="2"/><path d="M29 20v16" stroke="#B8323A" stroke-width="4"/><rect x="4" y="12" width="10" height="8" fill="#8A4FA3"/><rect x="14" y="12" width="10" height="8" fill="${B}"/><rect x="24" y="12" width="10" height="8" fill="#2E8B57"/><rect x="34" y="12" width="10" height="8" fill="${O}"/>`),
+    conv:w(`<rect x="4" y="16" width="40" height="16" rx="3" fill="#FFF1E2" stroke="${O}"/><path d="M10 16v7M16 16v4M22 16v7M28 16v4M34 16v7M40 16v4" stroke="${O}" stroke-width="2"/><path d="M8 40l6-4M8 40l6 4M40 40l-6-4M40 40l-6 4M8 40h32" stroke="${V}" stroke-width="2"/>`),
+    briq:w(`<rect x="5" y="18" width="20" height="20" fill="${O}" stroke="${V}" stroke-width="2"/><path d="M10 18v20M15 18v20M20 18v20M5 23h20M5 28h20M5 33h20" stroke="${V}" stroke-width="1"/><rect x="29" y="8" width="5" height="30" fill="${B}" stroke="${V}" stroke-width="2"/><rect x="38" y="33" width="5" height="5" fill="#2E8B57" stroke="${V}" stroke-width="2"/>`),
+  }; })();
 const FLOT = {
   frac:{t:'Fraction', ic:'½', w:30, h:52, o:() => ({forme:'cercle', n:4, k:[], voir:true})},
   mur:{t:'Mur des fractions', ic:'▤', w:46, h:62, o:() => ({k:[]})},
@@ -3944,7 +3971,7 @@ function rendreFlotsEcran(){
   for (const f of L) {
     let w = zone.querySelector(`.fl[data-id="${f.id}"]`);
     if (!w) { w = document.createElement('div'); w.className = 'fl'; w.dataset.id = f.id;
-      w.innerHTML = `<div class="fl-t"><span>${FLOT[f.type].ic} ${FLOT[f.type].t}</span><button class="fl-x" data-fx="1" type="button" aria-label="Fermer">✕</button></div><div class="fl-corps"></div>`; zone.append(w); }
+      w.innerHTML = `<div class="fl-t"><span>${ICO[f.type]} ${FLOT[f.type].t}</span><button class="fl-x" data-fx="1" type="button" aria-label="Fermer">✕</button></div><div class="fl-corps"></div>`; zone.append(w); }
     w.style.left = f.x + '%'; w.style.top = f.y + '%'; if (!w.dataset.redim) { w.style.width = f.w + '%'; w.style.height = f.h + '%'; }
     const sig = JSON.stringify(f.o);
     if (w.dataset.sig !== sig && !(w.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) { w.dataset.sig = sig; w.querySelector('.fl-corps').innerHTML = corpsFlot(f); }
@@ -5021,6 +5048,62 @@ const INTER = [
       const m = Math.max(a, b, c), r = a + b + c - m, autres = [a, b, c].sort((x, y) => y - x).slice(1).join(' + ');
       el.querySelector('.ia-msg').innerHTML = ok ? `✅ ${m} &lt; ${autres} = ${r} : le triangle est constructible.` : plat ? `➖ ${m} = ${autres} : les points sont alignés (triangle aplati).` : `❌ ${m} &gt; ${autres} = ${r} : le triangle n’est pas constructible.`;
       el.querySelector('.ia-msg').className = 'ia-msg ' + (ok ? 'ok' : 'ko'); }, [' cm', ' cm', ' cm']); }},
+  {id:'divpas', t:'La division posée, pas à pas', ch:['6e:divisions', '3e:arith'], ic:'÷', col:'#3A6FB0', run(el){
+    el.innerHTML = `<div class="ia-ctl"><label class="ia-cur"><span>Dividende</span><input type="number" class="ia-n" value="7452" min="1" max="99999"></label><label class="ia-cur"><span>Diviseur</span><input type="number" class="ia-n" value="6" min="2" max="99"></label></div>
+      <div class="ia-btns"><button class="btn plein" data-ia="suiv" type="button">Étape suivante ▶</button><button class="btn" data-ia="tout" type="button">Tout montrer</button><button class="btn mini" data-ia="raz" type="button">Recommencer</button></div>
+      <div class="dv-zone"><div class="dv-pot"></div><p class="ia-msg dv-msg"></p></div>`;
+    let E = [], k = 0;
+    const calc = () => { const [N, d] = [...el.querySelectorAll('.ia-n')].map(i => Math.max(1, Math.floor(+i.value || 1))); const s = String(N); E = []; let i = 0, p = +s[0];
+      while (p < d && i < s.length - 1) { i++; p = p * 10 + +s[i]; }
+      const L = [{t:s, c:s.length - 1, k:'n'}], Q = [];
+      E.push({L:[...L], q:'', m:`On commence par le plus petit nombre (à gauche) qui contient ${d} : <b>${p}</b>.`});
+      while (true) { const q = Math.floor(p / d), pr = q * d, r = p - pr; Q.push(q);
+        E.push({L:[...L], q:Q.join(''), m:`Dans ${p}, combien de fois ${d} ? <b>${q} fois</b> (${q} × ${d} = ${pr}).`});
+        L.push({t:'−' + pr, c:i, k:'p'}); E.push({L:[...L], q:Q.join(''), m:`J’écris ${pr} sous ${p} pour le soustraire.`});
+        L.push({t:String(r), c:i, k:'r'}); E.push({L:[...L], q:Q.join(''), m:`${p} − ${pr} = <b>${r}</b>. Le reste ${r} est plus petit que ${d} ✔`});
+        if (i >= s.length - 1) { E.push({L:[...L], q:Q.join(''), m:`Fini ! ${N} = ${d} × <b>${Q.join('').replace(/^0+(?=\d)/, '')}</b> + <b>${r}</b> (le reste ${r} &lt; ${d}).`, fin:true}); break; }
+        i++; p = r * 10 + +s[i]; L[L.length - 1] = {t:String(r) + s[i], c:i, k:'r', ab:true};
+        E.push({L:[...L], q:Q.join(''), m:`J’abaisse le chiffre suivant, ${s[i]} : on a maintenant <b>${p}</b>.`}); }
+      k = 0; dessin(); };
+    const dessin = () => { const e = E[k], [N, d] = [...el.querySelectorAll('.ia-n')].map(i => +i.value), n = String(N).length + 1;
+      const lig = e.L.map(l => { const cc = l.c + 1, debut = cc - l.t.length + 1; return `<div class="dv-l dv-${l.k}" style="grid-template-columns:repeat(${n},1fr)">${Array.from({length:n}, (_, j) => `<span${l.ab && j === cc ? ' class="ab"' : ''}>${j >= debut && j <= cc ? l.t[j - debut] : ''}</span>`).join('')}</div>`; }).join('');
+      el.querySelector('.dv-pot').innerHTML = `<div class="dv-g">${lig}</div><div class="dv-d"><div class="dv-dv">${d}</div><div class="dv-q">${e.q || '&nbsp;'}</div></div>`;
+      el.querySelector('.dv-msg').innerHTML = e.m; };
+    el.querySelectorAll('.ia-n').forEach(i => i.addEventListener('change', calc));
+    el.querySelector('[data-ia="suiv"]').onclick = () => { if (k < E.length - 1) { k++; dessin(); } };
+    el.querySelector('[data-ia="tout"]').onclick = () => { k = E.length - 1; dessin(); };
+    el.querySelector('[data-ia="raz"]').onclick = () => { k = 0; dessin(); };
+    calc(); }},
+  {id:'souscass', t:'Soustraction : casser une dizaine', ch:['6e:operations', '6e:entiers', '6e:decimaux'], ic:'−', col:'#B8323A', run(el){
+    el.innerHTML = `<div class="ia-ctl"><label class="ia-cur"><span>Nombre</span><input type="number" class="ia-n" value="52" min="10" max="999"></label><label class="ia-cur"><span>On enlève</span><input type="number" class="ia-n" value="27" min="1" max="998"></label></div>
+      <div class="ia-btns"><button class="btn plein" data-ia="suiv" type="button">Étape suivante ▶</button><button class="btn mini" data-ia="raz" type="button">Recommencer</button></div>
+      <div class="sc-zone"><div class="sc-blocs"></div><div class="sc-pose"></div></div><p class="ia-msg sc-msg"></p>`;
+    const NOM = ['unités', 'dizaines', 'centaines'], UN = ['unité', 'dizaine', 'centaine'];
+    let E = [], k = 0;
+    const calc = () => { let [a, b] = [...el.querySelectorAll('.ia-n')].map(i => Math.floor(+i.value || 0)); if (b >= a) { b = Math.max(1, a - 1); el.querySelectorAll('.ia-n')[1].value = b; }
+      const da = [a % 10, Math.floor(a / 10) % 10, Math.floor(a / 100)], db = [b % 10, Math.floor(b / 10) % 10, Math.floor(b / 100)], nc = a >= 100 ? 3 : 2;
+      const st = {c:[...da], neuf:[0, 0, 0], barre:[0, 0, 0], casse:[false, false, false]};
+      const snap = m => E.push({st:JSON.parse(JSON.stringify(st)), m});
+      E = []; snap(`${a} − ${b} : on représente ${a} avec des briques, puis on va enlever ${b}, en commençant par les unités.`);
+      for (let j = 0; j < nc; j++) {
+        if (st.c[j] < db[j]) { let s = j + 1; while (st.c[s] === 0) s++; for (let t = s; t > j; t--) { st.c[t]--; st.c[t - 1] += 10; st.neuf[t - 1] += 10; st.casse[t] = true; }
+          snap(`Il n’y a que ${st.c[j] - 10} ${NOM[j]} : pas assez pour en enlever ${db[j]}. Je <b>casse 1 ${UN[j + 1]}</b> en 10 ${NOM[j]} → j’ai maintenant <b>${st.c[j]} ${NOM[j]}</b>.`); }
+        if (db[j]) { st.barre[j] = db[j]; snap(`J’enlève ${db[j]} ${db[j] > 1 ? NOM[j] : UN[j]} : ${st.c[j]} − ${db[j]} = <b>${st.c[j] - db[j]}</b>.`); }
+      }
+      snap(`Résultat : ${a} − ${b} = <b>${a - b}</b>.`);
+      E.a = a; E.b = b; E.nc = nc; E.db = db; k = 0; dessin(); };
+    const dessin = () => { const {st, m} = E[k], nc = E.nc, cls = ['u', 'd', 'c'];
+      el.querySelector('.sc-blocs').innerHTML = Array.from({length:nc}, (_, x) => nc - 1 - x).map(j => { const n = st.c[j], neuf = st.neuf[j], br = st.barre[j];
+        return `<div class="sc-col"><b>${NOM[j]}</b><div class="sc-pile">${Array.from({length:n}, (_, i) => `<span class="br-mini br-${cls[j]}${i >= n - neuf ? ' neuf' : ''}${i < br ? ' barre' : ''}"></span>`).join('')}</div><b class="sc-n">${n - br}</b></div>`; }).join('');
+      const A = String(E.a).padStart(nc, ' '), B = String(E.b).padStart(nc, ' ');
+      const haut = Array.from({length:nc}, (_, x) => { const j = nc - 1 - x, chg = st.c[j] !== +A[x] && A[x] !== ' '; return `<span>${chg ? `<s>${A[x]}</s><sup>${st.c[j]}</sup>` : A[x]}</span>`; }).join('');
+      const fin = k === E.length - 1;
+      el.querySelector('.sc-pose').innerHTML = `<div class="sc-l">${haut}</div><div class="sc-l">−${B.split('').map(c => `<span>${c}</span>`).join('')}</div><div class="sc-l sc-res">${fin ? String(E.a - E.b).padStart(nc, ' ').split('').map(c => `<span>${c}</span>`).join('') : ''}</div>`;
+      el.querySelector('.sc-msg').innerHTML = m; };
+    el.querySelectorAll('.ia-n').forEach(i => i.addEventListener('change', calc));
+    el.querySelector('[data-ia="suiv"]').onclick = () => { if (k < E.length - 1) { k++; dessin(); } };
+    el.querySelector('[data-ia="raz"]').onclick = () => { k = 0; dessin(); };
+    calc(); }},
   {id:'trianim', t:'Triangle constructible ? (animation)', ch:['6e:triangles', '3e:pythagore'], ic:'📐', col:'#2E8B57', anim:true},
   {id:'angles', t:'Somme des angles d’un triangle', ch:['6e:triangles', '6e:angles'], ic:'∠', col:'#B8323A', run(el){
     el.innerHTML = `<svg viewBox="0 0 640 380" class="ia-svg" style="touch-action:none"></svg><p class="ia-msg">Déplace les sommets A, B et C.</p>`;
@@ -5834,7 +5917,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795360894',t0=Date.now(),vue=false;
+<script>(function(){var V='1795361308',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
