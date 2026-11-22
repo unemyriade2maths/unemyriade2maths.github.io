@@ -459,44 +459,51 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 .br-mini.neuf{background:#7FD08F;outline:2px solid #F28C28}.br-mini.barre{opacity:.18}
 .sc-pose{font:800 56px/1.2 'Courier New',monospace;color:#1F3A5F}.sc-l{display:flex;justify-content:flex-end}.sc-l span{width:1.2ch;text-align:center;position:relative}
 .sc-l s{color:#B8323A}.sc-l sup{position:absolute;top:-14px;right:-6px;font-size:22px;color:#B8323A}.sc-l:nth-child(2){border-bottom:4px solid #1F3A5F}.sc-res{color:#1E5AA8}
-.ou-ouverts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.ou-ouverts:empty{display:none}
+.ou-ouverts{display:flex;flex-direction:column;gap:10px}.ou-ouverts:empty{display:none}
+.ou-reg-t{display:flex;align-items:center;gap:10px}.ou-reg-t b{color:var(--orange-fonce)}
+.ou-regs{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:10px}
+.ou-reg{background:#FFF8F0;border:2px solid #F7D3AE;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.ou-reg-h{display:flex;align-items:center;gap:8px}.ou-reg-h .ico{width:26px;height:26px}.ou-taille{display:flex;align-items:center;gap:4px;font-weight:800;font-size:13px;color:var(--gris)}
 .ou-chip{display:inline-flex;align-items:center;gap:6px;background:#FFF1E2;color:#8a4300;border-radius:999px;padding:4px 6px 4px 12px;font-weight:800;font-size:14px}.ou-chip button{border:0;background:#fff;border-radius:999px;width:24px;height:24px;cursor:pointer}
 .ou-cartes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
 .ou-carte{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:14px 16px;display:flex;flex-direction:column;gap:10px}.ou-carte h4{margin:0;color:var(--vert);font-size:16px}
 #eFlots{position:absolute;inset:0;z-index:4;pointer-events:none}
-.fl{position:absolute;pointer-events:auto;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;resize:both;min-width:200px;min-height:140px;border:2px solid #1F6F3D}
-.fl-t{display:flex;align-items:center;gap:8px;background:#1F6F3D;color:#fff;font:800 15px Nunito,'Segoe UI',sans-serif;padding:5px 6px 5px 12px;cursor:grab;user-select:none;touch-action:none}.fl-t span{flex:1}
+.fl{position:absolute;pointer-events:auto;background:transparent;display:flex;flex-direction:column;overflow:visible;resize:both;min-width:120px;min-height:90px;container-type:size;border:2px dashed transparent;border-radius:10px}
+.fl:hover{border-color:rgba(31,111,61,.45)}
+.fl::-webkit-resizer{background:transparent}
+.fl-t{position:absolute;left:-2px;bottom:100%;margin-bottom:4px;display:flex;align-items:center;gap:6px;background:#1F6F3D;color:#fff;border-radius:10px;padding:4px;cursor:grab;user-select:none;touch-action:none;opacity:0;pointer-events:none;transition:opacity .15s;z-index:2;white-space:nowrap}
+.fl:hover .fl-t,.fl-t:hover{opacity:1;pointer-events:auto}.fl-grip{font-size:18px;padding:0 6px}.fl-reg{display:flex;gap:4px;align-items:center}.fl-reg .fl-b{min-height:28px;min-width:28px;font-size:13px}
 .fl-x{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;width:28px;height:28px;cursor:pointer;font-weight:900}
-.fl-corps{flex:1;min-height:0;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:6px;position:relative}
+.fl-corps{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:6px;position:relative}
 .fl-barre{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .fl-b{border:2px solid #d6e5da;background:#fff;border-radius:9px;min-width:34px;min-height:32px;font:800 14px Nunito,'Segoe UI',sans-serif;cursor:pointer;padding:0 8px}.fl-b.on{background:#1F6F3D;border-color:#1F6F3D;color:#fff}
 .fl-sep{width:8px}.fl-nb{font-size:15px;min-width:64px;text-align:center}
 .fl-frac{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:14px}
 .fl-svg{height:100%;max-height:100%;width:auto;max-width:72%;flex:0 1 auto;min-height:0}
-.fl-f{display:flex;flex-direction:column;align-items:center;font:900 44px/1.1 Nunito,'Segoe UI',sans-serif;color:var(--c-den)}.fl-f span:first-child{color:var(--c-num);border-bottom:4px solid #1F3A5F;padding:0 8px}
+.fl-f{display:flex;flex-direction:column;align-items:center;font:900 16cqmin/1.1 Nunito,'Segoe UI',sans-serif;color:var(--c-den)}.fl-f span:first-child{color:var(--c-num);border-bottom:4px solid #1F3A5F;padding:0 8px}
 .fl-mur{flex:1;display:flex;flex-direction:column;gap:3px}
 .fl-mur-l{flex:1;display:flex;gap:0}
 .fl-mur-c{flex:1;border:1.5px solid rgba(0,0,0,.35);background:hsl(calc(var(--h)*1deg) 75% 72%);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;min-width:0}
 .fl-mur-c.on{background:#fff;outline:3px solid #1F3A5F;outline-offset:-3px}
 .fl-mini{display:inline-flex;flex-direction:column;font:800 10px/1 Nunito,'Segoe UI',sans-serif}.fl-mini i{font-style:normal;color:var(--c-den)}.fl-mini i:first-child{color:var(--c-num)}.fl-mini i:first-child{border-bottom:1.5px solid currentColor}
-.fl-pyt{border-collapse:collapse;width:100%;height:100%;font:800 17px Nunito,'Segoe UI',sans-serif;table-layout:fixed}
+.fl-pyt{border-collapse:collapse;width:100%;height:100%;background:#fff;font:800 4.6cqmin Nunito,'Segoe UI',sans-serif;table-layout:fixed}
 .fl-pyt th,.fl-pyt td{border:1.5px solid #3A6FB0;text-align:center;padding:2px}.fl-pyt th{background:#E3ECF7;color:#1E5AA8}.fl-pyt th.hl{background:#F28C28;color:#fff}
 .fl-pyt td{cursor:pointer}.fl-pyt td.ax{background:#FFF1E2}.fl-pyt td.sel{background:#F28C28;color:#fff;font-size:20px}
-.fl-op{border-collapse:collapse;margin:0 auto}.fl-op td{width:38px;height:38px;border:1px dashed #b9cbe3;padding:0}
+.fl-op{border-collapse:collapse;margin:0 auto;background:#fff}.fl-op td{width:min(11cqw,13cqh);height:min(11cqw,13cqh);border:1px dashed #b9cbe3;padding:0}
 .fl-op .fl-trait tr:first-child td,.fl-op tr.fl-trait td{border-top:3px solid #1F3A5F}
-.fl-c{width:100%;height:100%;border:0;text-align:center;font:800 24px Nunito,'Segoe UI',sans-serif;background:transparent;color:#1F3A5F;padding:0}.fl-c.res{color:#1E5AA8}
+.fl-c{width:100%;height:100%;border:0;text-align:center;font:800 7cqmin Nunito,'Segoe UI',sans-serif;background:transparent;color:#1F3A5F;padding:0}.fl-c.res{color:#1E5AA8}
 .fl-signe{position:absolute;left:14px;top:84px;font:900 28px Nunito,'Segoe UI',sans-serif;color:var(--c-op)}
 .dv-l .op,.sc-l .op,.ia-msg .op{color:var(--c-op)}
 .fl-div{display:flex;gap:0;align-items:flex-start;justify-content:center}.fl-divd{border-left:3px solid #1F3A5F;margin:0}
-.fl-num{border-collapse:collapse;width:100%;font:800 14px Nunito,'Segoe UI',sans-serif}.fl-num th{color:#fff;padding:6px;border:2px solid #fff}
-.fl-num td{border:1.5px solid #9fb6d6;text-align:center;height:40px;padding:0}.fl-num td.virg{border-right:5px solid #B8323A}
-.fl-briq{flex:1;min-height:0;position:relative;background:repeating-linear-gradient(0deg,#f7faf8 0 24px,#fff 24px 48px);border-radius:10px}
+.fl-num{border-collapse:collapse;width:100%;height:100%;background:#fff;font:800 2.6cqw Nunito,'Segoe UI',sans-serif}.fl-num th{color:#fff;padding:6px;border:2px solid #fff}
+.fl-num td{border:1.5px solid #9fb6d6;text-align:center;padding:0}.fl-num td.virg{border-right:5px solid #B8323A}
+.fl-briq{flex:1;min-height:0;position:relative}
 .br{position:absolute;cursor:grab;border:1.5px solid rgba(0,0,0,.4);touch-action:none}
-.br-c,.br-U{width:110px;height:110px;background-image:repeating-linear-gradient(90deg,#0003 0 1px,#0000 1px 11px),repeating-linear-gradient(0deg,#0003 0 1px,#0000 1px 11px);background-color:#F28C28}
-.br-d,.br-di{width:11px;height:110px;background-image:repeating-linear-gradient(0deg,#0003 0 1px,#0000 1px 11px);background-color:#3A6FB0}
-.br-u,.br-ce{width:11px;height:11px;background-color:#2E8B57}
+.br-c,.br-U{width:22cqmin;height:22cqmin;background-image:repeating-linear-gradient(90deg,#0003 0 1px,#0000 1px 2.2cqmin),repeating-linear-gradient(0deg,#0003 0 1px,#0000 1px 2.2cqmin);background-color:#F28C28}
+.br-d,.br-di{width:2.2cqmin;height:22cqmin;background-image:repeating-linear-gradient(0deg,#0003 0 1px,#0000 1px 2.2cqmin);background-color:#3A6FB0}
+.br-u,.br-ce{width:2.2cqmin;height:2.2cqmin;background-color:#2E8B57}
 .br-U{background-color:#8A4FA3}.br-di{background-color:#C76A0E}.br-ce{background-color:#B8323A}
-.fl-tot{font:800 18px Nunito,'Segoe UI',sans-serif;text-align:center;color:#1F3A5F}.fl-tot b{font-size:26px;color:#C76A0E}
+.fl-tot{font:800 5cqmin Nunito,'Segoe UI',sans-serif;text-align:center;color:#1F3A5F}.fl-tot b{font-size:26px;color:#C76A0E}
 .en-haut{font-size:12px;font-weight:800;color:var(--orange-texte);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 -2px}
 .orga-l{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--ligne);border-radius:12px;padding:8px 12px;font-weight:800}
 .orga-l input{width:64px;min-height:36px;text-align:center;font-weight:800}.orga-l span{flex:1}.orga-l select{width:auto;min-height:34px}
@@ -626,7 +633,7 @@ body.vue-tel::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-ar
 
   <!-- Outils -->
   <div class="panneau" data-p="outils" hidden>
-    <section class="ou-sec"><div class="ou-tete"><h3>Au tableau, par-dessus la diapo</h3><span class="aide">La diapo reste derrière. Sur l’écran de classe, chaque outil se déplace par sa barre de titre et s’agrandit par son coin.</span></div>
+    <section class="ou-sec"><div class="ou-tete"><h3>Au tableau, par-dessus la diapo</h3><span class="aide">La diapo reste derrière. Au tableau on ne voit que l’objet. Tu le règles ici ; sur l’écran, passe la souris dessus : ✥ pour le déplacer, le coin en bas à droite pour la taille.</span></div>
       <div class="ou-grille" id="oFlot"></div>
       <div id="oOuverts" class="ou-ouverts"></div></section>
     <section class="ou-sec"><div class="ou-tete"><h3>Vie de classe</h3></div>
@@ -3868,7 +3875,9 @@ function rendreOutilsTel(){
   const o = D.live.outils || {}, sc = D.live.score || {on:false, eq:[]};
   $('#oFlot').innerHTML = [...Object.entries(FLOT).map(([k, d]) => `<button class="ou-tuile" data-oflot="${k}" type="button">${ICO[k]}${d.t}</button>`), `<button class="ou-tuile" data-oflot="cmp" type="button">${ICO.cmp}Comparer 2 fractions</button>`].join('');
   const L = flots();
-  $('#oOuverts').innerHTML = L.length ? `<b>Au tableau :</b>${L.map(f => `<span class="ou-chip">${ICO[f.type]} ${FLOT[f.type].t}<button data-ofx="${f.id}" type="button" aria-label="Retirer">✕</button></span>`).join('')}<button class="btn mini danger" id="oFlotRaz" type="button">Tout retirer</button>` : '';
+  const ouv = $('#oOuverts'), sigO = JSON.stringify(L);
+  if (ouv.dataset.sig !== sigO && !(ouv.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) { ouv.dataset.sig = sigO;
+    ouv.innerHTML = L.length ? `<div class="ou-reg-t"><b>Au tableau, à régler</b><button class="btn mini danger" id="oFlotRaz" type="button">Tout retirer</button></div><div class="ou-regs">${L.map(f => `<div class="ou-reg" data-fid="${f.id}"><div class="ou-reg-h">${ICO[f.type]}<b>${FLOT[f.type].t}</b><span class="sp"></span><span class="ou-taille">Taille <button class="fl-b" data-ftaille="-1" type="button">−</button><button class="fl-b" data-ftaille="1" type="button">+</button></span><button class="fl-b" data-ofx="${f.id}" type="button" aria-label="Retirer">✕</button></div><div class="fl-barre">${partsFlot(f).barre || '<span class="aide">Rien à régler : on agit directement sur l’écran.</span>'}</div></div>`).join('')}</div>` : ''; }
   $('#oCalme').innerHTML = `
     <div class="duo"><button class="btn${o.foret ? ' plein' : ''}" data-ou="foret" type="button">🌳 Forêt de Guyane${o.foret ? ' · affichée' : ''}</button><button class="btn${o.mascotte !== false ? ' plein' : ''}" data-ou="mascotte" type="button">🦥 Paresseux${o.mascotte !== false ? ' · affiché' : ''}</button></div>
     <label class="champ">Seuil de bruit : <b id="oSeuilV">${o.seuil || 60}</b><input type="range" id="oSeuil" min="20" max="95" value="${o.seuil || 60}"></label>
@@ -3966,25 +3975,47 @@ function corpsFlot(f){
       <div class="fl-tot">${B.map(([t, l]) => `${nbt(t)} ${l.toLowerCase()}${nbt(t) > 1 ? 's' : ''}`).join(' · ')} = <b>${String(Math.round(tot * 100) / 100).replace('.', ',')}</b></div>`; }
   return '';
 }
+function partsFlot(f){ const d = document.createElement('div'); d.innerHTML = corpsFlot(f); const b = d.querySelector('.fl-barre'); if (b) b.remove(); return {barre:b ? b.innerHTML : '', objet:d.innerHTML}; }
 function rendreFlotsEcran(){
   const zone = $('#eFlots'), L = flots(), ids = new Set(L.map(f => f.id));
   zone.querySelectorAll('.fl').forEach(w => { if (!ids.has(w.dataset.id)) w.remove(); });
   for (const f of L) {
     let w = zone.querySelector(`.fl[data-id="${f.id}"]`);
     if (!w) { w = document.createElement('div'); w.className = 'fl'; w.dataset.id = f.id;
-      w.innerHTML = `<div class="fl-t"><span>${ICO[f.type]} ${FLOT[f.type].t}</span><button class="fl-x" data-fx="1" type="button" aria-label="Fermer">✕</button></div><div class="fl-corps"></div>`; zone.append(w); }
-    w.style.left = f.x + '%'; w.style.top = f.y + '%'; if (!w.dataset.redim) { w.style.width = f.w + '%'; w.style.height = f.h + '%'; }
+      w.innerHTML = `<div class="fl-t"><span class="fl-grip" title="Déplacer">✥</span><div class="fl-reg"></div><button class="fl-x" data-fx="1" type="button" aria-label="Retirer">✕</button></div><div class="fl-corps"></div>`; zone.append(w); }
+    w.style.left = f.x + '%'; w.style.top = f.y + '%';
+    if (!w._redim) { w.style.width = f.w + '%'; w.style.height = f.h + '%'; }
     const sig = JSON.stringify(f.o);
-    if (w.dataset.sig !== sig && !(w.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) { w.dataset.sig = sig; w.querySelector('.fl-corps').innerHTML = corpsFlot(f); }
+    if (w.dataset.sig !== sig && !(w.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) { w.dataset.sig = sig; const P = partsFlot(f); w.querySelector('.fl-reg').innerHTML = P.barre; w.querySelector('.fl-corps').innerHTML = P.objet; }
   }
 }
+/* une action sur un outil (depuis l'écran ou la télécommande) */
+function actionFlot(id, t){
+  const part = t.closest('[data-part]'), b = t.closest('button');
+  const go = fn => { majFlot(id, fn); rendre(); };
+  if (part) return go(f => { const i = +part.dataset.part, k = f.o.k; f.o.k = k.includes(i) ? k.filter(x => x !== i) : [...k, i]; });
+  const cel = t.closest('[data-pyt]'); if (cel) { const [r, c] = cel.dataset.pyt.split('-').map(Number); return go(f => { f.o.sel = f.o.sel && f.o.sel[0] === r && f.o.sel[1] === c ? null : [r, c]; }); }
+  if (!b) return;
+  if (b.dataset.ftaille) return go(f => { const k = b.dataset.ftaille > 0 ? 1.15 : 1 / 1.15; f.w = Math.max(10, Math.min(95, f.w * k)); f.h = Math.max(12, Math.min(95, f.h * k)); f.x = Math.min(f.x, 99 - f.w); f.y = Math.min(f.y, 99 - f.h); });
+  if (b.dataset.fx) { D.live.flot = flots().filter(f => f.id !== id); save('app/live', D.live); return rendre(); }
+  if (b.dataset.fforme) return go(f => { f.o.forme = b.dataset.fforme; if (f.o.forme === 'hex' && !NHEX.includes(f.o.n)) f.o.n = 6; f.o.k = f.o.k.filter(x => x < f.o.n); });
+  if (b.dataset.fn) return go(f => { if (f.o.forme === 'hex') { const i = NHEX.indexOf(f.o.n) + +b.dataset.fn; f.o.n = NHEX[Math.max(0, Math.min(NHEX.length - 1, i < 0 ? 0 : i))]; } else f.o.n = Math.max(1, Math.min(24, f.o.n + +b.dataset.fn)); f.o.k = f.o.k.filter(x => x < f.o.n); });
+  if (b.dataset.fvoir) return go(f => { f.o.voir = !f.o.voir; });
+  if (b.dataset.mur) return go(f => { const k = b.dataset.mur; f.o.k = f.o.k.includes(k) ? f.o.k.filter(x => x !== k) : [...f.o.k, k]; });
+  if (b.dataset.pcache) return go(f => { f.o.cache = !f.o.cache; });
+  if (b.dataset.fvide) return go(f => { if (f.o.c) f.o.c = {}; if (f.o.p) f.o.p = []; });
+  if (b.dataset.fu) return go(f => { f.o.u = b.dataset.fu; });
+  if (b.dataset.bmode) return go(f => { f.o.mode = b.dataset.bmode; f.o.p = []; });
+  if (b.dataset.badd) return go(f => { const n = f.o.p.filter(x => x.t === b.dataset.badd).length, j = BRIQ[f.o.mode].findIndex(x => x[0] === b.dataset.badd); f.o.p.push({t:b.dataset.badd, x:4 + j * 34 + (n % 6) * 4, y:6 + (n % 6) * 8 + Math.floor(n / 6) * 4}); });
+  }
 /* interactions sur l'écran de classe */
 (function(){
   const zone = $('#eFlots'); let drag = null, zMax = 10;
   zone.addEventListener('pointerdown', e => {
     const w = e.target.closest('.fl'); if (!w) return; w.style.zIndex = ++zMax; // au premier plan
+    w._souris = true; clearTimeout(w._s); w._s = setTimeout(() => { w._souris = false; }, 3000);
     const st = $('#stage').getBoundingClientRect();
-    if (e.target.closest('.fl-t') && !e.target.closest('button')) { const r = w.getBoundingClientRect(); drag = {w, k:'fen', dx:e.clientX - r.left, dy:e.clientY - r.top, st}; w.setPointerCapture(e.pointerId); return; }
+    if (e.target.closest('.fl-t') && !e.target.closest('button') && !e.target.closest('.fl-reg')) { const r = w.getBoundingClientRect(); drag = {w, k:'fen', dx:e.clientX - r.left, dy:e.clientY - r.top, st}; w.setPointerCapture(e.pointerId); return; }
     const b = e.target.closest('.br'); if (b) { const box = b.parentElement.getBoundingClientRect(), r = b.getBoundingClientRect(); drag = {w, k:'br', b, i:+b.dataset.br, box, dx:e.clientX - r.left, dy:e.clientY - r.top}; b.setPointerCapture(e.pointerId); e.preventDefault(); }
   });
   zone.addEventListener('pointermove', e => { if (!drag) return;
@@ -3996,25 +4027,8 @@ function rendreFlotsEcran(){
   zone.addEventListener('pointerup', fin); zone.addEventListener('pointercancel', fin);
   zone.addEventListener('dblclick', e => { const b = e.target.closest('.br'); if (!b) return; const id = b.closest('.fl').dataset.id; majFlot(id, f => { f.o.p.splice(+b.dataset.br, 1); }); rendre(); });
   // la taille choisie à la souris (coin en bas à droite) est gardée
-  new MutationObserver(() => zone.querySelectorAll('.fl:not([data-obs])').forEach(w => { w.dataset.obs = '1'; new ResizeObserver(es => { if (!w.dataset.pret) { w.dataset.pret = '1'; return; } w.dataset.redim = '1'; clearTimeout(w._t); w._t = setTimeout(() => { const st = $('#stage').getBoundingClientRect(); majFlot(w.dataset.id, f => { f.w = w.offsetWidth / st.width * 100; f.h = w.offsetHeight / st.height * 100; }); }, 500); }).observe(w); })).observe(zone, {childList:true});
-  zone.addEventListener('click', e => {
-    const w = e.target.closest('.fl'); if (!w) return; const id = w.dataset.id, t = e.target;
-    const part = t.closest('[data-part]'), b = t.closest('button');
-    const go = fn => { majFlot(id, fn); rendre(); };
-    if (part) return go(f => { const i = +part.dataset.part, k = f.o.k; f.o.k = k.includes(i) ? k.filter(x => x !== i) : [...k, i]; });
-    const cel = t.closest('[data-pyt]'); if (cel) { const [r, c] = cel.dataset.pyt.split('-').map(Number); return go(f => { f.o.sel = f.o.sel && f.o.sel[0] === r && f.o.sel[1] === c ? null : [r, c]; }); }
-    if (!b) return;
-    if (b.dataset.fx) { D.live.flot = flots().filter(f => f.id !== id); save('app/live', D.live); return rendre(); }
-    if (b.dataset.fforme) return go(f => { f.o.forme = b.dataset.fforme; if (f.o.forme === 'hex' && !NHEX.includes(f.o.n)) f.o.n = 6; f.o.k = f.o.k.filter(x => x < f.o.n); });
-    if (b.dataset.fn) return go(f => { if (f.o.forme === 'hex') { const i = NHEX.indexOf(f.o.n) + +b.dataset.fn; f.o.n = NHEX[Math.max(0, Math.min(NHEX.length - 1, i < 0 ? 0 : i))]; } else f.o.n = Math.max(1, Math.min(24, f.o.n + +b.dataset.fn)); f.o.k = f.o.k.filter(x => x < f.o.n); });
-    if (b.dataset.fvoir) return go(f => { f.o.voir = !f.o.voir; });
-    if (b.dataset.mur) return go(f => { const k = b.dataset.mur; f.o.k = f.o.k.includes(k) ? f.o.k.filter(x => x !== k) : [...f.o.k, k]; });
-    if (b.dataset.pcache) return go(f => { f.o.cache = !f.o.cache; });
-    if (b.dataset.fvide) return go(f => { if (f.o.c) f.o.c = {}; if (f.o.p) f.o.p = []; });
-    if (b.dataset.fu) return go(f => { f.o.u = b.dataset.fu; });
-    if (b.dataset.bmode) return go(f => { f.o.mode = b.dataset.bmode; f.o.p = []; });
-    if (b.dataset.badd) return go(f => { const n = f.o.p.filter(x => x.t === b.dataset.badd).length, j = BRIQ[f.o.mode].findIndex(x => x[0] === b.dataset.badd); f.o.p.push({t:b.dataset.badd, x:4 + j * 34 + (n % 6) * 4, y:6 + (n % 6) * 8 + Math.floor(n / 6) * 4}); });
-  });
+  new MutationObserver(() => zone.querySelectorAll('.fl:not([data-obs])').forEach(w => { w.dataset.obs = '1'; new ResizeObserver(es => { if (!w.dataset.pret) { w.dataset.pret = '1'; return; } if (!w._souris) return; w._redim = true; clearTimeout(w._t); w._t = setTimeout(() => { const st = $('#stage').getBoundingClientRect(); majFlot(w.dataset.id, f => { f.w = w.offsetWidth / st.width * 100; f.h = w.offsetHeight / st.height * 100; }); w._redim = false; }, 500); }).observe(w); })).observe(zone, {childList:true});
+  zone.addEventListener('click', e => { const w = e.target.closest('.fl'); if (w) actionFlot(w.dataset.id, e.target); });
   zone.addEventListener('input', e => { const c = e.target.closest('[data-fc]'); if (!c) return; const id = c.closest('.fl').dataset.id;
     clearTimeout(c._t); c._t = setTimeout(() => majFlot(id, f => { f.o.c[c.dataset.fc] = c.value; }), 300); });
   zone.addEventListener('keydown', e => { e.stopPropagation(); }); // taper un chiffre ne change pas de diapo
@@ -5793,6 +5807,7 @@ $('#tel').addEventListener('click', e => {
   if (b.id === 'planEcran2') { D.live.showPlan = !D.live.showPlan; save('app/live', D.live); rendre(); return; }
   if (b.dataset.tripre) majOutils(o => { o.tri = {bc:10, ab:3, ac:+b.dataset.tripre}; o.triOn = true; });
   else if (b.dataset.oflot) { if (b.dataset.oflot === 'cmp') { ajouterFlot('frac', {n:4, k:[0, 1, 2]}); ajouterFlot('frac', {n:8, k:[0, 1, 2, 3, 4, 5]}); const L = flots(); Object.assign(L[L.length - 2], {x:8, y:14}); Object.assign(L[L.length - 1], {x:52, y:14}); save('app/live', D.live); rendre(); } else ajouterFlot(b.dataset.oflot); }
+  else if (b.closest('[data-fid]') && !b.dataset.ofx) { actionFlot(b.closest('[data-fid]').dataset.fid, b); }
   else if (b.dataset.ofx) { D.live.flot = flots().filter(f => f.id !== b.dataset.ofx); save('app/live', D.live); rendre(); }
   else if (b.id === 'oFlotRaz') { D.live.flot = []; save('app/live', D.live); rendre(); }
   else if (b.dataset.ou) majOutils(o => { const k = b.dataset.ou; o[k] = k === 'mascotte' ? o[k] === false : !o[k]; });
@@ -5919,7 +5934,7 @@ route();
   abonner(); majQR(); majInstall(); rendre();
 })();
 </script>
-<script>(function(){var V='1795361484',t0=Date.now(),vue=false;
+<script>(function(){var V='1795362271',t0=Date.now(),vue=false;
 function bandeau(){if(vue)return;vue=true;var d=document.createElement('div');d.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;background:#1F6F3D;color:#fff;font:800 16px Nunito,Segoe UI,sans-serif;border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.3)';d.innerHTML='Nouvelle version de l’application <button type="button" style="font:inherit;border:0;border-radius:10px;padding:6px 12px;background:#F28C28;color:#fff;cursor:pointer">Mettre à jour</button><button type="button" aria-label="Plus tard" style="font:inherit;border:0;background:none;color:#fff;cursor:pointer">✕</button>';d.children[0].onclick=function(){location.reload()};d.children[1].onclick=function(){d.remove()};document.body.append(d);}
 function verif(){if(!navigator.onLine)return;fetch('version.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(o){if(!o.v||o.v===V)return;
 var ec=document.getElementById('ecran'),enCours=ec&&!ec.hidden&&document.fullscreenElement;
